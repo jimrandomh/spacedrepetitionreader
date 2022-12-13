@@ -1,0 +1,18 @@
+{
+	"project-file-version": "0.1",
+	"roots": [
+		".",
+	],
+	"ignoreList": [
+		"^node_modules$",
+		"^build$"
+	],
+	"settings": {
+		"tabsize": 2,
+		"expandtab": true,
+		"hideDotfiles": true
+	},
+	"pushFilesIntoSubfolder": [
+		"^(\\.\\/)?[^/]*$"
+	]
+}
