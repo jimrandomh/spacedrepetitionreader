@@ -1,5 +1,11 @@
 import * as React from 'react'
-import * as Server from 'react-dom/server'
+import * as ReactDOM from 'react-dom'
+import {App} from './App';
 
-let Greet = () => <h1>Hello, world!</h1>
-console.log(Server.renderToString(<Greet />))
+function clientMain() {
+  const rootDiv = document.getElementById('react-root');
+  const root = ReactDOM.createRoot(rootDiv);
+  root.render(<App/>);
+}
+
+clientMain();
