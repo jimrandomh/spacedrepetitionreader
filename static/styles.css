@@ -26,14 +26,59 @@
   padding: 16px;
 }
 
-.leftSidebar .decksList li {
+.leftSidebar .decksList ul {
   padding-left: 16px;
   margin-block-start: 8px;
+}
+
+.leftSidebar .decksList li {
 }
 
 .mainPane {
   position: absolute;
   top: 48px; bottom: 0;
-  left: 150px; right: 0;
+  left: 200px; right: 0;
   overflow-y: scroll;
+  padding: 16px;
 }
+
+.cardChallenge {
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  padding: 32px;
+  max-width: 600px;
+}
+
+.cardChallenge .content {
+  text-align: center;
+}
+
+.cardChallenge .buttons {
+  margin-top: 64px;
+  display: flex;
+  justify-content: center;
+}
+
+.cardChallenge .button {
+  display: inline-block;
+  padding: 16px;
+  min-width: 100px;
+  margin: 8px;
+  border: 1px solid #666;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.cardChallenge .button.flip {
+  background: #ccf;
+}
+.cardChallenge .button.easy {
+  background: #cfc;
+}
+.cardChallenge .button.hard {
+  background: #ffc;
+}
+.cardChallenge .button.again {
+  background: #fcc;
+}
+
