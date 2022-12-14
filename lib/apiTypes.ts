@@ -1,0 +1,58 @@
+
+export interface RestApi {
+  path: string
+  queryArgs: {}
+  bodyArgs: {}
+  responseType: {}
+}
+
+export interface ApiSignup {
+  path: "/api/users/signup"
+  queryArgs: {}
+  bodyArgs: {
+    username: string
+    email: string
+    password: string
+  }
+  responseType: {
+  }
+}
+
+export interface ApiLogin {
+  path: "/api/users/login"
+  queryArgs: {}
+  bodyArgs: {
+    username: string
+    password: string
+  }
+  responseType: {
+  }
+}
+
+export interface ApiLogout {
+  path: "/api/users/logout"
+  queryArgs: {}
+  bodyArgs: {}
+  responseType: {}
+}
+
+export interface ApiListCards {
+  path: "/api/cards/list"
+  queryArgs: {}
+  bodyArgs: {}
+  responseType: {
+    //TODO
+  }
+}
+
+export interface ApiGetCard {
+  path: "/api/cards/:cardId"
+  queryArgs: {
+    cardId: string
+  }
+  bodyArgs: {}
+  responseType: {
+    front: string
+    back: string
+  }
+}

@@ -7,8 +7,8 @@ function serverStartup() {
   const app = express()
   const port = 5000
   
-  serveStaticFiles(app);
   addApiEndpoints(app);
+  serveStaticFiles(app);
   
   app.listen(port, () => {
     console.log(`Listening on port ${port}`)

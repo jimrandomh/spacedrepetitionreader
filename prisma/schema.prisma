@@ -14,6 +14,16 @@ model User {
   passwordHash String
   
   decks Deck[]
+  loginTokens LoginToken[]
+}
+
+model LoginToken {
+  id Int @id @default(autoincrement())
+  token String
+  valid Boolean
+
+  owner User @relation(fields: [ownerId], references: [id])
+  ownerId Int
 }
 
 model Deck {

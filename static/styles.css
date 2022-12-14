@@ -1,3 +1,39 @@
 
 .root {
 }
+
+.topBar {
+  position: absolute;
+  background:#88f;
+  display: flex;
+  padding: 12px;
+  box-sizing: border-box;
+  
+  top: 0; height: 48px;
+  left: 0; right: 0;
+}
+.topBar .siteNameHeader {
+  flex-grow: 1;
+}
+
+.leftSidebar {
+  position: absolute;
+  top: 48px; bottom: 0;
+  left: 0; width: 200px;
+  box-sizing: border-box;
+  
+  background: #eef;
+  padding: 16px;
+}
+
+.leftSidebar .decksList li {
+  padding-left: 16px;
+  margin-block-start: 8px;
+}
+
+.mainPane {
+  position: absolute;
+  top: 48px; bottom: 0;
+  left: 150px; right: 0;
+  overflow-y: scroll;
+}
