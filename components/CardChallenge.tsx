@@ -1,10 +1,11 @@
 import React,{useState} from 'react'
 
-export function CardChallenge({card}: {
+export function CardChallenge({card, onFinish}: {
   card: {
     front: string,
     back: string
-  }
+  },
+  onFinish: ()=>void,
 }) {
   const [flipped,setFlipped] = useState(false);
   
@@ -13,7 +14,7 @@ export function CardChallenge({card}: {
   }
   
   function clickResolution(resolution: "Easy"|"Hard"|"Repeat") {
-    setFlipped(false); // TODO
+    onFinish();
   }
   
   if (flipped) {

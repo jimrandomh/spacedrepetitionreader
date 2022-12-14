@@ -36,12 +36,30 @@ export interface ApiLogout {
   responseType: {}
 }
 
+export interface ApiListDecks {
+  path: "/api/decks/list"
+  queryArgs: {}
+  bodyArgs: {}
+  responseType: {
+    decks: {id: number, name: string}[]
+  }
+}
+
 export interface ApiListCards {
   path: "/api/cards/list"
   queryArgs: {}
   bodyArgs: {}
   responseType: {
     //TODO
+  }
+}
+
+export interface ApiCardsDue {
+  path: "/api/cards/due"
+  queryArgs: {}
+  bodyArgs: {}
+  responseType: {
+    cards: {id: number, front: string, back: string}[]
   }
 }
 

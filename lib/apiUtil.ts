@@ -20,11 +20,11 @@ export function useGetApi<
     if (!withArgs) throw new Error("Route-parsing failed");
     const fetchResult = await fetch(withArgs, {
       method: "GET",
-      body: JSON.stringify(body),
+      //body: JSON.stringify(body),
     });
     setResult({
       loading: false,
-      data: fetchResult.json(),
+      data: await fetchResult.json(),
     });
   }, []);
   

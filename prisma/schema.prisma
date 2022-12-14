@@ -43,3 +43,8 @@ model Card {
   deck Deck @relation(fields: [deckId], references: [id])
   deckId Int
 }
+
+model RSSSubscription {
+  id Int @id @default(autoincrement())
+  rssUrl String
+}
