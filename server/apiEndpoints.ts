@@ -1,56 +1,28 @@
 import type {Express} from 'express';
-import {Prisma, PrismaClient} from '@prisma/client'
 import * as ApiTypes from '../lib/apiTypes';
+import {defineGetApi,definePostApi,assertLoggedIn} from './serverApiUtil';
 import {getFeed} from './feedUtil';
-import Route from 'route-parser';
-import mapValues from 'lodash/mapValues';
-
-interface ServerApiContext<QueryArgs,BodyArgs> {
-  req: Express.Request
-  res: Express.Response
-  query: QueryArgs
-  body: BodyArgs
-}
-
-function defineApi<T extends ApiTypes.RestApi>(
-  app: Express,
-  endpoint: T["path"],
-  fn: (ctx: ServerApiContext<T["queryArgs"], T["bodyArgs"]>) => T["responseType"]|Promise<T["responseType"]>
-) {
-  const route = new Route(endpoint);
-  
-  app.get(endpoint, async (req,res) => {
-    const parsedRoute = route.match(req.url);
-    if (!parsedRoute) throw new Error("Invalid URL");
-    const queryArgs = mapValues(parsedRoute, (v:string)=>decodeURIComponent(v));
-    // TODO: Handle args in request body
-    const ctx: ServerApiContext<T["queryArgs"], T["bodyArgs"]> = {
-      req, res, query: queryArgs,
-      body: {},
-    };
-    const result = await fn(ctx);
-    res.json(result);
-  });
-}
+import {addAuthEndpoints} from './auth';
 
 export function addApiEndpoints(app: Express) {
-  defineApi<ApiTypes.ApiSignup>(app, "/api/users/signup", ctx => {
-    return {} //TODO
-  });
-  defineApi<ApiTypes.ApiLogin>(app, "/api/users/login", ctx => {
-    return {} //TODO
-  });
-  defineApi<ApiTypes.ApiLogout>(app, "/api/users/logout", ctx => {
-    return {} //TODO
-  });
-  defineApi<ApiTypes.ApiListDecks>(app, "/api/decks/list", ctx => {
+  addAuthEndpoints(app);
+  
+  defineGetApi<ApiTypes.ApiListDecks>(app, "/api/decks/list", ctx => {
+    assertLoggedIn(ctx);
     return { decks: [] } //TODO
   });
-  
-  defineApi<ApiTypes.ApiListCards>(app, "/api/cards/list", ctx => {
+  definePostApi<ApiTypes.ApiCreateDeck>(app, "/api/decks/create", ctx => {
+    assertLoggedIn(ctx);
+    const {name} = ctx.body;
+    throw new Error("Not implemented"); // TODO
+  });
+
+
+  defineGetApi<ApiTypes.ApiListCards>(app, "/api/cards/list", ctx => {
+    assertLoggedIn(ctx);
     return {} //TODO
   });
-  defineApi<ApiTypes.ApiCardsDue>(app, "/api/cards/due", ctx => {
+  defineGetApi<ApiTypes.ApiCardsDue>(app, "/api/cards/due", ctx => {
     return {cards: [
       {
         id: 1,
@@ -69,14 +41,14 @@ export function addApiEndpoints(app: Express) {
       },
     ]};
   });
-  defineApi<ApiTypes.ApiGetCard>(app, "/api/cards/:cardId", ctx => {
+  defineGetApi<ApiTypes.ApiGetCard>(app, "/api/cards/:cardId", ctx => {
     return {
       front: `PLACEHOLDER ${ctx.query.cardId} front`,
       back: `PLACEHOLDER ${ctx.query.cardId} back`,
     };
   });
   
-  defineApi<ApiTypes.ApiLoadFeed>(app, "/api/feed/load/:feedUrl", async (ctx) => {
+  defineGetApi<ApiTypes.ApiLoadFeed>(app, "/api/feed/load/:feedUrl", async (ctx) => {
     const {feedUrl} = ctx.query;
     const feedItems = await getFeed(feedUrl);
     return {feedItems};

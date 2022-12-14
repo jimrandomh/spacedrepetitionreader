@@ -11,11 +11,11 @@ import map from 'lodash/map';
 export function FrontPage() {
   const {data:cardsDue, loading} = useGetApi<ApiCardsDue>({
     endpoint: "/api/cards/due",
-    query: {}, body: {},
+    query: {},
   });
   const {data:xkcdFeed, loading: loadingXkcd} = useGetApi<ApiLoadFeed>({
     endpoint: "/api/feed/load/:feedUrl",
-    query: {feedUrl: "https://xkcd.com/atom.xml"}, body: {},
+    query: {feedUrl: "https://xkcd.com/atom.xml"},
   });
   console.log(xkcdFeed);
   

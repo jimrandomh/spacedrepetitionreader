@@ -1,14 +1,13 @@
 import {useState,useCallback,useEffect,useMemo} from 'react';
-import type {RestApi} from './apiTypes';
+import type {RestApiGet,RestApiPost} from './apiTypes';
 import Route from 'route-parser';
 import mapValues from 'lodash/mapValues';
 
 export function useGetApi<
-  T extends RestApi,
->({ endpoint, query, body }: {
+  T extends RestApiGet,
+>({ endpoint, query }: {
   endpoint: T["path"],
   query: T["queryArgs"],
-  body: T["bodyArgs"],
 }): {
   loading: boolean
   data: T["responseType"]|null
@@ -37,4 +36,25 @@ export function useGetApi<
   }, [refetch]);
   
   return {...result,refetch};
+}
+
+export async function doPost<T extends RestApiPost>({ endpoint, query, body }: {
+  endpoint: T["path"],
+  query: T["queryArgs"],
+  body: T["bodyArgs"],
+}): Promise<{
+  result: T["responseType"]
+}> {
+  const withArgs = new Route(endpoint).reverse(mapValues(query, (v:any)=>encodeURIComponent(v)));
+  if (!withArgs) throw new Error("Route-parsing failed");
+  console.log("POST with body "+JSON.stringify(body));
+  const fetchResult = await fetch(withArgs, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const responseBody = await fetchResult.json();
+  return responseBody;
 }

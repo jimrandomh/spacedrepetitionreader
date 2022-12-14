@@ -9,8 +9,8 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  name String
-  email String
+  name String @unique
+  email String @unique
   passwordHash String
   
   decks Deck[]
@@ -19,8 +19,9 @@ model User {
 
 model LoginToken {
   id Int @id @default(autoincrement())
-  token String
-  valid Boolean
+  token String @unique
+  createdAt DateTime @default(now())
+  valid Boolean @default(true)
 
   owner User @relation(fields: [ownerId], references: [id])
   ownerId Int
@@ -28,6 +29,7 @@ model LoginToken {
 
 model Deck {
   id Int @id @default(autoincrement())
+  deleted Boolean @default(false)
   
   name String
   cards Card[]

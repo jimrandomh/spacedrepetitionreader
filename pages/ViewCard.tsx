@@ -6,7 +6,6 @@ export function ViewCard({id}: {id: string}) {
   const {data:card, loading} = useGetApi<ApiGetCard>({
     endpoint: "/api/cards/:cardId",
     query: {cardId: id},
-    body: {},
   });
   
   if (loading) {

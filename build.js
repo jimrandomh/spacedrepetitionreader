@@ -15,8 +15,9 @@ build({
   bundle: true,
   sourcemap: true,
   sourcesContent: true,
-  external: ["express","path","fs","rss-parser"],
+  external: ["express","path","fs","rss-parser","body-parser","bcrypt","@prisma","@prisma/client","crypto"],
   outfile: 'build/server.js',
+  minify: false,
   run: true,
 }).catch(() => process.exit(1))
 
