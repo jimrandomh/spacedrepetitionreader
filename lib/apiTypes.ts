@@ -1,4 +1,12 @@
 
+export interface FeedEntry {
+  title: string
+  link: string
+  pubDate: string
+  summary: string
+  id: string
+}
+
 export interface RestApi {
   path: string
   queryArgs: {}
@@ -72,5 +80,16 @@ export interface ApiGetCard {
   responseType: {
     front: string
     back: string
+  }
+}
+
+export interface ApiLoadFeed {
+  path: "/api/feed/load/:feedUrl"
+  queryArgs: {
+    feedUrl: string
+  }
+  bodyArgs: {}
+  responseType: {
+    feedItems: any
   }
 }

@@ -1,7 +1,9 @@
 import type {Express} from 'express';
 import {Prisma, PrismaClient} from '@prisma/client'
 import * as ApiTypes from '../lib/apiTypes';
+import {getFeed} from './feedUtil';
 import Route from 'route-parser';
+import mapValues from 'lodash/mapValues';
 
 interface ServerApiContext<QueryArgs,BodyArgs> {
   req: Express.Request
@@ -13,18 +15,20 @@ interface ServerApiContext<QueryArgs,BodyArgs> {
 function defineApi<T extends ApiTypes.RestApi>(
   app: Express,
   endpoint: T["path"],
-  fn: (ctx: ServerApiContext<T["queryArgs"], T["bodyArgs"]>) => T["responseType"]
+  fn: (ctx: ServerApiContext<T["queryArgs"], T["bodyArgs"]>) => T["responseType"]|Promise<T["responseType"]>
 ) {
   const route = new Route(endpoint);
   
-  app.get(endpoint, (req,res) => {
-    const queryArgs = route.match(req.url);
+  app.get(endpoint, async (req,res) => {
+    const parsedRoute = route.match(req.url);
+    if (!parsedRoute) throw new Error("Invalid URL");
+    const queryArgs = mapValues(parsedRoute, (v:string)=>decodeURIComponent(v));
     // TODO: Handle args in request body
     const ctx: ServerApiContext<T["queryArgs"], T["bodyArgs"]> = {
       req, res, query: queryArgs,
       body: {},
     };
-    const result = fn(ctx);
+    const result = await fn(ctx);
     res.json(result);
   });
 }
@@ -40,7 +44,7 @@ export function addApiEndpoints(app: Express) {
     return {} //TODO
   });
   defineApi<ApiTypes.ApiListDecks>(app, "/api/decks/list", ctx => {
-    return {} //TODO
+    return { decks: [] } //TODO
   });
   
   defineApi<ApiTypes.ApiListCards>(app, "/api/cards/list", ctx => {
@@ -51,7 +55,7 @@ export function addApiEndpoints(app: Express) {
       {
         id: 1,
         front: "Why do people stop using spaced repetition apps?",
-        back: "Homework assigned by your past self is still homework",
+        back: "It doesn't provide intrinsic reward.",
       },
       {
         id: 2,
@@ -70,5 +74,11 @@ export function addApiEndpoints(app: Express) {
       front: `PLACEHOLDER ${ctx.query.cardId} front`,
       back: `PLACEHOLDER ${ctx.query.cardId} back`,
     };
+  });
+  
+  defineApi<ApiTypes.ApiLoadFeed>(app, "/api/feed/load/:feedUrl", async (ctx) => {
+    const {feedUrl} = ctx.query;
+    const feedItems = await getFeed(feedUrl);
+    return {feedItems};
   });
 }

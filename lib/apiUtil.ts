@@ -1,6 +1,7 @@
 import {useState,useCallback,useEffect,useMemo} from 'react';
 import type {RestApi} from './apiTypes';
 import Route from 'route-parser';
+import mapValues from 'lodash/mapValues';
 
 export function useGetApi<
   T extends RestApi,
@@ -16,15 +17,18 @@ export function useGetApi<
   const [result,setResult] = useState<{loading:boolean, data: T["responseType"]|null}>({loading:true, data:null});
   
   const refetch = useCallback(async () => {
-    const withArgs = new Route(endpoint).reverse(query);
+    const withArgs = new Route(endpoint).reverse(mapValues(query, (v:any)=>encodeURIComponent(v)));
     if (!withArgs) throw new Error("Route-parsing failed");
     const fetchResult = await fetch(withArgs, {
       method: "GET",
       //body: JSON.stringify(body),
     });
+    const body = await fetchResult.json();
+    console.log(endpoint);
+    console.log(body);
     setResult({
       loading: false,
-      data: await fetchResult.json(),
+      data: body
     });
   }, []);
   

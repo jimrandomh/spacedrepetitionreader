@@ -15,7 +15,7 @@ build({
   bundle: true,
   sourcemap: true,
   sourcesContent: true,
-  external: ["express","path","fs"],
+  external: ["express","path","fs","rss-parser"],
   outfile: 'build/server.js',
   run: true,
 }).catch(() => process.exit(1))
