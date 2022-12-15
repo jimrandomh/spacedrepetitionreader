@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {routes,Endpoint} from '../pages/routes';
+import {UserContextProvider} from '../lib/useCurrentUser';
 import type Route from 'route-parser';
 
 
@@ -24,6 +25,8 @@ export function App() {
   
   const CurrentRouteComponent = currentRoute.component;
   return <div className="root">
-    <CurrentRouteComponent {...routeProps}/>
+    <UserContextProvider>
+      <CurrentRouteComponent {...routeProps}/>
+    </UserContextProvider>
   </div>
 }

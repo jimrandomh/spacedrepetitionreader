@@ -5,6 +5,19 @@ export interface ApiObjDeck { //{{_}}
   authorId: number
 }
 
+export interface ApiObjCard { //{{_}}
+  id: number
+  deckId: number
+  front: string
+  back: string
+}
+
+export interface ApiObjCurrentUser { //{{_}}
+  id: number
+  name: string
+  email: string
+}
+
 export interface FeedEntry { //{{_}}
   title: string
   link: string
@@ -61,6 +74,15 @@ export interface ApiLogout extends RestApiPost { //{{_}}
   responseType: {}
 }
 
+export interface ApiWhoami extends RestApiGet { //{{_}}
+  path: "/api/users/whoami"
+  queryArgs: {}
+  bodyArgs: {}
+  responseType: {
+    currentUser: ApiObjCurrentUser|null
+  }
+}
+
 
 export interface ApiListDecks extends RestApiGet { //{{_}}
   path: "/api/decks/list"
@@ -86,6 +108,7 @@ export interface ApiGetDeck extends RestApiGet { //{{_}}
   queryArgs: {id: number}
   responseType: {
     deck: ApiObjDeck|null
+    cards: ApiObjCard[]
   }
 }
 
@@ -99,6 +122,19 @@ export interface ApiDeleteDeck extends RestApiPost { //{{_}}
 }
 
 
+export interface ApiCreateCard extends RestApiPost { //{{_}}
+  path: "/api/cards/create",
+  queryArgs: {},
+  bodyArgs: {
+    deckId: number
+    front: string
+    back: string
+  }
+  responseType: {
+    id: number
+  }
+}
+
 export interface ApiListCards extends RestApiGet { //{{_}}
   path: "/api/cards/list"
   queryArgs: {}
@@ -107,12 +143,13 @@ export interface ApiListCards extends RestApiGet { //{{_}}
   }
 }
 
-export interface ApiCardsDue extends RestApiGet { //{{_}}
-  path: "/api/cards/due"
+export interface ApiDeleteCard extends RestApiPost { //{{_}}
+  path: "/api/cards/delete"
   queryArgs: {}
-  responseType: {
-    cards: {id: number, front: string, back: string}[]
+  bodyArgs: {
+    cardId: number
   }
+  responseType: {}
 }
 
 export interface ApiGetCard extends RestApiGet { //{{_}}
@@ -121,8 +158,16 @@ export interface ApiGetCard extends RestApiGet { //{{_}}
     cardId: number
   }
   responseType: {
-    front: string
-    back: string
+    card: ApiObjCard
+  }
+}
+
+
+export interface ApiCardsDue extends RestApiGet { //{{_}}
+  path: "/api/cards/due"
+  queryArgs: {}
+  responseType: {
+    cards: {id: number, front: string, back: string}[]
   }
 }
 

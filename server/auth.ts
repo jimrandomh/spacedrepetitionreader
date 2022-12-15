@@ -1,7 +1,7 @@
 import type {Express} from 'express';
 import type {PrismaClient, User} from '@prisma/client'
 import * as ApiTypes from '../lib/apiTypes';
-import {definePostApi} from './serverApiUtil';
+import {defineGetApi,definePostApi,ServerApiContext} from './serverApiUtil';
 import {getPrisma} from './db';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
@@ -67,7 +67,7 @@ export function addAuthEndpoints(app: Express) {
     });
     await createAndAssignLoginToken(ctx.req, ctx.res, user, ctx.db);
     
-    return {} //TODO
+    return {};
   });
   definePostApi<ApiTypes.ApiLogin>(app, "/api/users/login", async (ctx) => {
     const {username,password} = ctx.body;
@@ -84,7 +84,7 @@ export function addAuthEndpoints(app: Express) {
     const cookies = new Cookies((ctx.req as any).headers.cookie);
     const loginCookie = cookies.get('login')
     if (!loginCookie) {
-      return null;
+      return {};
     }
     await ctx.db.loginToken.update({
       where: {token:loginCookie},
@@ -93,5 +93,23 @@ export function addAuthEndpoints(app: Express) {
     (ctx.res as any).cookie('login', '', {
       path: "/"
     });
+    
+    return {};
   });
+  
+  defineGetApi<ApiTypes.ApiWhoami>(app, "/api/users/whoami", async (ctx) => {
+    return {
+      currentUser: apiFilterCurrentUser(ctx.currentUser, ctx)
+    };
+  });
+}
+
+function apiFilterCurrentUser(user: User|null, ctx: ServerApiContext): ApiTypes.ApiObjCurrentUser|null {
+  if (!user)
+    return null;
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  }
 }

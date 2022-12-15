@@ -42,6 +42,7 @@ model Card {
   id Int @id @default(autoincrement())
   front String
   back String
+  deleted Boolean @default(false)
   
   deck Deck @relation(fields: [deckId], references: [id])
   deckId Int

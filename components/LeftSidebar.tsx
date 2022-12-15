@@ -15,7 +15,7 @@ export function LeftSidebar() {
       {loading && <Loading/>}
       
       <ul>
-        {data?.decks && data.decks.map(deck => <li>
+        {data?.decks && data.decks.map(deck => <li key={""+deck.id}>
           <a href={`/decks/edit/${deck.id}`}>{deck.name}</a>
         </li>)}
       </ul>

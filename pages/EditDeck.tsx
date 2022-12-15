@@ -1,6 +1,7 @@
 import React from 'react'
 import {PageWrapper} from '../components/PageWrapper';
 import {Loading} from '../components/Loading';
+import {CreateCardForm} from '../components/CreateCardForm';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {CreateDeckForm} from '../components/CreateDeckForm';
 import {redirect} from '../lib/browserUtil';
@@ -13,6 +14,7 @@ export function EditDeck({id}: {id: number}) {
     query: {id}
   });
   const deck = deckResult?.deck;
+  const cards = deckResult?.cards;
   
   async function deleteDeck() {
     if (!deck) return;
@@ -30,10 +32,19 @@ export function EditDeck({id}: {id: number}) {
   }
   
   return <PageWrapper>
-    {deck && <h1>{deck.name}</h1>}
-    
     {loadingDeck && <Loading/>}
     
-    <button onClick={deleteDeck}>Delete</button>
+    {deck && <>
+      <h1>{deck.name}</h1>
+      
+      {cards && <ul>
+        {cards.map(card => <li key={card.id}>
+          <a href={`/card/${card.id}`}>{card.front}</a>
+        </li>)}
+      </ul>}
+      
+      <CreateCardForm deck={deck}/>
+      <button onClick={deleteDeck}>Delete</button>
+    </>}
   </PageWrapper>
 }

@@ -1,7 +1,7 @@
 import type {Express} from 'express';
-import type {Deck} from '@prisma/client'
+import type {Card,Deck} from '@prisma/client'
 import * as ApiTypes from '../lib/apiTypes';
-import {defineGetApi,definePostApi,assertLoggedIn,assertIsInt,ServerApiContext} from './serverApiUtil';
+import {defineGetApi,definePostApi,assertLoggedIn,assertIsInt,assertIsString,ServerApiContext} from './serverApiUtil';
 import {getFeed} from './feedUtil';
 import {addAuthEndpoints} from './auth';
 
@@ -63,18 +63,80 @@ export function addApiEndpoints(app: Express) {
     const currentUser = assertLoggedIn(ctx);
     const id = assertIsInt(ctx.query.id);
     
-    const deck = await ctx.db.deck.findUnique({
-      where: {id}
+    const deck = await ctx.db.deck.findUnique({ where: {id} });
+    if (!deck || deck.deleted) throw new Error("Invalid deck ID");
+    
+    const cards = await ctx.db.card.findMany({
+      where: { deleted: false, deckId: id }
     });
     
-    return { deck: apiFilterDeck(deck, ctx) };
+    return {
+      deck: apiFilterDeck(deck, ctx),
+      cards: cards.map(card => apiFilterCard(card, ctx)!),
+    };
   });
 
 
+  definePostApi<ApiTypes.ApiCreateCard>(app, "/api/cards/create", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const deckId = assertIsInt(ctx.body.deckId);
+    const front = assertIsString(ctx.body.front);
+    const back = assertIsString(ctx.body.back);
+    
+    // Check that deckId is valid
+    const deck = await ctx.db.deck.findUnique({ where: {id: deckId} });
+    if (!deck || deck.deleted) throw new Error("Invalid deck ID");
+    
+    const card = await ctx.db.card.create({
+      data: {
+        deckId, front, back,
+        deleted: false,
+      }
+    });
+    
+    return {id: card.id};
+  });
+  
   defineGetApi<ApiTypes.ApiListCards>(app, "/api/cards/list", async (ctx) => {
     assertLoggedIn(ctx);
     return {} //TODO
   });
+  
+  defineGetApi<ApiTypes.ApiGetCard>(app, "/api/cards/:cardId", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const cardId = assertIsInt(ctx.query.cardId);
+    
+    const card = await ctx.db.card.findUnique({where: {id: cardId}});
+    if (!card || card.deleted)
+      throw new Error("Not found");
+    const deck = await ctx.db.deck.findUnique({where: {id: card.deckId}});
+    if (!deck || deck.deleted || deck.authorId !== currentUser.id)
+      throw new Error("Not found");
+    
+    return {
+      card: apiFilterCard(card, ctx)!
+    }
+  });
+  
+  definePostApi<ApiTypes.ApiDeleteCard>(app, "/api/cards/delete", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const cardId = assertIsInt(ctx.body.cardId);
+    
+    const card = await ctx.db.card.findUnique({where: {id: cardId}});
+    if (!card || card.deleted)
+      throw new Error("Not found");
+    const deck = await ctx.db.deck.findUnique({where: {id: card.deckId}});
+    if (!deck || deck.deleted || deck.authorId !== currentUser.id)
+      throw new Error("Not found");
+    
+    await ctx.db.card.update({
+      where: {id: cardId},
+      data: {deleted: true}
+    });
+    
+    return {};
+  });
+  
   
   defineGetApi<ApiTypes.ApiCardsDue>(app, "/api/cards/due", async (ctx) => {
     return {cards: []}; // TODO
@@ -97,13 +159,6 @@ export function addApiEndpoints(app: Express) {
     ]};*/
   });
   
-  defineGetApi<ApiTypes.ApiGetCard>(app, "/api/cards/:cardId", async (ctx) => {
-    const cardId = assertIsInt(ctx.query.cardId);
-    return {
-      front: `PLACEHOLDER ${cardId} front`,
-      back: `PLACEHOLDER ${cardId} back`,
-    };
-  });
   
   defineGetApi<ApiTypes.ApiLoadFeed>(app, "/api/feed/load/:feedUrl", async (ctx) => {
     const {feedUrl} = ctx.query;
@@ -112,7 +167,7 @@ export function addApiEndpoints(app: Express) {
   });
 }
 
-function apiFilterDeck(deck: Deck|null, ctx: ServerApiContext) : ApiTypes.ApiObjDeck|null {
+function apiFilterDeck(deck: Deck|null, ctx: ServerApiContext): ApiTypes.ApiObjDeck|null {
   if (!deck)
     return null;
   return {
@@ -120,4 +175,15 @@ function apiFilterDeck(deck: Deck|null, ctx: ServerApiContext) : ApiTypes.ApiObj
     name: deck.name,
     authorId: deck.authorId
   }
+}
+
+function apiFilterCard(card: Card|null, ctx: ServerApiContext): ApiTypes.ApiObjCard|null {
+  if (!card)
+    return null;
+  return {
+    id: card.id,
+    deckId: card.deckId,
+    front: card.front,
+    back: card.back,
+  };
 }

@@ -39,15 +39,21 @@ export function defineGetApi<T extends ApiTypes.RestApiGet>(
       req, res, query: queryArgs, db,
       currentUser: await getUserFromReq(req, db),
     };
-    const result = await fn(ctx);
-    res.json(result);
+    
+    try {
+      const result = await fn(ctx);
+      res.json(result);
+    } catch(e) {
+      res.status(400);
+      res.json({error: e.message});
+    }
   });
 }
 
 export function definePostApi<T extends ApiTypes.RestApiPost>(
   app: Express,
   endpoint: T["path"],
-  fn: (ctx: ServerApiPostContext<T["queryArgs"], T["bodyArgs"]>) => T["responseType"]|Promise<T["responseType"]>
+  fn: (ctx: ServerApiPostContext<T["queryArgs"], T["bodyArgs"]>) => Promise<T["responseType"]>
 ) {
   const route = new Route(endpoint);
   
@@ -63,10 +69,16 @@ export function definePostApi<T extends ApiTypes.RestApiPost>(
       body: requestBody,
       currentUser: await getUserFromReq(req,db),
     };
-    const result = await fn(ctx);
-    res.json(result);
+    try {
+      const result = await fn(ctx);
+      res.json(result);
+    } catch(e) {
+      res.status(400);
+      res.json({error: e.message});
+    }
   });
 }
+
 
 export function assertLoggedIn(ctx: ServerApiContext): User {
   const {currentUser} = ctx;
@@ -80,4 +92,10 @@ export function assertIsInt(value: any): number {
   const num = parseInt(value);
   if(isNaN(num)) throw new Error(`Argument must be a number; was ${JSON.stringify(value)}`);
   return num;
+}
+
+export function assertIsString(value: any): string {
+  if(typeof(value) !== 'string')
+    throw new Error("Argument must be a string");
+  return (value as string);
 }

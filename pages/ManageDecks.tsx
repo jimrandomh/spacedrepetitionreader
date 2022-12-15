@@ -16,7 +16,7 @@ export function ManageDecks() {
     
     {loadingDecks && <Loading/>}
     <ul>
-      {decksResult?.decks && decksResult.decks.map(deck => <li>
+      {decksResult?.decks && decksResult.decks.map(deck => <li key={deck.id}>
         <a href={`/decks/edit/${deck.id}`}>{deck.name}</a>
       </li>)}
     </ul>

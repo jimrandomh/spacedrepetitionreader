@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {doPost} from '../lib/apiUtil';
 import {TextInput} from './TextInput';
+import {ErrorMessage} from './ErrorMessage';
 import {redirect} from '../lib/browserUtil';
 import type {ApiCreateDeck} from '../lib/apiTypes';
 
@@ -27,6 +28,7 @@ export function CreateDeckForm() {
     <form onSubmit={(ev) => {ev.preventDefault(); createDeck()}}>
       <TextInput label="Name" value={deckName} setValue={setDeckName}/>
       <input type="submit" value="Create Deck"/>
+      {error && <ErrorMessage message={error}/>}
     </form>
   </div>;
 }

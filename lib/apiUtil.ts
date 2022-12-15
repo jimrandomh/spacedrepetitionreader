@@ -19,13 +19,11 @@ export function useGetApi<
   const refetch = useCallback(async () => {
     const withArgs = new Route(endpoint).reverse(mapValues(query, (v:any)=>encodeURIComponent(v)));
     if (!withArgs) throw new Error("Route-parsing failed");
+    
     const fetchResult = await fetch(withArgs, {
       method: "GET",
-      //body: JSON.stringify(body),
     });
     const body = await fetchResult.json();
-    console.log(endpoint);
-    console.log(body);
     setResult({
       loading: false,
       data: body
