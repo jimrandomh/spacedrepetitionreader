@@ -3,17 +3,16 @@ import {doPost} from '../lib/apiUtil';
 import {TextAreaInput} from './TextAreaInput';
 import {ErrorMessage} from './ErrorMessage';
 import {redirect} from '../lib/browserUtil';
-import type {ApiCreateCard,ApiObjDeck} from '../lib/apiTypes';
 
 export function CreateCardForm({deck}: {
-  deck: ApiObjDeck
+  deck: ApiTypes.ApiObjDeck
 }) {
   const [cardFront,setCardFront] = useState("");
   const [cardBack,setCardBack] = useState("");
   const [error,setError] = useState<string|null>(null);
   
   async function createCard() {
-    const {result,error} = await doPost<ApiCreateCard>({
+    const {result,error} = await doPost<ApiTypes.ApiCreateCard>({
       endpoint: "/api/cards/create",
       query: {},
       body: {

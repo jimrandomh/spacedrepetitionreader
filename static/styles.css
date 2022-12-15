@@ -61,6 +61,7 @@
 
 .cardChallenge .button {
   display: inline-block;
+  cursor: pointer;
   padding: 16px;
   min-width: 100px;
   margin: 8px;
@@ -86,4 +87,8 @@
 .loading {
   width: 32px;
   height: 32px;
+}
+
+.errorMessage {
+  color: #ff0000;
 }

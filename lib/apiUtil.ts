@@ -1,10 +1,9 @@
 import {useState,useCallback,useEffect,useMemo} from 'react';
-import type {RestApiGet,RestApiPost} from './apiTypes';
 import Route from 'route-parser';
 import mapValues from 'lodash/mapValues';
 
 export function useGetApi<
-  T extends RestApiGet,
+  T extends ApiTypes.RestApiGet,
 >({ endpoint, query, skip }: {
   endpoint: T["path"],
   query: T["queryArgs"],
@@ -39,7 +38,7 @@ export function useGetApi<
   return {...result,refetch};
 }
 
-export async function doPost<T extends RestApiPost>({ endpoint, query, body }: {
+export async function doPost<T extends ApiTypes.RestApiPost>({ endpoint, query, body }: {
   endpoint: T["path"],
   query: T["queryArgs"],
   body: T["bodyArgs"],
@@ -57,6 +56,14 @@ export async function doPost<T extends RestApiPost>({ endpoint, query, body }: {
       "Content-Type": "application/json",
     },
   });
+  
+  if(!fetchResult.ok) {
+    return {
+      result: null,
+      error: (await fetchResult.json()).error,
+    };
+  }
+  
   const responseBody = await fetchResult.json();
   return {
     result: responseBody,

@@ -1,15 +1,15 @@
 import React,{createContext,useContext} from 'react'
 import {useGetApi} from './apiUtil';
-import type {ApiObjCurrentUser,ApiWhoami} from './apiTypes';
+import {Loading} from '../components/Loading';
 
-const UserContext = createContext<ApiObjCurrentUser|null>(null);
+const UserContext = createContext<ApiTypes.ApiObjCurrentUser|null>(null);
 
 export function useCurrentUser() {
   return useContext(UserContext);
 }
 
 export function UserContextProvider({children}: {children: React.ReactNode}) {
-  const {loading,data} = useGetApi<ApiWhoami>({
+  const {loading,data} = useGetApi<ApiTypes.ApiWhoami>({
     endpoint: "/api/users/whoami",
     query: {}
   });
@@ -17,7 +17,8 @@ export function UserContextProvider({children}: {children: React.ReactNode}) {
   const currentUser = data?.currentUser ?? null;
   
   return <UserContext.Provider value={currentUser}>
-    {children}
+    {loading && <Loading/>}
+    {!loading && <>{children}</>}
   </UserContext.Provider>
 }
 

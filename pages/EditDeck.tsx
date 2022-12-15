@@ -5,10 +5,9 @@ import {CreateCardForm} from '../components/CreateCardForm';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {CreateDeckForm} from '../components/CreateDeckForm';
 import {redirect} from '../lib/browserUtil';
-import type {ApiGetDeck,ApiDeleteDeck} from '../lib/apiTypes';
 
-export function EditDeck({id}: {id: number}) {
-  const {loading: loadingDeck, data: deckResult} = useGetApi<ApiGetDeck>({
+export function EditDeck({id}: {id: DbKey}) {
+  const {loading: loadingDeck, data: deckResult} = useGetApi<ApiTypes.ApiGetDeck>({
     skip: !id,
     endpoint: `/api/decks/:id`,
     query: {id}
@@ -21,7 +20,7 @@ export function EditDeck({id}: {id: number}) {
     if (!confirm(`Are you sure you want to delete the deck "${deck.name}"?`))
       return;
     
-    const {result,error} = await doPost<ApiDeleteDeck>({
+    const {result,error} = await doPost<ApiTypes.ApiDeleteDeck>({
       endpoint: "/api/decks/delete",
       query: {},
       body: {id}

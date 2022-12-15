@@ -3,14 +3,13 @@ import {doPost} from '../lib/apiUtil';
 import {TextInput} from './TextInput';
 import {ErrorMessage} from './ErrorMessage';
 import {redirect} from '../lib/browserUtil';
-import type {ApiCreateDeck} from '../lib/apiTypes';
 
 export function CreateDeckForm() {
   const [deckName,setDeckName] = useState("");
   const [error,setError] = useState<string|null>(null);
   
   async function createDeck() {
-    const {result,error} = await doPost<ApiCreateDeck>({
+    const {result,error} = await doPost<ApiTypes.ApiCreateDeck>({
       endpoint: "/api/decks/create",
       query: {},
       body: {

@@ -1,12 +1,11 @@
 import * as React from 'react'
 import {useGetApi,doPost} from '../lib/apiUtil';
-import {ApiGetCard,ApiDeleteCard} from '../lib/apiTypes';
 import {PageWrapper} from '../components/PageWrapper';
 import {Loading} from '../components/Loading';
 import {redirect} from '../lib/browserUtil';
 
-export function ViewCard({id}: {id: number}) {
-  const {data, loading} = useGetApi<ApiGetCard>({
+export function ViewCard({id}: {id: DbKey}) {
+  const {data, loading} = useGetApi<ApiTypes.ApiGetCard>({
     endpoint: "/api/cards/:cardId",
     query: {cardId: id},
   });
@@ -18,7 +17,7 @@ export function ViewCard({id}: {id: number}) {
     if (!confirm(`Are you sure you want to delete this card?`))
       return;
     
-    const {result,error} = await doPost<ApiDeleteCard>({
+    const {result,error} = await doPost<ApiTypes.ApiDeleteCard>({
       endpoint: "/api/cards/delete",
       query: {},
       body: {cardId: card.id}

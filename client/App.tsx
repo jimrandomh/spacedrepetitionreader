@@ -1,26 +1,30 @@
-import * as React from 'react'
+import React from 'react'
 import {routes,Endpoint} from '../pages/routes';
 import {UserContextProvider} from '../lib/useCurrentUser';
+import {Error404Page} from '../pages/Error404Page';
 import type Route from 'route-parser';
 
 
-export function App() {
-  let currentRoute: Endpoint|null = null;
-  let routeProps: any = null;
-  const pathname = window.location.pathname;
-  
+function locationToRoute(location: Location): {
+  route: Endpoint|null
+  routeProps: {}
+} {
+  const pathname = location.pathname;
   for (let route of routes) {
     let match = route.path.match(pathname)
     if(match) {
-      currentRoute = route;
-      routeProps = match;
+      return {route, routeProps: match};
     }
   }
+  return {route: null, routeProps: {}};
+}
+
+export function App() {
+  let {route: currentRoute, routeProps} = locationToRoute(window.location);
+  
   
   if (!currentRoute) {
-    return <div className="root">
-      Not found
-    </div>
+    return <Error404Page/>
   }
   
   const CurrentRouteComponent = currentRoute.component;

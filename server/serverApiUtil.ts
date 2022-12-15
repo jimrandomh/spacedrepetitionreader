@@ -1,9 +1,8 @@
 import type {Express} from 'express';
 import type {User} from '@prisma/client'
 import type {PrismaClient} from '@prisma/client'
-import * as ApiTypes from '../lib/apiTypes';
 import {getPrisma} from './db';
-import {getUserFromReq} from './auth';
+import {getUserFromReq} from './api/auth';
 import mapValues from 'lodash/mapValues';
 import Route from 'route-parser';
 import bodyParser from 'body-parser';
@@ -45,6 +44,7 @@ export function defineGetApi<T extends ApiTypes.RestApiGet>(
       res.json(result);
     } catch(e) {
       res.status(400);
+      console.log(e.message);
       res.json({error: e.message});
     }
   });
@@ -74,6 +74,7 @@ export function definePostApi<T extends ApiTypes.RestApiPost>(
       res.json(result);
     } catch(e) {
       res.status(400);
+      console.log(e.message);
       res.json({error: e.message});
     }
   });
@@ -83,9 +84,13 @@ export function definePostApi<T extends ApiTypes.RestApiPost>(
 export function assertLoggedIn(ctx: ServerApiContext): User {
   const {currentUser} = ctx;
   if (!currentUser) {
-    throw new Error("Not logged in");
+    throw new ApiErrorAccessDenied;
   }
   return currentUser;
+}
+
+export function assertIsKey(value: any): DbKey {
+  return assertIsInt(value);
 }
 
 export function assertIsInt(value: any): number {
@@ -94,8 +99,33 @@ export function assertIsInt(value: any): number {
   return num;
 }
 
+export function assertIsNumber(value: any): number {
+  const num = parseFloat(value);
+  if(isNaN(num)) throw new Error(`Argument must be a number; was ${JSON.stringify(value)}`);
+  return num;
+}
+
 export function assertIsString(value: any): string {
   if(typeof(value) !== 'string')
     throw new Error("Argument must be a string");
   return (value as string);
+}
+
+
+export class ApiErrorNotFound extends Error {
+  constructor() {
+    super("Not found");
+  }
+}
+
+export class ApiErrorAccessDenied extends Error {
+  constructor() {
+    super("Access denied");
+  }
+}
+
+export class ApiErrorNotImplemented extends Error {
+  constructor() {
+    super("Not implemented");
+  }
 }

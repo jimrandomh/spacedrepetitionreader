@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
-import type {ApiLogin,ApiSignup} from '../lib/apiTypes';
 import {doPost} from '../lib/apiUtil';
 import {TextInput} from '../components/TextInput';
+import {ErrorMessage} from '../components/ErrorMessage';
+import {redirect} from '../lib/browserUtil';
 
 export function LoginPage() {
   const [loginUsername,setLoginUsername] = useState("");
@@ -13,7 +14,7 @@ export function LoginPage() {
   const [error,setError] = useState<string|null>(null);
   
   async function logIn() {
-    await doPost<ApiLogin>({
+    const {result,error} = await doPost<ApiTypes.ApiLogin>({
       endpoint: "/api/users/login",
       query: {},
       body: {
@@ -21,7 +22,11 @@ export function LoginPage() {
         password: loginPassword
       }
     });
-    // TODO: Show error or redirect
+    if (error) {
+      setError(error);
+    } else {
+      redirect("/");
+    }
   }
   async function createAccount() {
     if (createAccountPassword !== confirmPassword) {
@@ -29,7 +34,7 @@ export function LoginPage() {
       return;
     }
     
-    await doPost<ApiSignup>({
+    const {result,error} = await doPost<ApiTypes.ApiSignup>({
       endpoint: "/api/users/signup",
       query: {},
       body: {
@@ -38,7 +43,11 @@ export function LoginPage() {
         password: createAccountPassword
       }
     });
-    // TODO: Show error or redirect
+    if (error) {
+      setError(error);
+    } else {
+      redirect("/");
+    }
   }
   
   return <div>
@@ -55,7 +64,7 @@ export function LoginPage() {
       <TextInput label="Confirm Password" inputType="password" value={confirmPassword} setValue={setConfirmPassword}/>
       <input type="submit" value="Create Account"/>
       
-      {error && <div className="error">{error}</div>}
+      {error && <div><ErrorMessage message={error}/></div>}
     </form>
   </div>;
 }

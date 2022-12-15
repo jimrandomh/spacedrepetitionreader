@@ -1,8 +1,7 @@
 import type {Express} from 'express';
 import type {PrismaClient, User} from '@prisma/client'
-import * as ApiTypes from '../lib/apiTypes';
-import {defineGetApi,definePostApi,ServerApiContext} from './serverApiUtil';
-import {getPrisma} from './db';
+import {defineGetApi,definePostApi,ServerApiContext} from '../serverApiUtil';
+import {getPrisma} from '../db';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import Cookies from 'universal-cookie';

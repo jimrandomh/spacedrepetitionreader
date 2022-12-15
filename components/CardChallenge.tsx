@@ -1,19 +1,38 @@
 import React,{useState} from 'react'
+import {doPost} from '../lib/apiUtil';
 
 export function CardChallenge({card, onFinish}: {
   card: {
+    id: number
     front: string,
     back: string
   },
   onFinish: ()=>void,
 }) {
   const [flipped,setFlipped] = useState(false);
+  const [startTime,setStartTime] = useState<Date>(() => new Date());
+  const [flipTime,setFlipTime] = useState<Date|null>(null);
   
   function clickFlip() {
+    setFlipTime(new Date());
     setFlipped(true);
   }
   
   function clickResolution(resolution: "Easy"|"Hard"|"Repeat") {
+    const timeSpentMS = flipTime!.getTime() - startTime.getTime();
+    
+    void (async function() {
+      doPost<ApiTypes.ApiRecordCardImpression>({
+        endpoint: "/api/cards/impression",
+        query: {},
+        body: {
+          resolution,
+          timeSpent: timeSpentMS,
+          cardId: card.id,
+        },
+      });
+    })();
+    
     onFinish();
   }
   

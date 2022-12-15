@@ -1,8 +1,7 @@
 import React,{useState} from 'react'
-import type {FeedEntry} from '../lib/apiTypes';
 
 export function RSSCard({card, onFinish}: {
-  card: FeedEntry,
+  card: ApiTypes.FeedEntry,
   onFinish: ()=>void,
 }) {
   const [flipped,setFlipped] = useState(false);

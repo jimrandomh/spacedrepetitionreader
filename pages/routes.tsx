@@ -1,9 +1,11 @@
 import * as React from 'react'
-import {FrontPage} from './FrontPage';
+import {LandingPage} from './LandingPage';
+import {DashboardPage} from './DashboardPage';
 import {LoginPage} from './LoginPage';
 import {AboutPage} from './AboutPage';
 import {ViewCard} from './ViewCard';
 import {ManageDecks} from './ManageDecks';
+import {ManageFeeds} from './ManageFeeds';
 import {EditDeck} from './EditDeck';
 import Route from 'route-parser';
 
@@ -17,7 +19,12 @@ export const routes: Endpoint[] = [
   {
     path: new Route("/"),
     access: "LoggedOut",
-    component: FrontPage,
+    component: LandingPage,
+  },
+  {
+    path: new Route("/dashboard"),
+    access: "LoggedIn",
+    component: DashboardPage,
   },
   {
     path: new Route("/login"),
@@ -28,6 +35,11 @@ export const routes: Endpoint[] = [
     path: new Route("/decks/manage"),
     access: "LoggedIn",
     component: ManageDecks,
+  },
+  {
+    path: new Route("/feeds/manage"),
+    access: "LoggedIn",
+    component: ManageFeeds,
   },
   {
     path: new Route("/decks/edit/:id"),

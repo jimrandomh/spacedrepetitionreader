@@ -3,10 +3,9 @@ import {PageWrapper} from '../components/PageWrapper';
 import {Loading} from '../components/Loading';
 import {useGetApi} from '../lib/apiUtil';
 import {CreateDeckForm} from '../components/CreateDeckForm';
-import type {ApiListDecks} from '../lib/apiTypes';
 
 export function ManageDecks() {
-  const {loading: loadingDecks, data: decksResult} = useGetApi<ApiListDecks>({
+  const {loading: loadingDecks, data: decksResult} = useGetApi<ApiTypes.ApiListDecks>({
     endpoint: "/api/decks/list",
     query: {}
   });
