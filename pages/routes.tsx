@@ -1,12 +1,5 @@
 import * as React from 'react'
-import {LandingPage} from './LandingPage';
-import {DashboardPage} from './DashboardPage';
-import {LoginPage} from './LoginPage';
-import {AboutPage} from './AboutPage';
-import {ViewCard} from './ViewCard';
-import {ManageDecks} from './ManageDecks';
-import {ManageFeeds} from './ManageFeeds';
-import {EditDeck} from './EditDeck';
+import * as Pages from '../components/pages';
 import Route from 'route-parser';
 
 export type Endpoint = {
@@ -19,45 +12,45 @@ export const routes: Endpoint[] = [
   {
     path: new Route("/"),
     access: "LoggedOut",
-    component: LandingPage,
+    component: Pages.LandingPage,
   },
   {
     path: new Route("/dashboard"),
     access: "LoggedIn",
-    component: DashboardPage,
+    component: Pages.DashboardPage,
   },
   {
     path: new Route("/login"),
     access: "LoggedOut",
-    component: LoginPage,
+    component: Pages.LoginPage,
   },
   {
     path: new Route("/decks/manage"),
     access: "LoggedIn",
-    component: ManageDecks,
+    component: Pages.ManageDecks,
   },
   {
     path: new Route("/feeds/manage"),
     access: "LoggedIn",
-    component: ManageFeeds,
+    component: Pages.ManageFeeds,
   },
   {
     path: new Route("/decks/edit/:id"),
     access: "LoggedIn",
     component: ({id}: {id: string}) => {
-      return <EditDeck id={parseInt(id)}/>
+      return <Pages.EditDeck id={parseInt(id)}/>
     },
   },
   {
     path: new Route("/about"),
     access: "LoggedOut",
-    component: AboutPage,
+    component: Pages.AboutPage,
   },
   {
     path: new Route("/card/:id"),
     access: "LoggedIn",
     component: ({id}: {id: string}) => {
-      return <ViewCard id={parseInt(id)}/>
+      return <Pages.ViewCard id={parseInt(id)}/>
     },
   },
 ];

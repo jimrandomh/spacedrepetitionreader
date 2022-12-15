@@ -1,7 +1,7 @@
 import React from 'react'
 import {routes,Endpoint} from '../pages/routes';
 import {UserContextProvider} from '../lib/useCurrentUser';
-import {Error404Page} from '../pages/Error404Page';
+import {Error404Page} from '../components/pages';
 import type Route from 'route-parser';
 
 
