@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {PageWrapper} from './PageWrapper';
+import {PageWrapper} from './layout';
 import {CardChallenge} from './CardChallenge';
 import {CreateCardForm} from './CreateCardForm';
 import {CreateDeckForm} from './CreateDeckForm';
