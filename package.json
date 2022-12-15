@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "author": "James Babcock <jimrandomh@gmail.com>",
-  "license": "GPL-3.0-only",
+  "license": "AGPL-3.0-only",
   "scripts": {
     "build": "node ./build.js",
     "tsc": "tsc --noEmit",
