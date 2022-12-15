@@ -43,6 +43,11 @@ export function TopBar() {
     siteName: {
       flexGrow: 1,
     },
+    userNameButton: {
+      marginRight: 12,
+    },
+    logOutButton: {
+    },
   }));
   
   const currentUser = useCurrentUser();
@@ -56,13 +61,15 @@ export function TopBar() {
   }
   
   return <div className={classes.root}>
-    <Link href="/" className={classes.siteName}>
-      {"SRSR . SR ... SR"}
-    </Link>
+    <div className={classes.siteName}>
+      <Link href="/" color={false}>
+        {"SRSR . SR ... SR"}
+      </Link>
+    </div>
     
     {currentUser && <>
-      <Link href="/users/profile" className="userNameButton">{currentUser.name}</Link>
-      <Link onClick={logOut} className="logOutButton">Log Out</Link>
+      <Link href="/users/profile" className={classes.userNameButton}>{currentUser.name}</Link>
+      <Link onClick={logOut} className={classes.logOutButton}>Log Out</Link>
     </>}
     {!currentUser && <>
       <Link href="/login" className="logInButton">Log In</Link>
@@ -112,3 +119,4 @@ export function LeftSidebar() {
     </div>
   </div>;
 }
+

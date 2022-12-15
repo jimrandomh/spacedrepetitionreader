@@ -82,7 +82,9 @@ export function addAuthEndpoints(app: Express) {
     const password = assertIsString(ctx.body.password);
     
     const user = await ctx.db.user.findUnique({where: {name: username}});
-    if (!user || !await bcrypt.compare(user.passwordHash, password)) {
+    if (!user || !await bcrypt.compare(password, user.passwordHash)) {
+      if (!user) console.log(`No such user: ${username}`);
+      console.log(`Password ${password} did not match hash ${user?.passwordHash}`);
       throw new Error("Incorrect username or password");
     }
     

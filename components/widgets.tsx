@@ -1,13 +1,35 @@
 import React from 'react'
 import {useJssStyles} from '../lib/useJssStyles';
+import classNames from 'classnames';
 
-export function Link({href, onClick, className, children}: {
+export function Link({href, onClick, className, color=true, children}: {
   href?: string
   onClick?: ()=>void
   className?: string
+  color?: boolean
   children: React.ReactNode
 }) {
-  return <a onClick={onClick ? ((ev) => onClick()) : undefined} className={className} href={href}>
+  const classes = useJssStyles("Link", () => ({
+    link: {
+      textDecoration: "none",
+      
+      "&:hover": {
+        textDecoration: "underline",
+      }
+    },
+    noColor: {
+      color: "inherit"
+    },
+  }));
+  
+  return <a
+    onClick={onClick ? ((ev) => onClick()) : undefined}
+    className={classNames(
+      classes.link, className,
+      {[classes.noColor]: !color}
+    )}
+    href={href || "javascript:void(0)"}
+  >
     {children}
   </a>;
 }
