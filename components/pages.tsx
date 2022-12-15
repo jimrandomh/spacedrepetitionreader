@@ -1,8 +1,7 @@
 import React, {useState} from 'react'
 import {PageWrapper} from './layout';
 import {CardChallenge} from './CardChallenge';
-import {CreateCardForm} from './CreateCardForm';
-import {CreateDeckForm} from './CreateDeckForm';
+import {CreateCardForm,CreateDeckForm} from './forms';
 import {Link,TextAreaInput,TextInput,ErrorMessage,Loading} from './widgets';
 import {RSSCard} from './RSSCard';
 import {useGetApi,doPost} from '../lib/apiUtil';
