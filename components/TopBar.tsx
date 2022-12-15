@@ -1,6 +1,6 @@
 import React from 'react'
 import {useCurrentUser} from '../lib/useCurrentUser';
-import {Link} from './Link';
+import {Link} from './widgets';
 import {doPost} from '../lib/apiUtil';
 import {redirect} from '../lib/browserUtil';
 

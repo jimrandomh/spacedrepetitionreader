@@ -1,7 +1,6 @@
 import React from 'react'
 import {useGetApi} from '../lib/apiUtil';
-import {Loading} from './Loading';
-import {Link} from './Link';
+import {Link,Loading} from './widgets';
 
 export function LeftSidebar() {
   const {loading, data} = useGetApi<ApiTypes.ApiListDecks>({

@@ -1,6 +1,6 @@
 import React,{createContext,useContext} from 'react'
 import {useGetApi} from './apiUtil';
-import {Loading} from '../components/Loading';
+import {Loading} from '../components/widgets';
 
 const UserContext = createContext<ApiTypes.ApiObjCurrentUser|null>(null);
 

@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import {doPost} from '../lib/apiUtil';
-import {TextInput} from './TextInput';
-import {ErrorMessage} from './ErrorMessage';
+import {TextInput,ErrorMessage} from './widgets';
 import {redirect} from '../lib/browserUtil';
 
 export function CreateDeckForm() {

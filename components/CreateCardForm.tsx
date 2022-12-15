@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import {doPost} from '../lib/apiUtil';
-import {TextAreaInput} from './TextAreaInput';
-import {ErrorMessage} from './ErrorMessage';
+import {TextAreaInput,ErrorMessage} from './widgets';
 import {redirect} from '../lib/browserUtil';
 
 export function CreateCardForm({deck}: {
