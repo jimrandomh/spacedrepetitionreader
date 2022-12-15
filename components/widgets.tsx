@@ -20,7 +20,7 @@ export function ErrorMessage({message}: {
       color: "#ff0000",
     }
   }));
-  return <span className={classes.errorMessag}>{message}</span>
+  return <span className={classes.errorMessage}>{message}</span>
 }
 
 export function Loading() {
@@ -53,12 +53,24 @@ export function TextInput({label, value, setValue, inputType}: {
   setValue: (newValue: string)=>void,
   inputType?: string,
 }) {
-  return <div>
-    {label}
+  const classes = useJssStyles("TextInput", () => ({
+    root: {
+    },
+    label: {
+      display: "inline-block",
+      minWidth: 130,
+    },
+    input: {
+    },
+  }));
+  
+  return <div className={classes.root}>
+    <span className={classes.label}>{label}</span>
     <input
       value={value}
       onChange={ev=>setValue(ev.target.value)}
       type={inputType||"text"}
+      className={classes.input}
     />
   </div>
 }

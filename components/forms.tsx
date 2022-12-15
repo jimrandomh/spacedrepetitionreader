@@ -6,6 +6,19 @@ import {useJssStyles} from '../lib/useJssStyles';
 
 export function LoginForm() {
   const classes = useJssStyles("LoginForm", () => ({
+    root: {
+    },
+    form: {
+      border: "1px solid #ccc",
+      padding: 16,
+      display: "inline-block",
+      verticalAlign: "top",
+      margin: 16,
+    },
+    formTitle: {
+      marginBottom: 8,
+      textAlign: "center",
+    },
   }));
   
   const [loginUsername,setLoginUsername] = useState("");
@@ -14,7 +27,8 @@ export function LoginForm() {
   const [createAccountEmail,setCreateAccountEmail] = useState("");
   const [createAccountPassword,setCreateAccountPassword] = useState("");
   const [confirmPassword,setConfirmPassword] = useState("");
-  const [error,setError] = useState<string|null>(null);
+  const [loginError,setLoginError] = useState<string|null>(null);
+  const [signupError,setSignupError] = useState<string|null>(null);
   
   async function logIn() {
     const {result,error} = await doPost<ApiTypes.ApiLogin>({
@@ -26,14 +40,22 @@ export function LoginForm() {
       }
     });
     if (error) {
-      setError(error);
+      setLoginError(error);
     } else {
-      redirect("/");
+      redirect("/dashboard");
     }
   }
   async function createAccount() {
+    if (createAccountUsername==="") {
+      setSignupError("Please choose a username.");
+      return;
+    }
+    if (createAccountPassword === "") {
+      setSignupError("Please choose a password.");
+      return;
+    }
     if (createAccountPassword !== confirmPassword) {
-      setError("Passwords do not match.");
+      setSignupError("Passwords do not match.");
       return;
     }
     
@@ -47,27 +69,35 @@ export function LoginForm() {
       }
     });
     if (error) {
-      setError(error);
+      setSignupError(error);
     } else {
-      redirect("/");
+      redirect("/dashboard");
     }
   }
   
-  return <div>
-    <form onSubmit={(ev) => {ev.preventDefault(); logIn()}}>
-      <div>Log in:</div>
+  return <div className={classes.root}>
+    <form
+      className={classes.form}
+      onSubmit={(ev) => {ev.preventDefault(); logIn()}}
+    >
+      <div className={classes.formTitle}>Log In</div>
       <TextInput label="Username" value={loginUsername} setValue={setLoginUsername}/>
       <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword}/>
       <input type="submit" value="Log In"/>
+      {loginError && <div><ErrorMessage message={loginError}/></div>}
     </form>
-    <form onSubmit={(ev) => {ev.preventDefault(); createAccount()}}>
-      <TextInput label="SignUp" value={createAccountUsername} setValue={setCreateAccountUsername}/>
+    <form
+      className={classes.form}
+      onSubmit={(ev) => {ev.preventDefault(); createAccount()}}
+    >
+      <div className={classes.formTitle}>Sign Up</div>
+      <TextInput label="Username" value={createAccountUsername} setValue={setCreateAccountUsername}/>
       <TextInput label="Email" value={createAccountEmail} setValue={setCreateAccountEmail}/>
       <TextInput label="Password" inputType="password" value={createAccountPassword} setValue={setCreateAccountPassword}/>
       <TextInput label="Confirm Password" inputType="password" value={confirmPassword} setValue={setConfirmPassword}/>
       <input type="submit" value="Create Account"/>
       
-      {error && <div><ErrorMessage message={error}/></div>}
+      {signupError && <div><ErrorMessage message={signupError}/></div>}
     </form>
   </div>;
 }

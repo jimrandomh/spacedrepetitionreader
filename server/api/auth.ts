@@ -1,6 +1,6 @@
 import type {Express} from 'express';
 import type {PrismaClient, User} from '@prisma/client'
-import {defineGetApi,definePostApi,ServerApiContext} from '../serverApiUtil';
+import {defineGetApi,definePostApi,ServerApiContext,assertIsString} from '../serverApiUtil';
 import {getPrisma} from '../db';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
@@ -48,8 +48,16 @@ async function createAndAssignLoginToken(req: Express.Request, res: Express.Resp
 
 export function addAuthEndpoints(app: Express) {
   definePostApi<ApiTypes.ApiSignup>(app, "/api/users/signup", async (ctx) => {
-    const {username, email, password} = ctx.body;
-    const passwordHash = await bcrypt.hash(password, bcryptSaltRounds);
+    const username = assertIsString(ctx.body.username);
+    const email = assertIsString(ctx.body.email);
+    const password = assertIsString(ctx.body.password);
+    
+    if (username === "")
+      throw new Error("Please provide a username");
+    if (email === "")
+      throw new Error("Please provide an email address");
+    if (password === "")
+      throw new Error("Please choose a password");
     
     if (await ctx.db.user.findUnique({where: {name: username}})) {
       throw new Error("That username is taken");
@@ -58,6 +66,7 @@ export function addAuthEndpoints(app: Express) {
       throw new Error("That email address is taken");
     }
     
+    const passwordHash = await bcrypt.hash(password, bcryptSaltRounds);
     const user = await ctx.db.user.create({
       data: {
         name: username,
@@ -69,7 +78,8 @@ export function addAuthEndpoints(app: Express) {
     return {};
   });
   definePostApi<ApiTypes.ApiLogin>(app, "/api/users/login", async (ctx) => {
-    const {username,password} = ctx.body;
+    const username = assertIsString(ctx.body.username);
+    const password = assertIsString(ctx.body.password);
     
     const user = await ctx.db.user.findUnique({where: {name: username}});
     if (!user || !await bcrypt.compare(user.passwordHash, password)) {
