@@ -5,9 +5,10 @@ import mapValues from 'lodash/mapValues';
 
 export function useGetApi<
   T extends RestApiGet,
->({ endpoint, query }: {
+>({ endpoint, query, skip }: {
   endpoint: T["path"],
   query: T["queryArgs"],
+  skip?: boolean,
 }): {
   loading: boolean
   data: T["responseType"]|null
@@ -32,8 +33,10 @@ export function useGetApi<
   }, []);
   
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (!skip) {
+      refetch();
+    }
+  }, [skip,refetch]);
   
   return {...result,refetch};
 }
@@ -42,9 +45,10 @@ export async function doPost<T extends RestApiPost>({ endpoint, query, body }: {
   endpoint: T["path"],
   query: T["queryArgs"],
   body: T["bodyArgs"],
-}): Promise<{
-  result: T["responseType"]
-}> {
+}): Promise<
+  {result: T["responseType"], error:null}
+  |{result:null, error: string}
+> {
   const withArgs = new Route(endpoint).reverse(mapValues(query, (v:any)=>encodeURIComponent(v)));
   if (!withArgs) throw new Error("Route-parsing failed");
   console.log("POST with body "+JSON.stringify(body));
@@ -56,5 +60,8 @@ export async function doPost<T extends RestApiPost>({ endpoint, query, body }: {
     },
   });
   const responseBody = await fetchResult.json();
-  return responseBody;
+  return {
+    result: responseBody,
+    error: null
+  };
 }

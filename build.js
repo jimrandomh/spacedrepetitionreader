@@ -6,6 +6,8 @@ build({
   bundle: true,
   sourcemap: true,
   sourcesContent: true,
+  keepNames: true,
+  minify: false,
   outfile: 'build/client.js',
   run: false,
 }).catch(() => process.exit(1))

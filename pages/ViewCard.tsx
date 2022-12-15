@@ -2,7 +2,7 @@ import * as React from 'react'
 import {useGetApi} from '../lib/apiUtil';
 import {ApiGetCard} from '../lib/apiTypes';
 
-export function ViewCard({id}: {id: string}) {
+export function ViewCard({id}: {id: number}) {
   const {data:card, loading} = useGetApi<ApiGetCard>({
     endpoint: "/api/cards/:cardId",
     query: {cardId: id},

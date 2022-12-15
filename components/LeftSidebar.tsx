@@ -1,14 +1,23 @@
-import * as React from 'react'
+import React from 'react'
+import {useGetApi} from '../lib/apiUtil';
+import {Loading} from './Loading';
+import type {ApiListDecks} from '../lib/apiTypes';
 
 export function LeftSidebar() {
+  const {loading, data} = useGetApi<ApiListDecks>({
+    endpoint: "/api/decks/list",
+    query: {}
+  });
+  
   return <div className="leftSidebar">
     <div className="decksList">
-      <div className="decksListLabel">Decks</div>
+      <a href="/decks/manage">Decks</a>
+      {loading && <Loading/>}
       
       <ul>
-        <li>Typescript Trivia</li>
-        <li>Rationality Jargon</li>
-        <li>AI Alignment Concepts</li>
+        {data?.decks && data.decks.map(deck => <li>
+          <a href={`/decks/edit/${deck.id}`}>{deck.name}</a>
+        </li>)}
       </ul>
     </div>
   </div>;

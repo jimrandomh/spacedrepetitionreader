@@ -3,6 +3,8 @@ import {FrontPage} from './FrontPage';
 import {LoginPage} from './LoginPage';
 import {AboutPage} from './AboutPage';
 import {ViewCard} from './ViewCard';
+import {ManageDecks} from './ManageDecks';
+import {EditDeck} from './EditDeck';
 import Route from 'route-parser';
 
 export type Endpoint = {
@@ -23,6 +25,18 @@ export const routes: Endpoint[] = [
     component: LoginPage,
   },
   {
+    path: new Route("/decks/manage"),
+    access: "LoggedIn",
+    component: ManageDecks,
+  },
+  {
+    path: new Route("/decks/edit/:id"),
+    access: "LoggedIn",
+    component: ({id}: {id: string}) => {
+      return <EditDeck id={parseInt(id)}/>
+    },
+  },
+  {
     path: new Route("/about"),
     access: "LoggedOut",
     component: AboutPage,
@@ -31,7 +45,7 @@ export const routes: Endpoint[] = [
     path: new Route("/card/:id"),
     access: "LoggedIn",
     component: ({id}: {id: string}) => {
-      return <ViewCard id={id}/>
+      return <ViewCard id={parseInt(id)}/>
     },
   },
 ];

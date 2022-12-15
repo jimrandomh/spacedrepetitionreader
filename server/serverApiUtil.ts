@@ -12,7 +12,7 @@ export interface ServerApiContext {
   req: Express.Request
   res: Express.Response
   db: PrismaClient
-  user: User|null
+  currentUser: User|null
 }
 export interface ServerApiGetContext<QueryArgs> extends ServerApiContext {
   query: QueryArgs
@@ -37,7 +37,7 @@ export function defineGetApi<T extends ApiTypes.RestApiGet>(
     const db = getPrisma();
     const ctx: ServerApiGetContext<T["queryArgs"]> = {
       req, res, query: queryArgs, db,
-      user: await getUserFromReq(req, db),
+      currentUser: await getUserFromReq(req, db),
     };
     const result = await fn(ctx);
     res.json(result);
@@ -61,15 +61,23 @@ export function definePostApi<T extends ApiTypes.RestApiPost>(
       req, res, db,
       query: queryArgs,
       body: requestBody,
-      user: await getUserFromReq(req,db),
+      currentUser: await getUserFromReq(req,db),
     };
     const result = await fn(ctx);
     res.json(result);
   });
 }
 
-export function assertLoggedIn(ctx: ServerApiContext) {
-  if (!ctx.user) {
+export function assertLoggedIn(ctx: ServerApiContext): User {
+  const {currentUser} = ctx;
+  if (!currentUser) {
     throw new Error("Not logged in");
   }
+  return currentUser;
+}
+
+export function assertIsInt(value: any): number {
+  const num = parseInt(value);
+  if(isNaN(num)) throw new Error(`Argument must be a number; was ${JSON.stringify(value)}`);
+  return num;
 }

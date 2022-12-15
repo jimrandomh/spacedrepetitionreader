@@ -16,7 +16,7 @@ function generateTokenString(): string {
 export async function getUserFromReq(req: Express.Request, db: PrismaClient): Promise<User|null> {
   const cookies = new Cookies((req as any).headers.cookie);
   const loginCookie = cookies.get('login')
-  if (!loginCookie) {
+  if (!loginCookie || !loginCookie.length) {
     return null;
   }
   
@@ -25,6 +25,7 @@ export async function getUserFromReq(req: Express.Request, db: PrismaClient): Pr
     include: {owner: true}
   });
   if (!token) return null;
+  if (!token.valid) return null;
   
   const user = token.owner;
   return user;
@@ -79,7 +80,18 @@ export function addAuthEndpoints(app: Express) {
     await createAndAssignLoginToken(ctx.req, ctx.res, user, ctx.db);
     return {};
   });
-  definePostApi<ApiTypes.ApiLogout>(app, "/api/users/logout", ctx => {
-    return {} //TODO
+  definePostApi<ApiTypes.ApiLogout>(app, "/api/users/logout", async (ctx) => {
+    const cookies = new Cookies((ctx.req as any).headers.cookie);
+    const loginCookie = cookies.get('login')
+    if (!loginCookie) {
+      return null;
+    }
+    await ctx.db.loginToken.update({
+      where: {token:loginCookie},
+      data: {valid: false}
+    });
+    (ctx.res as any).cookie('login', '', {
+      path: "/"
+    });
   });
 }

@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import type {ApiLogin,ApiSignup} from '../lib/apiTypes';
 import {doPost} from '../lib/apiUtil';
+import {TextInput} from '../components/TextInput';
 
 export function LoginPage() {
   const [loginUsername,setLoginUsername] = useState("");
@@ -43,51 +44,15 @@ export function LoginPage() {
   return <div>
     <form onSubmit={(ev) => {ev.preventDefault(); logIn()}}>
       <div>Log in:</div>
-      <div>
-        Username <input
-          value={loginUsername}
-          onChange={ev=>setLoginUsername(ev.target.value)}
-        />
-      </div>
-      <div>
-        Password <input
-          type="password"
-          value={loginPassword}
-          onChange={ev=>setLoginPassword(ev.target.value)}
-        />
-      </div>
+      <TextInput label="Username" value={loginUsername} setValue={setLoginUsername}/>
+      <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword}/>
       <input type="submit" value="Log In"/>
     </form>
     <form onSubmit={(ev) => {ev.preventDefault(); createAccount()}}>
-      <div>Sign up</div>
-      <div>
-        Username
-        <input
-          value={createAccountUsername}
-          onChange={ev=>setCreateAccountUsername(ev.target.value)}
-        />
-      </div>
-      <div>
-        Email
-        <input
-          value={createAccountEmail}
-          onChange={ev=>setCreateAccountEmail(ev.target.value)}
-        />
-      </div>
-      <div>
-        Password <input
-          type="password"
-          value={createAccountPassword}
-          onChange={ev=>setCreateAccountPassword(ev.target.value)}
-        />
-      </div>
-      <div>
-        Confirm Password <input
-          type="password"
-          value={confirmPassword}
-          onChange={ev=>setConfirmPassword(ev.target.value)}
-        />
-      </div>
+      <TextInput label="SignUp" value={createAccountUsername} setValue={setCreateAccountUsername}/>
+      <TextInput label="Email" value={createAccountEmail} setValue={setCreateAccountEmail}/>
+      <TextInput label="Password" inputType="password" value={createAccountPassword} setValue={setCreateAccountPassword}/>
+      <TextInput label="Confirm Password" inputType="password" value={confirmPassword} setValue={setConfirmPassword}/>
       <input type="submit" value="Create Account"/>
       
       {error && <div className="error">{error}</div>}
