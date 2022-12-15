@@ -1,4 +1,5 @@
 import React from 'react'
+import {useJssStyles} from '../lib/useJssStyles';
 
 export function Link({href, onClick, className, children}: {
   href?: string
@@ -14,11 +15,22 @@ export function Link({href, onClick, className, children}: {
 export function ErrorMessage({message}: {
   message: string
 }) {
-  return <span className="errorMessage">{message}</span>
+  const classes = useJssStyles("ErrorMessage", () => ({
+    errorMessage: {
+      color: "#ff0000",
+    }
+  }));
+  return <span className={classes.errorMessag}>{message}</span>
 }
 
 export function Loading() {
-  return <img className="loading" src="/static/loading.gif"/>
+  const classes = useJssStyles("Loading", () => ({
+    loading: {
+      width: 32,
+      height: 32,
+    }
+  }));
+  return <img className={classes.loading} src="/static/loading.gif"/>
 }
 
 export function TextAreaInput({label, value, setValue}: {
