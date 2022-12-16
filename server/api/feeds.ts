@@ -57,7 +57,7 @@ export function addFeedEndpoints(app: Express) {
       include: {feed: true}
     });
     
-    const unreadCountsByFeedId: Record<number,number> = {};
+    const unreadCountsByFeedId: Record<DbKey,number> = {};
     await Promise.all(subscriptions.map(async (subscription) => {
       unreadCountsByFeedId[subscription.feed.id] = await getUnreadCount(subscription.feed, ctx)
     }));

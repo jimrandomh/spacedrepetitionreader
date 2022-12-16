@@ -31,7 +31,7 @@ export interface ApiObjFeed { //{{_}}
 }
 
 export interface ApiObjRssItem { //{{_}}
-  id: number
+  id: DbKey
   title: string
   link: string
   pubDate: string

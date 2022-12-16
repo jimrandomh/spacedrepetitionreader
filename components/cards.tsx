@@ -8,7 +8,7 @@ import take from 'lodash/take';
 
 export function CardChallenge({card, onFinish}: {
   card: {
-    id: number
+    id: DbKey
     front: string,
     back: string
   },
