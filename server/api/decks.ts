@@ -1,6 +1,6 @@
 import type {Express} from 'express';
 import type {Card,Deck} from '@prisma/client'
-import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsInt,assertIsNumber,assertIsString,ServerApiContext,ApiErrorNotFound,ApiErrorAccessDenied} from '../serverApiUtil';
+import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsNumber,assertIsString,ServerApiContext,ApiErrorNotFound,ApiErrorAccessDenied} from '../serverApiUtil';
 import {maybeRefreshFeed,getUnreadItems,apiFilterRssItem} from './feeds';
 import {getDueDate} from '../cardScheduler';
 import flatten from 'lodash/flatten';
@@ -18,7 +18,7 @@ export function addDeckEndpoints(app: Express) {
     });
     
     return {
-      decks: decks.map(deck => apiFilterDeck(deck, ctx)!)
+      decks: decks.map(deck => apiFilterDeck(deck, ctx))
     }
   });
   
@@ -62,8 +62,10 @@ export function addDeckEndpoints(app: Express) {
     const currentUser = assertLoggedIn(ctx);
     const id = assertIsKey(ctx.query.id);
     
-    const deck = await ctx.db.deck.findUnique({ where: {id} });
-    if (!deck || deck.deleted) throw new ApiErrorNotFound;
+    const deck = await ctx.db.deck.findFirst({
+      where: {id, authorId: currentUser.id, deleted: false}
+    });
+    if (!deck) throw new ApiErrorNotFound;
     
     const cards = await ctx.db.card.findMany({
       where: { deleted: false, deckId: id }
@@ -71,13 +73,13 @@ export function addDeckEndpoints(app: Express) {
     
     return {
       deck: apiFilterDeck(deck, ctx),
-      cards: cards.map(card => apiFilterCard(card, ctx)!),
+      cards: cards.map(card => apiFilterCard(card, ctx)),
     };
   });
 
 
   definePostApi<ApiTypes.ApiCreateCard>(app, "/api/cards/create", async (ctx) => {
-    const currentUser = assertLoggedIn(ctx);
+    const _currentUser = assertLoggedIn(ctx);
     const deckId = assertIsKey(ctx.body.deckId);
     const front = assertIsString(ctx.body.front);
     const back = assertIsString(ctx.body.back);
@@ -175,8 +177,8 @@ export function addDeckEndpoints(app: Express) {
     
     // Return cards that are due
     return {
-      cards: cardsDue.map(card => apiFilterCard(card, ctx)!),
-      feedItems: unreadItems.map(item => apiFilterRssItem(item, ctx)!),
+      cards: cardsDue.map(card => apiFilterCard(card, ctx)),
+      feedItems: unreadItems.map(item => apiFilterRssItem(item, ctx)),
     };
   });
   
@@ -216,14 +218,12 @@ export function addDeckEndpoints(app: Express) {
       throw new ApiErrorNotFound;
     
     return {
-      card: apiFilterCard(card, ctx)!
+      card: apiFilterCard(card, ctx)
     }
   });
 }
 
-function apiFilterDeck(deck: Deck|null, ctx: ServerApiContext): ApiTypes.ApiObjDeck|null {
-  if (!deck)
-    return null;
+function apiFilterDeck(deck: Deck, _ctx: ServerApiContext): ApiTypes.ApiObjDeck {
   return {
     id: deck.id,
     name: deck.name,
@@ -231,9 +231,7 @@ function apiFilterDeck(deck: Deck|null, ctx: ServerApiContext): ApiTypes.ApiObjD
   }
 }
 
-function apiFilterCard(card: Card|null, ctx: ServerApiContext): ApiTypes.ApiObjCard|null {
-  if (!card)
-    return null;
+function apiFilterCard(card: Card, _ctx: ServerApiContext): ApiTypes.ApiObjCard {
   return {
     id: card.id,
     deckId: card.deckId,

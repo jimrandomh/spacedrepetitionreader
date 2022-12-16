@@ -1,13 +1,12 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {PageWrapper} from './layout';
 import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm} from './forms';
-import {Link,TextAreaInput,TextInput,ErrorMessage,Loading,BulletSeparator,FeedItem} from './widgets';
-import {ReviewWrapper,CardChallenge,RSSCard} from './cards';
+import {Link,Loading,BulletSeparator,FeedItem} from './widgets';
+import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {useCurrentUser} from '../lib/useCurrentUser';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
-import map from 'lodash/map';
 
 
 export function AboutPage() {
@@ -25,24 +24,11 @@ export function DashboardPage() {
     endpoint: "/api/cards/due",
     query: {},
   });
-  /*const {data:xkcdFeed, loading: loadingXkcd} = useGetApi<ApiTypes.ApiPollFeed>({
-    skip: !currentUser,
-    endpoint: "/api/feed/poll/:feedUrl",
-    query: {feedUrl: "https://xkcd.com/atom.xml"},
-  });
-  
-  const [cardPos,setCardPos] = useState(0);*/
   
   if (!currentUser) {
     redirect('/login');
     return <div/>;
   }
-  
-  /*const combinedCards = [
-    ...(map(cardsDue?.cards, card=>({type:"card", ...card}))),
-    ...(map(xkcdFeed?.feedItems, rssEntry=>({type:"rss", ...rssEntry}))),
-  ];
-  const currentCard = (combinedCards && cardPos<combinedCards.length) ? combinedCards[cardPos] : undefined;*/
   
   return <PageWrapper>
     {loading && <Loading/>}
@@ -50,24 +36,6 @@ export function DashboardPage() {
       cards={data.cards}
       feedItems={data.feedItems}
     />}
-    
-    {/*{!loading && cardPos>=combinedCards.length && <div>
-      You're all caught up!
-    </div>}
-    {currentCard && currentCard.type==="card" && <CardChallenge
-      key={cardPos}
-      card={currentCard}
-      onFinish={() => {
-        setCardPos(cardPos+1)
-      }}
-    />}
-    {currentCard && currentCard.type==="rss" && <RSSCard
-      key={cardPos}
-      card={currentCard}
-      onFinish={() => {
-        setCardPos(cardPos+1)
-      }}
-    />}*/}
   </PageWrapper>
 }
 
@@ -114,7 +82,7 @@ export function EditDeck({id}: {id: DbKey}) {
       <h1>{deck.name}</h1>
       
       {cards && !cards.length && <div>
-        This deck doesn't have any cards yet.
+        This deck doesn&apos;t have any cards yet.
       </div>}
       {cards && cards.length>0 && <div>
         <div className={classes.cardsListLabel}>
@@ -203,9 +171,6 @@ export function ManageFeeds() {
 }
 
 export function ViewCardPage({id}: {id: DbKey}) {
-  const classes = useJssStyles("ViewCardPage", () => ({
-  }));
-  
   const {data, loading} = useGetApi<ApiTypes.ApiGetCard>({
     endpoint: "/api/cards/:cardId",
     query: {cardId: id},
@@ -239,16 +204,13 @@ export function ViewCardPage({id}: {id: DbKey}) {
 }
 
 export function ViewFeedPage({id}: {id: DbKey}) {
-  const classes = useJssStyles("ViewFeedPage", () => ({
-  }));
-  
   const {data, loading} = useGetApi<ApiTypes.ApiLoadFeed>({
     endpoint: "/api/feed/load/:id",
     query: {id}
   });
   
   async function forceRefresh() {
-    const {result, error} = await doPost({
+    const {result:_, error} = await doPost({
       endpoint: "/api/feed/refresh",
       query: {}, body: {id}
     });
@@ -264,7 +226,7 @@ export function ViewFeedPage({id}: {id: DbKey}) {
   }
   
   async function unsubscribe() {
-    const {result,error} = await doPost<ApiTypes.ApiUnsubscribeFromFeed >({
+    const {result:_,error} = await doPost<ApiTypes.ApiUnsubscribeFromFeed >({
       endpoint: "/api/feeds/unsubscribe",
       query: {}, body: {feedId: id}
     });

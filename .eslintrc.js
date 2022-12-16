@@ -27,8 +27,12 @@ module.exports = {
     "prefer-const": "warn",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "@typescript-eslint/no-unused-vars": 1,
+    "@typescript-eslint/no-unused-vars": [1, {
+      "varsIgnorePattern": "^_",
+      "argsIgnorePattern": "^_",
+    }],
     "@typescript-eslint/no-explicit-any": 1,
+    "@typescript-eslint/no-namespace": 0,
   },
   "ignorePatterns": [
   ],

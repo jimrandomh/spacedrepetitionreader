@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React from 'react'
 import {useJssStyles} from '../lib/useJssStyles';
 import classNames from 'classnames';
 
@@ -23,7 +23,7 @@ export function Link({href, onClick, className, color=true, children}: {
   }));
   
   return <a
-    onClick={onClick ? ((ev) => onClick()) : undefined}
+    onClick={onClick ? (_ev => onClick()) : undefined}
     className={classNames(
       classes.link, className,
       {[classes.noColor]: !color}
@@ -110,14 +110,6 @@ export function TextInput({label, value, setValue, inputType}: {
 
 export function BulletSeparator() {
   return <span>{" • "}</span>
-}
-
-export function Counter() {
-  const [count,setCount] = useState(0);
-  
-  return <div>
-    {count} <span onClick={(ev) => {setCount(count+1)}}>(+)</span>
-  </div>
 }
 
 export function FeedItem({item}: {

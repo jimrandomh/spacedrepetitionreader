@@ -1,4 +1,4 @@
-import React,{createContext,useContext,useState,useCallback} from 'react';
+import React,{createContext,useContext,useState} from 'react';
 import {useJssStyles} from './useJssStyles';
 
 type ModalDialogFn = (onClose: ()=>void)=>React.ReactNode;
@@ -10,7 +10,9 @@ const ModalContext = createContext<{
 export function useModal(): {
   openModal: (args: {fn: ModalDialogFn})=>void
 } {
-  return useContext(ModalContext)!;
+  const modalCtx = useContext(ModalContext);
+  if (!modalCtx) throw new Error("useModal used without context available");
+  return modalCtx;
 }
 
 export function ModalDialog({children}: {children: React.ReactNode}) {
@@ -49,7 +51,6 @@ export function ModalDialog({children}: {children: React.ReactNode}) {
 
 export function ModalContextProvider({children}: {children: React.ReactNode}) {
   const [modal,setModal] = useState<{fn:ModalDialogFn}|null>(null);
-  const [count,setCount] = useState(0);
   
   const openModal = (args: {fn: ModalDialogFn}) => {
     setModal(() => args);

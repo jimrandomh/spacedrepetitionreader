@@ -33,7 +33,7 @@ export function LoginForm() {
   const [signupError,setSignupError] = useState<string|null>(null);
   
   async function logIn() {
-    const {result,error} = await doPost<ApiTypes.ApiLogin>({
+    const {result:_,error} = await doPost<ApiTypes.ApiLogin>({
       endpoint: "/api/users/login",
       query: {},
       body: {
@@ -61,7 +61,7 @@ export function LoginForm() {
       return;
     }
     
-    const {result,error} = await doPost<ApiTypes.ApiSignup>({
+    const {result:_,error} = await doPost<ApiTypes.ApiSignup>({
       endpoint: "/api/users/signup",
       query: {},
       body: {
@@ -117,7 +117,7 @@ export function CreateCardForm({deck}: {
   const [error,setError] = useState<string|null>(null);
   
   async function createCard() {
-    const {result,error} = await doPost<ApiTypes.ApiCreateCard>({
+    const {result:_,error} = await doPost<ApiTypes.ApiCreateCard>({
       endpoint: "/api/cards/create",
       query: {},
       body: {
@@ -148,9 +148,6 @@ export function CreateCardForm({deck}: {
 }
 
 export function CreateDeckForm() {
-  const classes = useJssStyles("CreateDeckForm", () => ({
-  }));
-  
   const [deckName,setDeckName] = useState("");
   const [error,setError] = useState<string|null>(null);
   
@@ -162,10 +159,10 @@ export function CreateDeckForm() {
         name: deckName
       }
     });
-    if(error) {
+    if (error!==null) {
       setError(error);
     } else {
-      redirect(`/decks/edit/${result!.id}`);
+      redirect(`/decks/edit/${result.id}`);
     }
   }
   
@@ -179,9 +176,6 @@ export function CreateDeckForm() {
 }
 
 export function SubscribeToFeedForm() {
-  const classes = useJssStyles("SubscribeToFeedForm", () => ({
-  }));
-  
   const [feedUrl,setFeedUrl] = useState("");
   const [error,setError] = useState<string|null>(null);
   const {openModal} = useModal();
@@ -234,11 +228,11 @@ function FeedPreview({feedUrl,onError,onClose}: {
       query: {}, body: {feedUrl},
     });
     
-    if (error) {
+    if (error!==null) {
       onError(error);
       onClose();
     } else {
-      const feedId = result!.feedId;
+      const feedId = result.feedId;
       redirect(`/feeds/${feedId}`);
     }
   }

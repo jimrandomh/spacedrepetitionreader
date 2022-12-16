@@ -64,7 +64,7 @@ export function addFeedEndpoints(app: Express) {
     
     return {
       feeds: subscriptions.map(subscription => ({
-        ...apiFilterRssFeed(subscription.feed, ctx)!,
+        ...apiFilterRssFeed(subscription.feed, ctx),
         unreadCount: unreadCountsByFeedId[subscription.feed.id],
       }))
     };
@@ -88,7 +88,7 @@ export function addFeedEndpoints(app: Express) {
     }
     
     // Ensure that the user is subscribed
-    let subscriptions = await ctx.db.rssSubscription.findMany({
+    const subscriptions = await ctx.db.rssSubscription.findMany({
       where: {
         deleted: false,
         feedId: feed.id,
@@ -128,7 +128,6 @@ export function addFeedEndpoints(app: Express) {
     });
     
     return {};
-    //throw new ApiErrorNotImplemented; //TODO
   });
   defineGetApi<ApiTypes.ApiGetRecentFeedItems>(app, "/api/feeds/:id/recent", async (ctx) => {
     const currentUser = assertLoggedIn(ctx);
@@ -159,8 +158,8 @@ export function addFeedEndpoints(app: Express) {
 
 
 export async function pollFeed(feedUrl: string): Promise<ApiTypes.ApiObjRssItem[]> {
-  let parser = new RssParser();
-  let feed = await parser.parseURL(feedUrl);
+  const parser = new RssParser();
+  const feed = await parser.parseURL(feedUrl);
   
   return feed.items.map(item => ({
     title: item.title ?? "",
@@ -171,8 +170,7 @@ export async function pollFeed(feedUrl: string): Promise<ApiTypes.ApiObjRssItem[
   }));
 }
 
-function apiFilterRssFeed(feed: RssFeed|null, ctx: ServerApiContext): ApiTypes.ApiObjFeed|null {
-  if (!feed) return null;
+function apiFilterRssFeed(feed: RssFeed, _ctx: ServerApiContext): ApiTypes.ApiObjFeed {
   return {
     id: feed.id,
     url: feed.rssUrl,
@@ -180,8 +178,7 @@ function apiFilterRssFeed(feed: RssFeed|null, ctx: ServerApiContext): ApiTypes.A
   };
 }
 
-export function apiFilterRssItem(item: RssItem|null, ctx: ServerApiContext): ApiTypes.ApiObjRssItem|null {
-  if (!item) return null;
+export function apiFilterRssItem(item: RssItem, _ctx: ServerApiContext): ApiTypes.ApiObjRssItem {
   return {
     id: item.id,
     title: item.title,
@@ -199,14 +196,14 @@ export async function maybeRefreshFeed(feed: RssFeed, db: PrismaClient) {
   }
 }
 
-async function getUnreadCount(feed: RssFeed, ctx: ServerApiContext): Promise<number> {
+async function getUnreadCount(_feed: RssFeed, _ctx: ServerApiContext): Promise<number> {
   return 0; //TODO
 }
 
 async function refreshFeed(feed: RssFeed, db: PrismaClient) {
   console.log(`Refreshing feed ${feed.title}`);
-  let parser = new RssParser();
-  let feedResponse = await parser.parseURL(feed.rssUrl);
+  const parser = new RssParser();
+  const feedResponse = await parser.parseURL(feed.rssUrl);
   
   if (feedResponse.title && feedResponse.title!=="" && feed.title !== feedResponse.title) {
     // If the site provided a title, use it
@@ -223,7 +220,7 @@ async function refreshFeed(feed: RssFeed, db: PrismaClient) {
   const existingItemsByRemoteId = keyBy(existingItems, item=>item.remoteId);
   
   await Promise.all(feedResponse.items.map(async (item) => {
-    const matchingItem = existingItems[item.remoteId];
+    const matchingItem = existingItemsByRemoteId[item.remoteId];
     if (matchingItem) {
       // TODO: Check if changed and maybe update
     } else {
@@ -253,7 +250,7 @@ async function loadCachedFeedItems(feed: RssFeed, ctx: ServerApiContext): Promis
     where: {feedId: feed.id}
   });
   
-  return items.map(item => apiFilterRssItem(item, ctx)!);
+  return items.map(item => apiFilterRssItem(item, ctx));
 }
 
 async function markAsRead(user: User, item: RssItem, ctx: ServerApiContext): Promise<void> {

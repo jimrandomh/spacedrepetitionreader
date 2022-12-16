@@ -30,7 +30,7 @@ export function CardChallenge({card, onFinish}: {
   }));
   
   const [flipped,setFlipped] = useState(false);
-  const [startTime,setStartTime] = useState<Date>(() => new Date());
+  const [startTime] = useState<Date>(() => new Date());
   const [flipTime,setFlipTime] = useState<Date|null>(null);
   
   function clickFlip() {
@@ -39,7 +39,8 @@ export function CardChallenge({card, onFinish}: {
   }
   
   function clickResolution(resolution: "Easy"|"Hard"|"Repeat") {
-    const timeSpentMS = flipTime!.getTime() - startTime.getTime();
+    if (!flipTime) throw new Error("Inconsistent state");
+    const timeSpentMS = flipTime.getTime() - startTime.getTime();
     
     void (async function() {
       doPost<ApiTypes.ApiRecordCardImpression>({
@@ -131,7 +132,7 @@ function CardButton({label, onClick, className}: {
   }));
   
   return <div
-    onClick={ev => onClick()}
+    onClick={() => onClick()}
     className={classNames(classes.button,className)}
   >
     {label}
@@ -145,8 +146,6 @@ export function RSSCard({card, onFinish}: {
   const classes = useJssStyles("RSSCad", () => ({
     next: {},
   }));
-  
-  const [flipped,setFlipped] = useState(false);
   
   function clickNext() {
     onFinish();
@@ -182,11 +181,11 @@ export function ReviewWrapper({cards, feedItems}: {
   }
   
   if (!cards.length && !feedItems.length) {
-    return <div>You're all caught up!</div>
+    return <div>You&apos;re all caught up!</div>
   }
   
-  if (started) {
-    return <ReviewInProgress items={shuffledDeck!}/>
+  if (started && shuffledDeck) {
+    return <ReviewInProgress items={shuffledDeck}/>
   } else {
     return <div>
       <div>You have {cards.length} cards and {feedItems.length} RSS feed items ready.</div>
@@ -217,7 +216,7 @@ function ReviewInProgress({items}: {
       }}
     />}
     {!currentCard && <div>
-      You're all caught up!
+      You&apos;re all caught up!
     </div>}
   </>
   return <div/>

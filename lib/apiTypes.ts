@@ -3,7 +3,7 @@ export const dummy=0;
 declare global {
 export type DbKey = number;
 
-module ApiTypes {
+namespace ApiTypes {
 
 export interface ApiObjDeck { //{{_}}
   id: DbKey
@@ -42,8 +42,8 @@ export interface ApiObjRssItem { //{{_}}
 export interface RestApi { //{{_}}
   path: string
   method: string
-  queryArgs: {}
-  responseType: {}
+  queryArgs: object
+  responseType: object
 }
 
 export interface RestApiGet extends RestApi { //{{_}}
@@ -52,44 +52,42 @@ export interface RestApiGet extends RestApi { //{{_}}
 
 export interface RestApiPost extends RestApi { //{{_}}
   method: "POST"
-  bodyArgs: {}
+  bodyArgs: object
 }
 
 
 export interface ApiSignup extends RestApiPost { //{{_}}
   path: "/api/users/signup"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {
     username: string
     email: string
     password: string
   }
-  responseType: {
-  }
+  responseType: object
 }
 
 export interface ApiLogin extends RestApiPost { //{{_}}
   path: "/api/users/login"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {
     username: string
     password: string
   }
-  responseType: {
-  }
+  responseType: object
 }
 
 export interface ApiLogout extends RestApiPost { //{{_}}
   path: "/api/users/logout"
-  queryArgs: {}
-  bodyArgs: {}
-  responseType: {}
+  queryArgs: object
+  bodyArgs: object
+  responseType: object
 }
 
 export interface ApiWhoami extends RestApiGet { //{{_}}
   path: "/api/users/whoami"
-  queryArgs: {}
-  bodyArgs: {}
+  queryArgs: object
+  bodyArgs: object
   responseType: {
     currentUser: ApiObjCurrentUser|null
   }
@@ -98,7 +96,7 @@ export interface ApiWhoami extends RestApiGet { //{{_}}
 
 export interface ApiListDecks extends RestApiGet { //{{_}}
   path: "/api/decks/list"
-  queryArgs: {}
+  queryArgs: object
   responseType: {
     decks: ApiObjDeck[]
   }
@@ -106,7 +104,7 @@ export interface ApiListDecks extends RestApiGet { //{{_}}
 
 export interface ApiCreateDeck extends RestApiPost { //{{_}}
   path: "/api/decks/create",
-  queryArgs: {},
+  queryArgs: object,
   bodyArgs: {
     name: string,
   },
@@ -126,15 +124,15 @@ export interface ApiGetDeck extends RestApiGet { //{{_}}
 
 export interface ApiDeleteDeck extends RestApiPost { //{{_}}
   path: "/api/decks/delete",
-  queryArgs: {},
+  queryArgs: object,
   bodyArgs: {id: DbKey},
-  responseType: {},
+  responseType: object,
 }
 
 
 export interface ApiCreateCard extends RestApiPost { //{{_}}
   path: "/api/cards/create",
-  queryArgs: {},
+  queryArgs: object,
   bodyArgs: {
     deckId: DbKey
     front: string
@@ -147,7 +145,7 @@ export interface ApiCreateCard extends RestApiPost { //{{_}}
 
 export interface ApiListCards extends RestApiGet { //{{_}}
   path: "/api/cards/list"
-  queryArgs: {}
+  queryArgs: object
   responseType: {
     //TODO
   }
@@ -155,11 +153,11 @@ export interface ApiListCards extends RestApiGet { //{{_}}
 
 export interface ApiDeleteCard extends RestApiPost { //{{_}}
   path: "/api/cards/delete"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {
     cardId: DbKey
   }
-  responseType: {}
+  responseType: object
 }
 
 export interface ApiGetCard extends RestApiGet { //{{_}}
@@ -175,7 +173,7 @@ export interface ApiGetCard extends RestApiGet { //{{_}}
 
 export interface ApiCardsDue extends RestApiGet { //{{_}}
   path: "/api/cards/due"
-  queryArgs: {}
+  queryArgs: object
   responseType: {
     cards: ApiObjCard[]
     feedItems: ApiObjRssItem[]
@@ -194,16 +192,16 @@ export interface ApiPollFeed extends RestApiGet { //{{_}}
 
 export interface ApiRefreshFeed extends RestApiPost { //{{_}}
   path: "/api/feed/refresh"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {id: DbKey}
-  responseType: {}
+  responseType: object
 }
 
 export interface ApiMarkAllAsRead extends RestApiPost { //{{_}}
   path: "/api/feed/markAsRead"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {feedId: DbKey}
-  responseType: {}
+  responseType: object
 }
 
 export interface ApiLoadFeed extends RestApiGet { //{{_}}
@@ -218,7 +216,7 @@ export interface ApiLoadFeed extends RestApiGet { //{{_}}
 
 export interface ApiRecordCardImpression extends RestApiPost { //{{_}}
   path: "/api/cards/impression"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {
     cardId: DbKey,
     timeSpent: number, //in milliseconds
@@ -229,7 +227,7 @@ export interface ApiRecordCardImpression extends RestApiPost { //{{_}}
 
 export interface ApiListSubscriptions extends RestApiGet { //{{_}}
   path: "/api/feeds/subscribed"
-  queryArgs: {}
+  queryArgs: object
   responseType: {
     feeds: (ApiObjFeed & {unreadCount: number})[]
   }
@@ -237,7 +235,7 @@ export interface ApiListSubscriptions extends RestApiGet { //{{_}}
 
 export interface ApiSubscribeToFeed extends RestApiPost { //{{_}}
   path: "/api/feeds/subscribe"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {
     feedUrl: string
   }
@@ -248,11 +246,11 @@ export interface ApiSubscribeToFeed extends RestApiPost { //{{_}}
 
 export interface ApiUnsubscribeFromFeed extends RestApiPost { //{{_}}
   path: "/api/feeds/unsubscribe"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {
     feedId: DbKey
   }
-  responseType: {}
+  responseType: object
 }
 
 export interface ApiGetRecentFeedItems extends RestApiGet { //{{_}}
@@ -281,16 +279,16 @@ export interface ApiGetFeedPreview extends RestApiGet { //{{_}}
 
 export interface ApiMarkFeedItemRead extends RestApiPost { //{{_}}
   path: "/api/feedItems/markAsRead"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {itemId: DbKey}
-  responseType: {}
+  responseType: object
 }
 
 export interface ApiMarkFeedItemUnread extends RestApiPost { //{{_}}
   path: "/api/feedItems/markAsUnread"
-  queryArgs: {}
+  queryArgs: object
   bodyArgs: {itemId: DbKey}
-  responseType: {}
+  responseType: object
 }
 
 }}

@@ -1,7 +1,6 @@
 import type {Express} from 'express';
 import type {PrismaClient, User} from '@prisma/client'
 import {defineGetApi,definePostApi,ServerApiContext,assertIsString} from '../serverApiUtil';
-import {getPrisma} from '../db';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import Cookies from 'universal-cookie';
@@ -115,7 +114,7 @@ export function addAuthEndpoints(app: Express) {
   });
 }
 
-function apiFilterCurrentUser(user: User|null, ctx: ServerApiContext): ApiTypes.ApiObjCurrentUser|null {
+function apiFilterCurrentUser(user: User|null, _ctx: ServerApiContext): ApiTypes.ApiObjCurrentUser|null {
   if (!user)
     return null;
   return {

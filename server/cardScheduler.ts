@@ -2,7 +2,7 @@ import type {ServerApiContext} from './serverApiUtil';
 import type {Card,CardImpression} from '@prisma/client'
 import orderBy from 'lodash/orderBy';
 
-export function getDueDate(card: Card, pastImpressions: CardImpression[], ctx: ServerApiContext): Date {
+export function getDueDate(card: Card, pastImpressions: CardImpression[], _ctx: ServerApiContext): Date {
   // If a card has no impressions, it's due
   if (!pastImpressions.length) {
     return card.createdAt;
@@ -12,7 +12,6 @@ export function getDueDate(card: Card, pastImpressions: CardImpression[], ctx: S
   const sortedImpressions = orderBy(pastImpressions, imp=>imp.date);
   const lastImpression = sortedImpressions[sortedImpressions.length-1];
   const lastImpressionTime = lastImpression.date.getTime();
-  const now = new Date().getTime();
   
   switch (lastImpression.resolution) {
     default:

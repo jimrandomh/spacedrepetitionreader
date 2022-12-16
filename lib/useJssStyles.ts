@@ -1,8 +1,7 @@
-import React from 'react';
 import jss from 'jss'
 import jssPreset from 'jss-preset-default'
 
-let attachedStylesheets = new Map<string,any>();
+const attachedStylesheets = new Map<string,any>();
 
 /// Initialize the JSS library. Should be called once during startup, and never again.
 export function initJss() {

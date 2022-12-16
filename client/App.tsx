@@ -3,16 +3,14 @@ import {routes,Endpoint} from '../lib/routes';
 import {UserContextProvider} from '../lib/useCurrentUser';
 import {Error404Page} from '../components/pages';
 import {ModalContextProvider} from '../lib/useModal';
-import type Route from 'route-parser';
-
 
 function locationToRoute(location: Location): {
   route: Endpoint|null
-  routeProps: {}
+  routeProps: object
 } {
   const pathname = location.pathname;
-  for (let route of routes) {
-    let match = route.path.match(pathname)
+  for (const route of routes) {
+    const match = route.path.match(pathname)
     if(match) {
       return {route, routeProps: match};
     }
@@ -21,7 +19,7 @@ function locationToRoute(location: Location): {
 }
 
 export function App() {
-  let {route: currentRoute, routeProps} = locationToRoute(window.location);
+  const {route: currentRoute, routeProps} = locationToRoute(window.location);
   
   
   if (!currentRoute) {
