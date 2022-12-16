@@ -10,14 +10,14 @@ const feedRefreshIntervalMs = 1000*60*60; //1hr
 
 export function addFeedEndpoints(app: Express) {
   defineGetApi<ApiTypes.ApiPollFeed>(app, "/api/feed/poll/:feedUrl", async (ctx) => {
-    const currentUser = assertLoggedIn(ctx);
+    const _currentUser = assertLoggedIn(ctx);
     const {feedUrl} = ctx.query;
     const feedItems = await pollFeed(feedUrl);
     return {feedItems};
   });
   
   definePostApi<ApiTypes.ApiRefreshFeed>(app, "/api/feed/refresh", async (ctx) => {
-    const currentUser = assertLoggedIn(ctx);
+    const _currentUser = assertLoggedIn(ctx);
     const id = assertIsKey(ctx.body.id);
     const feed = await ctx.db.rssFeed.findUnique({where:{id}});
     if (!feed) throw new ApiErrorNotFound;
@@ -37,7 +37,7 @@ export function addFeedEndpoints(app: Express) {
   });
   
   defineGetApi<ApiTypes.ApiLoadFeed>(app, "/api/feed/load/:id", async (ctx) => {
-    const currentUser = assertLoggedIn(ctx);
+    const _currentUser = assertLoggedIn(ctx);
     const id = assertIsKey(ctx.query.id);
     const feed = await ctx.db.rssFeed.findUnique({where:{id}});
     if (!feed) throw new ApiErrorNotFound;
@@ -130,11 +130,11 @@ export function addFeedEndpoints(app: Express) {
     return {};
   });
   defineGetApi<ApiTypes.ApiGetRecentFeedItems>(app, "/api/feeds/:id/recent", async (ctx) => {
-    const currentUser = assertLoggedIn(ctx);
+    const _currentUser = assertLoggedIn(ctx);
     throw new ApiErrorNotImplemented; //TODO
   });
   defineGetApi<ApiTypes.ApiGetUnreadFeedItems>(app, "/api/feeds/:id/unread", async (ctx) => {
-    const currentUser = assertLoggedIn(ctx);
+    const _currentUser = assertLoggedIn(ctx);
     throw new ApiErrorNotImplemented; //TODO
   });
   
@@ -147,11 +147,11 @@ export function addFeedEndpoints(app: Express) {
   });
   
   definePostApi<ApiTypes.ApiMarkFeedItemRead>(app, "/api/feedItems/markAsRead", async (ctx) => {
-    const currentUser = assertLoggedIn(ctx);
+    const _currentUser = assertLoggedIn(ctx);
     throw new ApiErrorNotImplemented; //TODO
   });
   definePostApi<ApiTypes.ApiMarkFeedItemUnread>(app, "/api/feedItems/markAsUnread", async (ctx) => {
-    const currentUser = assertLoggedIn(ctx);
+    const _currentUser = assertLoggedIn(ctx);
     throw new ApiErrorNotImplemented; //TODO
   });
 }

@@ -31,7 +31,7 @@ module.exports = {
       "varsIgnorePattern": "^_",
       "argsIgnorePattern": "^_",
     }],
-    "@typescript-eslint/no-explicit-any": 1,
+    "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/no-namespace": 0,
   },
   "ignorePatterns": [

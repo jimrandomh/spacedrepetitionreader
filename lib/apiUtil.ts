@@ -27,7 +27,10 @@ export function useGetApi<
       loading: false,
       data: body
     });
-  }, []);
+  //Deliberately not including 'query' as a dependency here because it's too
+  //prone to referential stability issues
+  //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpoint]);
   
   useEffect(() => {
     if (!skip) {

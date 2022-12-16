@@ -1,7 +1,7 @@
-import React from 'react'
+import React,{useState} from 'react'
 import {PageWrapper} from './layout';
 import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm} from './forms';
-import {Link,Loading,BulletSeparator,FeedItem} from './widgets';
+import {ErrorMessage,Link,Loading,BulletSeparator,FeedItem} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {useCurrentUser} from '../lib/useCurrentUser';
@@ -53,6 +53,7 @@ export function EditDeck({id}: {id: DbKey}) {
     endpoint: `/api/decks/:id`,
     query: {id}
   });
+  const [error,setError] = useState<string|null>(null);
   const deck = deckResult?.deck;
   const cards = deckResult?.cards;
   
@@ -66,7 +67,9 @@ export function EditDeck({id}: {id: DbKey}) {
       query: {},
       body: {id}
     });
-    if (result) {
+    if(error!==null) {
+      setError(error);
+    } else if (result) {
       redirect("/decks/manage")
     }
   }
@@ -103,6 +106,7 @@ export function EditDeck({id}: {id: DbKey}) {
         <Link onClick={deleteDeck} color={false}>Delete</Link>
       </div>
     </>}
+    {error && <div><ErrorMessage message={error}/></div>}
   </PageWrapper>
 }
 
@@ -175,6 +179,7 @@ export function ViewCardPage({id}: {id: DbKey}) {
     endpoint: "/api/cards/:cardId",
     query: {cardId: id},
   });
+  const [error,setError] = useState<string|null>(null);
   
   const card = data?.card;
   
@@ -183,12 +188,14 @@ export function ViewCardPage({id}: {id: DbKey}) {
     if (!confirm(`Are you sure you want to delete this card?`))
       return;
     
-    const {result,error} = await doPost<ApiTypes.ApiDeleteCard>({
+    const {result:_,error} = await doPost<ApiTypes.ApiDeleteCard>({
       endpoint: "/api/cards/delete",
       query: {},
       body: {cardId: card.id}
     });
-    if (result) {
+    if(error !== null) {
+      setError(error);
+    } else {
       redirect("/decks/manage")
     }
   }
@@ -200,6 +207,7 @@ export function ViewCardPage({id}: {id: DbKey}) {
       <div>Back: {card.back}</div>
     </div>}
     <button onClick={deleteCard}>Delete</button>
+    {error && <div><ErrorMessage message={error}/></div>}
   </PageWrapper>
 }
 
@@ -208,13 +216,18 @@ export function ViewFeedPage({id}: {id: DbKey}) {
     endpoint: "/api/feed/load/:id",
     query: {id}
   });
+  const [error,setError] = useState<string|null>(null);
   
   async function forceRefresh() {
     const {result:_, error} = await doPost({
       endpoint: "/api/feed/refresh",
       query: {}, body: {id}
     });
-    redirect(`/feeds/${id}`);
+    if (error !== null) {
+      setError(error);
+    } else {
+      redirect(`/feeds/${id}`);
+    }
   }
   
   async function markAllAsRead() {
@@ -230,7 +243,11 @@ export function ViewFeedPage({id}: {id: DbKey}) {
       endpoint: "/api/feeds/unsubscribe",
       query: {}, body: {feedId: id}
     });
-    redirect("/dashboard");
+    if (error !== null) {
+      setError(error);
+    } else {
+      redirect("/dashboard");
+    }
   }
   
   return <PageWrapper>
@@ -241,6 +258,7 @@ export function ViewFeedPage({id}: {id: DbKey}) {
     <Link color={false} onClick={forceRefresh}>Refresh</Link>
     <BulletSeparator/>
     <Link color={false} onClick={unsubscribe}>Unsubscribe</Link>
+    {error && <div><ErrorMessage message={error}/></div>}
     
     {data?.feedItems && data.feedItems.map(item =>
       <FeedItem key={item.id} item={item}/>
