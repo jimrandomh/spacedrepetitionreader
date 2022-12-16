@@ -1,5 +1,5 @@
 import React from 'react'
-import {routes,Endpoint} from '../pages/routes';
+import {routes,Endpoint} from '../lib/routes';
 import {UserContextProvider} from '../lib/useCurrentUser';
 import {Error404Page} from '../components/pages';
 import {ModalContextProvider} from '../lib/useModal';
