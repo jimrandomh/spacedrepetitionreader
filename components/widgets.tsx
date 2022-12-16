@@ -60,9 +60,20 @@ export function TextAreaInput({label, value, setValue}: {
   value: string,
   setValue: (newValue: string)=>void,
 }) {
-  return <div>
-    <div>{label}</div>
+  const classes = useJssStyles("TextAreaInput", () => ({
+    root: {
+    },
+    label: {
+    },
+    textarea: {
+      width: 500,
+      height: 150,
+    },
+  }));
+  return <div className={classes.root}>
+    <div className={classes.label}>{label}</div>
     <textarea
+      className={classes.textarea}
       value={value}
       onChange={ev=>setValue(ev.target.value)}
     />
@@ -95,4 +106,8 @@ export function TextInput({label, value, setValue, inputType}: {
       className={classes.input}
     />
   </div>
+}
+
+export function BulletSeparator() {
+  return <span>{" • "}</span>
 }

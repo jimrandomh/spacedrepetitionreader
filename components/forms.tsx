@@ -105,6 +105,11 @@ export function LoginForm() {
 export function CreateCardForm({deck}: {
   deck: ApiTypes.ApiObjDeck
 }) {
+  const classes = useJssStyles("CreateCardForm", () => ({
+    form: {
+    },
+  }));
+  
   const [cardFront,setCardFront] = useState("");
   const [cardBack,setCardBack] = useState("");
   const [error,setError] = useState<string|null>(null);
@@ -127,7 +132,10 @@ export function CreateCardForm({deck}: {
   }
   
   return <div>
-    <form onSubmit={(ev) => {ev.preventDefault(); createCard()}}>
+    <form
+      className={classes.form}
+      onSubmit={(ev) => {ev.preventDefault(); createCard()}}
+    >
       <TextAreaInput label="Front" value={cardFront} setValue={setCardFront}/>
       <TextAreaInput label="Back" value={cardBack} setValue={setCardBack}/>
       <input type="submit" value="Create Card"/>
@@ -138,6 +146,9 @@ export function CreateCardForm({deck}: {
 }
 
 export function CreateDeckForm() {
+  const classes = useJssStyles("CreateDeckForm", () => ({
+  }));
+  
   const [deckName,setDeckName] = useState("");
   const [error,setError] = useState<string|null>(null);
   

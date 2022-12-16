@@ -88,6 +88,8 @@ export function LeftSidebar() {
       background: "#eef",
       padding: 16,
     },
+    sidebarSection: {
+    },
     decksList: {
       "& ul": {
         paddingLeft: 16,
@@ -105,17 +107,22 @@ export function LeftSidebar() {
   
   return <div className={classes.root}>
     <div className={classes.decksList}>
-      <Link href="/decks/manage">Decks</Link>
-      {loading && <Loading/>}
+      <div className={classes.sidebarSection}>
+        <Link href="/dashboard" color={false}>Review</Link>
+      </div>
       
-      <ul>
-        {data?.decks && data.decks.map(deck => <li key={""+deck.id}>
-          <a href={`/decks/edit/${deck.id}`}>{deck.name}</a>
-        </li>)}
-      </ul>
+      <div className={classes.sidebarSection}>
+        <Link href="/decks/manage" color={false}>Decks</Link>
+        {loading && <Loading/>}
+        <ul>
+          {data?.decks && data.decks.map(deck => <li key={""+deck.id}>
+            <Link color={false} href={`/decks/edit/${deck.id}`}>{deck.name}</Link>
+          </li>)}
+        </ul>
+      </div>
     </div>
-    <div className="feedsList">
-      <Link href="/feeds/manage">Feeds</Link>
+    <div className={classes.sidebarSection}>
+      <Link href="/feeds/manage" color={false}>Feeds</Link>
     </div>
   </div>;
 }

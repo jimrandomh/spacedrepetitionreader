@@ -12,34 +12,6 @@ export function CardChallenge({card, onFinish}: {
   onFinish: ()=>void,
 }) {
   const classes = useJssStyles("CardChallenge", () => ({
-    root: {
-      margin: "0 auto",
-      border: "1px solid #ddd",
-      padding: 32,
-      maxWidth: 600,
-    },
-    
-    content: {
-      textAlign: "center",
-    },
-    
-    buttons: {
-      marginTop: 64,
-      display: "flex",
-      justifyContent: "center",
-    },
-    
-    button: {
-      display: "inline-block",
-      cursor: "pointer",
-      padding: 16,
-      minWidth: 100,
-      margin: 8,
-      border: "1px solid #666",
-      borderRadius: 16,
-      textAlign: "center",
-    },
-    
     flip: {
       background: "#ccf"
     },
@@ -82,46 +54,112 @@ export function CardChallenge({card, onFinish}: {
   }
   
   if (flipped) {
-    return <div className={classes.root}>
-      <div className={classes.content}>{card.back}</div>
-      
-      <div className={classes.buttons}>
-        <div className={classes.easy} onClick={ev => clickResolution("Easy")}>Easy</div>
-        <div className={classes.hard} onClick={ev => clickResolution("Hard")}>Hard</div>
-        <div className={classes.again} onClick={ev => clickResolution("Repeat")}>Repeat</div>
-      </div>
-    </div>
+    return <CardFrame
+      contents={<>
+        {card.back}
+      </>}
+      buttons={<>
+        <CardButton className={classes.easy} onClick={() => clickResolution("Easy")} label="Easy"/>
+        <CardButton className={classes.hard} onClick={() => clickResolution("Hard")} label="Hard"/>
+        <CardButton className={classes.again} onClick={() => clickResolution("Repeat")} label="Repeat"/>
+      </>}
+    />
   } else {
-    return <div className={classes.root}>
-      <div className={classes.content}>{card.front}</div>
-      
-      <div className={classes.buttons}>
-        <div className={classes.flip} onClick={ev => clickFlip()}>Flip</div>
-      </div>
-    </div>
+    return <CardFrame
+      contents={<>
+        {card.front}
+      </>}
+      buttons={<>
+        <CardButton className={classes.flip} onClick={() => clickFlip()} label="Flip"/>
+      </>}
+    />
   }
+}
+
+function CardFrame({contents, buttons}: {
+  contents: React.ReactNode
+  buttons: React.ReactNode
+}) {
+  const classes = useJssStyles("CardFrame", () => ({
+    root: {
+      margin: "0 auto",
+      border: "1px solid #ddd",
+      padding: 32,
+      maxWidth: 600,
+    },
+    contents: {
+      textAlign: "center",
+    },
+    buttons: {
+      marginTop: 64,
+      display: "flex",
+      justifyContent: "center",
+    },
+    
+  }));
+  
+  return <div className={classes.root}>
+    <div className={classes.contents}>
+      {contents}
+    </div>
+    
+    <div className={classes.buttons}>
+      {buttons}
+    </div>
+  </div>
+}
+
+function CardButton({label, onClick, className}: {
+  label: string,
+  onClick: ()=>void,
+  className?: string,
+}) {
+  const classes = useJssStyles("CardButton", () => ({
+    button: {
+      display: "inline-block",
+      cursor: "pointer",
+      padding: 16,
+      minWidth: 100,
+      margin: 8,
+      border: "1px solid #666",
+      borderRadius: 16,
+      textAlign: "center",
+    },
+  }));
+  
+  return <div
+    onClick={ev => onClick()}
+    className={classNames(classes.button,className)}
+  >
+    {label}
+  </div>
 }
 
 export function RSSCard({card, onFinish}: {
   card: ApiTypes.FeedEntry,
   onFinish: ()=>void,
 }) {
+  const classes = useJssStyles("RSSCad", () => ({
+    next: {},
+    rssTitle: {},
+    rssBody: {},
+  }));
+  
   const [flipped,setFlipped] = useState(false);
   
   function clickNext() {
     onFinish();
   }
   
-  return <div className="cardChallenge">
-    <div className="content">
-      <div className="rssTitle">{card.title}</div>
-      <div className="rssBody">
+  return <CardFrame
+    contents={<>
+      <div className={classes.rssTitle}>{card.title}</div>
+      <div className={classes.rssBody}>
         <div dangerouslySetInnerHTML={{__html: card.summary}}/>
       </div>
-    </div>
-    
-    <div className="buttons">
-      <div className="button next" onClick={ev => clickNext()}>Next</div>
-    </div>
-  </div>
+    </>}
+    buttons={<>
+      <CardButton className={classes.next} onClick={() => clickNext()} label="Next"/>
+    </>}
+  />
 }

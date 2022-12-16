@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {PageWrapper} from './layout';
 import {LoginForm,CreateCardForm,CreateDeckForm} from './forms';
-import {Link,TextAreaInput,TextInput,ErrorMessage,Loading} from './widgets';
+import {Link,TextAreaInput,TextInput,ErrorMessage,Loading,BulletSeparator} from './widgets';
 import {CardChallenge,RSSCard} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {useCurrentUser} from '../lib/useCurrentUser';
@@ -67,6 +67,14 @@ export function DashboardPage() {
 }
 
 export function EditDeck({id}: {id: DbKey}) {
+  const classes = useJssStyles("EditDeck", () => ({
+    cardsListLabel: {
+    },
+    moreOptions: {
+      marginTop: 128,
+    },
+  }));
+  
   const {loading: loadingDeck, data: deckResult} = useGetApi<ApiTypes.ApiGetDeck>({
     skip: !id,
     endpoint: `/api/decks/:id`,
@@ -90,20 +98,37 @@ export function EditDeck({id}: {id: DbKey}) {
     }
   }
   
+  function notImplementedMessage() {
+    alert("This feature is not yet implemented");
+  }
+  
   return <PageWrapper>
     {loadingDeck && <Loading/>}
     
     {deck && <>
       <h1>{deck.name}</h1>
       
-      {cards && <ul>
-        {cards.map(card => <li key={card.id}>
-          <a href={`/card/${card.id}`}>{card.front}</a>
-        </li>)}
-      </ul>}
+      {cards && !cards.length && <div>
+        This deck doesn't have any cards yet.
+      </div>}
+      {cards && cards.length && <div>
+        <div className={classes.cardsListLabel}>
+          Cards ({cards.length})
+        </div>
+        <ul>
+          {cards.map(card => <li key={card.id}>
+            <a href={`/card/${card.id}`}>{card.front}</a>
+          </li>)}
+        </ul>
+      </div>}
       
       <CreateCardForm deck={deck}/>
-      <button onClick={deleteDeck}>Delete</button>
+      
+      <div className={classes.moreOptions}>
+        <Link onClick={notImplementedMessage} color={false}>Share</Link>
+        <BulletSeparator/>
+        <Link onClick={deleteDeck} color={false}>Delete</Link>
+      </div>
     </>}
   </PageWrapper>
 }
@@ -170,7 +195,10 @@ export function ManageFeeds() {
   </PageWrapper>
 }
 
-export function ViewCard({id}: {id: DbKey}) {
+export function ViewCardPage({id}: {id: DbKey}) {
+  const classes = useJssStyles("ViewCardPage", () => ({
+  }));
+  
   const {data, loading} = useGetApi<ApiTypes.ApiGetCard>({
     endpoint: "/api/cards/:cardId",
     query: {cardId: id},

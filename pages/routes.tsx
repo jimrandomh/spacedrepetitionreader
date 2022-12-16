@@ -50,7 +50,7 @@ export const routes: Endpoint[] = [
     path: new Route("/card/:id"),
     access: "LoggedIn",
     component: ({id}: {id: string}) => {
-      return <Pages.ViewCard id={parseInt(id)}/>
+      return <Pages.ViewCardPage id={parseInt(id)}/>
     },
   },
 ];
