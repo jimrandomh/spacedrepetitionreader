@@ -1,8 +1,10 @@
 import React, {useState} from 'react'
-import {doPost} from '../lib/apiUtil';
-import {TextInput,TextAreaInput,ErrorMessage} from './widgets';
+import {useGetApi,doPost} from '../lib/apiUtil';
+import {TextInput,TextAreaInput,ErrorMessage,Loading,FeedItem,Button} from './widgets';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
+import {useModal,ModalDialog} from '../lib/useModal';
+
 
 export function LoginForm() {
   const classes = useJssStyles("LoginForm", () => ({
@@ -174,4 +176,85 @@ export function CreateDeckForm() {
       {error && <ErrorMessage message={error}/>}
     </form>
   </div>;
+}
+
+export function SubscribeToFeedForm() {
+  const classes = useJssStyles("SubscribeToFeedForm", () => ({
+  }));
+  
+  const [feedUrl,setFeedUrl] = useState("");
+  const [error,setError] = useState<string|null>(null);
+  const {openModal} = useModal();
+  
+  function previewFeed() {
+    if (feedUrl==="") return;
+    
+    openModal({
+      fn: (onClose) => {
+        return <ModalDialog>
+          <FeedPreview
+            feedUrl={feedUrl}
+            onError={err => setError(err)}
+            onClose={onClose}
+          />
+        </ModalDialog>
+      }
+    })
+  }
+  
+  return <div>
+    <form onSubmit={(ev) => {ev.preventDefault(); previewFeed()}}>
+      <TextInput label="RSS or Atom URI" value={feedUrl} setValue={setFeedUrl}/>
+      <input type="submit" value="Preview"/>
+      {error && <div><ErrorMessage message={error}/></div>}
+    </form>
+  </div>
+}
+
+function FeedPreview({feedUrl,onError,onClose}: {
+  feedUrl: string
+  onError: (message: string)=>void
+  onClose: ()=>void
+}) {
+  const classes = useJssStyles("FeedPreview", () => ({
+    scrollingRegion: {
+      maxHeight: 400,
+      overflowY: "scroll",
+    },
+  }));
+  
+  const {loading,data} = useGetApi<ApiTypes.ApiGetFeedPreview>({
+    endpoint: "/api/feeds/preview/:url",
+    query: {url: feedUrl},
+  });
+  
+  async function subscribe() {
+    const {result,error} = await doPost<ApiTypes.ApiSubscribeToFeed>({
+      endpoint: "/api/feeds/subscribe",
+      query: {}, body: {feedUrl},
+    });
+    
+    if (error) {
+      onError(error);
+      onClose();
+    } else {
+      const feedId = result!.feedId;
+      redirect(`/feeds/${feedId}`);
+    }
+  }
+  function cancel() {
+    onClose();
+  }
+  
+  return <div>
+    <h1>Feed Preview</h1>
+    
+    {loading && <Loading/>}
+    {data && <div className={classes.scrollingRegion}>
+      {data.items.map((feedItem,i) => <FeedItem key={""+i} item={feedItem}/>)}
+    </div>}
+    
+    <Button label="Subscribe" onClick={subscribe}/>
+    <Button label="Cancel" onClick={cancel}/>
+  </div>
 }

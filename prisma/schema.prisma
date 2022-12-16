@@ -8,9 +8,9 @@ datasource db {
 }
 
 model User {
-  id           Int    @id @default(autoincrement())
-  name         String @unique
-  email        String @unique
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  email        String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
 
@@ -32,8 +32,8 @@ model LoginToken {
 }
 
 model Deck {
-  id      Int     @id @default(autoincrement())
-  deleted Boolean @default(false)
+  id        Int      @id @default(autoincrement())
+  deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
 
   name  String
@@ -44,15 +44,15 @@ model Deck {
 }
 
 model Card {
-  id      Int     @id @default(autoincrement())
-  front   String
-  back    String
-  deleted Boolean @default(false)
+  id        Int      @id @default(autoincrement())
+  front     String
+  back      String
+  deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  deck           Deck             @relation(fields: [deckId], references: [id])
-  deckId         Int
-  impressions    CardImpression[]
+  deck        Deck             @relation(fields: [deckId], references: [id])
+  deckId      Int
+  impressions CardImpression[]
 }
 
 model CardImpression {
@@ -81,9 +81,11 @@ model RssSubscription {
 
 model RssFeed {
   id              Int               @id @default(autoincrement())
-  rssUrl          String
+  rssUrl          String            @unique
+  title           String            @default("")
   lastSync        DateTime
   RssSubscription RssSubscription[]
+  RssItem         RssItem[]
 }
 
 model RssItem {
@@ -91,7 +93,13 @@ model RssItem {
   title         String
   link          String
   content       String
-  RssImpression RssImpression[]
+  pubDate       DateTime
+  remoteId      String
+  
+  impressions RssImpression[]
+
+  feed   RssFeed @relation(fields: [feedId], references: [id])
+  feedId Int
 }
 
 model RssImpression {

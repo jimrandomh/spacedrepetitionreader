@@ -35,6 +35,13 @@ export const routes: Endpoint[] = [
     component: Pages.ManageFeeds,
   },
   {
+    path: new Route("/feeds/:id"),
+    access: "LoggedIn",
+    component: ({id}: {id: string}) => {
+      return <Pages.ViewFeedPage id={parseInt(id)}/>
+    },
+  },
+  {
     path: new Route("/decks/edit/:id"),
     access: "LoggedIn",
     component: ({id}: {id: string}) => {

@@ -27,14 +27,15 @@ export interface ApiObjCurrentUser { //{{_}}
 export interface ApiObjFeed { //{{_}}
   id: DbKey
   url: string
+  title: string
 }
 
-export interface FeedEntry { //{{_}}
+export interface ApiObjRssItem { //{{_}}
+  id: number
   title: string
   link: string
   pubDate: string
   summary: string
-  id: string
 }
 
 
@@ -176,17 +177,42 @@ export interface ApiCardsDue extends RestApiGet { //{{_}}
   path: "/api/cards/due"
   queryArgs: {}
   responseType: {
-    cards: {id: DbKey, front: string, back: string}[]
+    cards: ApiObjCard[]
+    feedItems: ApiObjRssItem[]
   }
 }
 
-export interface ApiLoadFeed extends RestApiGet { //{{_}}
-  path: "/api/feed/load/:feedUrl"
+export interface ApiPollFeed extends RestApiGet { //{{_}}
+  path: "/api/feed/poll/:feedUrl"
   queryArgs: {
     feedUrl: string
   }
   responseType: {
     feedItems: any
+  }
+}
+
+export interface ApiRefreshFeed extends RestApiPost { //{{_}}
+  path: "/api/feed/refresh"
+  queryArgs: {}
+  bodyArgs: {id: DbKey}
+  responseType: {}
+}
+
+export interface ApiMarkAllAsRead extends RestApiPost { //{{_}}
+  path: "/api/feed/markAsRead"
+  queryArgs: {}
+  bodyArgs: {feedId: DbKey}
+  responseType: {}
+}
+
+export interface ApiLoadFeed extends RestApiGet { //{{_}}
+  path: "/api/feed/load/:id"
+  queryArgs: {
+    id: DbKey
+  }
+  responseType: {
+    feedItems: ApiObjRssItem[]
   }
 }
 
@@ -205,27 +231,19 @@ export interface ApiListSubscriptions extends RestApiGet { //{{_}}
   path: "/api/feeds/subscribed"
   queryArgs: {}
   responseType: {
-    feeds: ApiObjFeed[]
+    feeds: (ApiObjFeed & {unreadCount: number})[]
   }
-}
-
-export interface ApiCreateFeed extends RestApiPost { //{{_}}
-  path: "/api/feeds/create"
-  queryArgs: {}
-  bodyArgs: {
-    url: string
-    subscribe: boolean
-  }
-  responseType: {id: DbKey}
 }
 
 export interface ApiSubscribeToFeed extends RestApiPost { //{{_}}
   path: "/api/feeds/subscribe"
   queryArgs: {}
   bodyArgs: {
+    feedUrl: string
+  }
+  responseType: {
     feedId: DbKey
   }
-  responseType: {}
 }
 
 export interface ApiUnsubscribeFromFeed extends RestApiPost { //{{_}}
@@ -241,7 +259,7 @@ export interface ApiGetRecentFeedItems extends RestApiGet { //{{_}}
   path: "/api/feeds/:id/recent"
   queryArgs: {id: DbKey}
   responseType: {
-    items: FeedEntry[]
+    items: ApiObjRssItem[]
   }
 }
 
@@ -249,7 +267,15 @@ export interface ApiGetUnreadFeedItems extends RestApiGet { //{{_}}
   path: "/api/feeds/:id/unread"
   queryArgs: {id: DbKey}
   responseType: {
-    items: FeedEntry[]
+    items: ApiObjRssItem[]
+  }
+}
+
+export interface ApiGetFeedPreview extends RestApiGet { //{{_}}
+  path: "/api/feeds/preview/:url",
+  queryArgs: {url: string}
+  responseType: {
+    items: ApiObjRssItem[]
   }
 }
 

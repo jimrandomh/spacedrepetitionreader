@@ -1,6 +1,7 @@
 import type {Express} from 'express';
 import type {Card,Deck} from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsInt,assertIsNumber,assertIsString,ServerApiContext,ApiErrorNotFound,ApiErrorAccessDenied} from '../serverApiUtil';
+import {maybeRefreshFeed,getUnreadItems,apiFilterRssItem} from './feeds';
 import {getDueDate} from '../cardScheduler';
 import flatten from 'lodash/flatten';
 import filter from 'lodash/filter';
@@ -153,9 +154,29 @@ export function addDeckEndpoints(app: Express) {
       return dueDate<now;
     });
     
+    // Get the user's RSS subscriptions
+    const subscriptions = await ctx.db.rssSubscription.findMany({
+      where: {
+        userId: currentUser.id,
+        deleted: false,
+      },
+      include: {feed: true}
+    });
+    
+    // Refresh any RSS feeds that are stale
+    await Promise.all(subscriptions.map(async subscription => {
+      await maybeRefreshFeed(subscription.feed, ctx.db)
+    }));
+    
+    // Get unread items in the user's RSS feeds
+    const unreadItems = flatten(await Promise.all(subscriptions.map(async subscription => {
+      return await getUnreadItems(currentUser, subscription.feed, ctx.db);
+    })));
+    
     // Return cards that are due
     return {
-      cards: cardsDue.map(card => apiFilterCard(card, ctx)!)
+      cards: cardsDue.map(card => apiFilterCard(card, ctx)!),
+      feedItems: unreadItems.map(item => apiFilterRssItem(item, ctx)!),
     };
   });
   

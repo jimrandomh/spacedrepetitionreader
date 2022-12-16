@@ -1,7 +1,10 @@
 import React,{useState} from 'react'
 import {doPost} from '../lib/apiUtil';
 import {useJssStyles} from '../lib/useJssStyles';
+import {Button,FeedItem} from './widgets';
 import classNames from 'classnames';
+import shuffle from 'lodash/shuffle';
+import take from 'lodash/take';
 
 export function CardChallenge({card, onFinish}: {
   card: {
@@ -136,13 +139,11 @@ function CardButton({label, onClick, className}: {
 }
 
 export function RSSCard({card, onFinish}: {
-  card: ApiTypes.FeedEntry,
+  card: ApiTypes.ApiObjRssItem,
   onFinish: ()=>void,
 }) {
   const classes = useJssStyles("RSSCad", () => ({
     next: {},
-    rssTitle: {},
-    rssBody: {},
   }));
   
   const [flipped,setFlipped] = useState(false);
@@ -152,14 +153,72 @@ export function RSSCard({card, onFinish}: {
   }
   
   return <CardFrame
-    contents={<>
-      <div className={classes.rssTitle}>{card.title}</div>
-      <div className={classes.rssBody}>
-        <div dangerouslySetInnerHTML={{__html: card.summary}}/>
-      </div>
-    </>}
+    contents={<FeedItem item={card}/>}
     buttons={<>
       <CardButton className={classes.next} onClick={() => clickNext()} label="Next"/>
     </>}
   />
+}
+
+type CardOrFeedItem = {type:"card",card:ApiTypes.ApiObjCard}|{type:"feedItem",feedItem:ApiTypes.ApiObjRssItem};
+
+export function ReviewWrapper({cards, feedItems}: {
+  cards: ApiTypes.ApiObjCard[]
+  feedItems: ApiTypes.ApiObjRssItem[]
+}) {
+  const [started,setStarted] = useState(false);
+  const [shuffledDeck,setShuffledDeck] = useState<CardOrFeedItem[]|null>(null);
+  
+  function begin() {
+    const limit3feedItems = take(feedItems, 2);
+    const allItems: CardOrFeedItem[] = [
+      ...cards.map((card): CardOrFeedItem => ({type:"card", card})),
+      ...limit3feedItems.map((feedItem): CardOrFeedItem => ({type:"feedItem", feedItem})),
+    ];
+    const shuffled = shuffle(allItems);
+    console.log(shuffled);
+    setShuffledDeck(shuffled);
+    setStarted(true);
+  }
+  
+  if (!cards.length && !feedItems.length) {
+    return <div>You're all caught up!</div>
+  }
+  
+  if (started) {
+    return <ReviewInProgress items={shuffledDeck!}/>
+  } else {
+    return <div>
+      <div>You have {cards.length} cards and {feedItems.length} RSS feed items ready.</div>
+      <Button label="Begin" onClick={begin}/>
+    </div>
+  }
+}
+
+function ReviewInProgress({items}: {
+  items: Array<CardOrFeedItem>
+}) {
+  const [cardPos,setCardPos] = useState(0);
+  const currentCard = items[cardPos];
+  
+  return <>
+    {currentCard && currentCard.type==="card" && <CardChallenge
+      key={cardPos}
+      card={currentCard.card}
+      onFinish={() => {
+        setCardPos(cardPos+1)
+      }}
+    />}
+    {currentCard && currentCard.type==="feedItem" && <RSSCard
+      key={cardPos}
+      card={currentCard.feedItem}
+      onFinish={() => {
+        setCardPos(cardPos+1)
+      }}
+    />}
+    {!currentCard && <div>
+      You're all caught up!
+    </div>}
+  </>
+  return <div/>
 }

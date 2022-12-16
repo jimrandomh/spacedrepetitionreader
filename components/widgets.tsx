@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import {useJssStyles} from '../lib/useJssStyles';
 import classNames from 'classnames';
 
@@ -28,7 +28,7 @@ export function Link({href, onClick, className, color=true, children}: {
       classes.link, className,
       {[classes.noColor]: !color}
     )}
-    href={href || "javascript:void(0)"}
+    href={href || "#"}
   >
     {children}
   </a>;
@@ -110,4 +110,55 @@ export function TextInput({label, value, setValue, inputType}: {
 
 export function BulletSeparator() {
   return <span>{" • "}</span>
+}
+
+export function Counter() {
+  const [count,setCount] = useState(0);
+  
+  return <div>
+    {count} <span onClick={(ev) => {setCount(count+1)}}>(+)</span>
+  </div>
+}
+
+export function FeedItem({item}: {
+  item: ApiTypes.ApiObjRssItem
+}) {
+  const classes = useJssStyles("FeedItem", () => ({
+    rssTitle: {},
+    rssBody: {},
+  }));
+  return <div>
+    <div className={classes.rssTitle}>{item.title}</div>
+    <div className={classes.rssBody}>
+      <div dangerouslySetInnerHTML={{__html: item.summary}}/>
+    </div>
+  </div>
+}
+
+export function Button({label,onClick}: {
+  label: string
+  onClick: ()=>void
+}) {
+  const classes = useJssStyles("Button", () => ({
+    button: {
+      display: "inline-block",
+      cursor: "pointer",
+      padding: 8,
+      minWidth: 80,
+      margin: 8,
+      border: "1px solid #999",
+      borderRadius: 8,
+      textAlign: "center",
+      
+      "&:hover": {
+        background: "#eee",
+      },
+    },
+  }));
+  return <div
+    className={classes.button}
+    onClick={onClick}
+  >
+    {label}
+  </div>
 }

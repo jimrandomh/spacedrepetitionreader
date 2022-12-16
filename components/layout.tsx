@@ -87,10 +87,7 @@ export function LeftSidebar() {
       
       background: "#eef",
       padding: 16,
-    },
-    sidebarSection: {
-    },
-    decksList: {
+      
       "& ul": {
         paddingLeft: 16,
         marginBlockStart: 8,
@@ -98,31 +95,49 @@ export function LeftSidebar() {
       "& li": {
       }
     },
+    spacer: {
+      height: 16,
+    },
+    sidebarSection: {
+    },
   }));
   
-  const {loading, data} = useGetApi<ApiTypes.ApiListDecks>({
+  const {loading: loadingDecks, data: decksResponse} = useGetApi<ApiTypes.ApiListDecks>({
     endpoint: "/api/decks/list",
     query: {}
   });
   
+  const {loading: loadingFeeds, data: subscriptionsResponse} = useGetApi<ApiTypes.ApiListSubscriptions>({
+    endpoint: "/api/feeds/subscribed",
+    query: {}
+  });
+  
   return <div className={classes.root}>
-    <div className={classes.decksList}>
-      <div className={classes.sidebarSection}>
-        <Link href="/dashboard" color={false}>Review</Link>
-      </div>
-      
-      <div className={classes.sidebarSection}>
-        <Link href="/decks/manage" color={false}>Decks</Link>
-        {loading && <Loading/>}
-        <ul>
-          {data?.decks && data.decks.map(deck => <li key={""+deck.id}>
-            <Link color={false} href={`/decks/edit/${deck.id}`}>{deck.name}</Link>
-          </li>)}
-        </ul>
-      </div>
+    <div className={classes.sidebarSection}>
+      <Link href="/dashboard" color={false}>Review</Link>
+    </div>
+    
+    <div className={classes.spacer}/>
+    
+    <div className={classes.sidebarSection}>
+      <Link href="/decks/manage" color={false}>Decks</Link>
+      {loadingDecks && <Loading/>}
+      <ul>
+        {decksResponse?.decks && decksResponse.decks.map(deck => <li key={""+deck.id}>
+          <Link color={false} href={`/decks/edit/${deck.id}`}>{deck.name}</Link>
+        </li>)}
+      </ul>
     </div>
     <div className={classes.sidebarSection}>
       <Link href="/feeds/manage" color={false}>Feeds</Link>
+      {loadingFeeds && <Loading/>}
+      <ul>
+        {subscriptionsResponse?.feeds && subscriptionsResponse.feeds.map(feed => <li key={""+feed.id}>
+          <Link color={false} href={`/feeds/${feed.id}`}>
+            {feed.title || feed.url}
+          </Link>
+        </li>)}
+      </ul>
     </div>
   </div>;
 }

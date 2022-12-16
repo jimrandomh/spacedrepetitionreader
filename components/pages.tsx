@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
 import {PageWrapper} from './layout';
-import {LoginForm,CreateCardForm,CreateDeckForm} from './forms';
-import {Link,TextAreaInput,TextInput,ErrorMessage,Loading,BulletSeparator} from './widgets';
-import {CardChallenge,RSSCard} from './cards';
+import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm} from './forms';
+import {Link,TextAreaInput,TextInput,ErrorMessage,Loading,BulletSeparator,FeedItem} from './widgets';
+import {ReviewWrapper,CardChallenge,RSSCard} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {useCurrentUser} from '../lib/useCurrentUser';
 import {redirect} from '../lib/browserUtil';
@@ -20,33 +20,38 @@ export function AboutPage() {
 export function DashboardPage() {
   const currentUser = useCurrentUser();
   
-  const {data:cardsDue, loading} = useGetApi<ApiTypes.ApiCardsDue>({
+  const {data, loading} = useGetApi<ApiTypes.ApiCardsDue>({
     skip: !currentUser,
     endpoint: "/api/cards/due",
     query: {},
   });
-  const {data:xkcdFeed, loading: loadingXkcd} = useGetApi<ApiTypes.ApiLoadFeed>({
+  /*const {data:xkcdFeed, loading: loadingXkcd} = useGetApi<ApiTypes.ApiPollFeed>({
     skip: !currentUser,
-    endpoint: "/api/feed/load/:feedUrl",
+    endpoint: "/api/feed/poll/:feedUrl",
     query: {feedUrl: "https://xkcd.com/atom.xml"},
   });
   
-  const [cardPos,setCardPos] = useState(0);
+  const [cardPos,setCardPos] = useState(0);*/
   
   if (!currentUser) {
     redirect('/login');
     return <div/>;
   }
   
-  const combinedCards = [
+  /*const combinedCards = [
     ...(map(cardsDue?.cards, card=>({type:"card", ...card}))),
     ...(map(xkcdFeed?.feedItems, rssEntry=>({type:"rss", ...rssEntry}))),
   ];
-  const currentCard = (combinedCards && cardPos<combinedCards.length) ? combinedCards[cardPos] : undefined;
+  const currentCard = (combinedCards && cardPos<combinedCards.length) ? combinedCards[cardPos] : undefined;*/
   
   return <PageWrapper>
     {loading && <Loading/>}
-    {!loading && cardPos>=combinedCards.length && <div>
+    {data && <ReviewWrapper
+      cards={data.cards}
+      feedItems={data.feedItems}
+    />}
+    
+    {/*{!loading && cardPos>=combinedCards.length && <div>
       You're all caught up!
     </div>}
     {currentCard && currentCard.type==="card" && <CardChallenge
@@ -62,7 +67,7 @@ export function DashboardPage() {
       onFinish={() => {
         setCardPos(cardPos+1)
       }}
-    />}
+    />}*/}
   </PageWrapper>
 }
 
@@ -111,7 +116,7 @@ export function EditDeck({id}: {id: DbKey}) {
       {cards && !cards.length && <div>
         This deck doesn't have any cards yet.
       </div>}
-      {cards && cards.length && <div>
+      {cards && cards.length>0 && <div>
         <div className={classes.cardsListLabel}>
           Cards ({cards.length})
         </div>
@@ -192,6 +197,8 @@ export function ManageFeeds() {
         {feed.url}
       </li>)}
     </ul>
+    
+    <SubscribeToFeedForm/>
   </PageWrapper>
 }
 
@@ -228,5 +235,54 @@ export function ViewCardPage({id}: {id: DbKey}) {
       <div>Back: {card.back}</div>
     </div>}
     <button onClick={deleteCard}>Delete</button>
+  </PageWrapper>
+}
+
+export function ViewFeedPage({id}: {id: DbKey}) {
+  const classes = useJssStyles("ViewFeedPage", () => ({
+  }));
+  
+  const {data, loading} = useGetApi<ApiTypes.ApiLoadFeed>({
+    endpoint: "/api/feed/load/:id",
+    query: {id}
+  });
+  
+  async function forceRefresh() {
+    const {result, error} = await doPost({
+      endpoint: "/api/feed/refresh",
+      query: {}, body: {id}
+    });
+    redirect(`/feeds/${id}`);
+  }
+  
+  async function markAllAsRead() {
+    await doPost({
+      endpoint: "/api/feed/markAsRead",
+      query: {}, body: {feedId: id}
+    });
+    redirect(`/feeds/${id}`);
+  }
+  
+  async function unsubscribe() {
+    const {result,error} = await doPost<ApiTypes.ApiUnsubscribeFromFeed >({
+      endpoint: "/api/feeds/unsubscribe",
+      query: {}, body: {feedId: id}
+    });
+    redirect("/dashboard");
+  }
+  
+  return <PageWrapper>
+    {loading && <Loading/>}
+    
+    <Link color={false} onClick={markAllAsRead}>Mark All As Read</Link>
+    <BulletSeparator/>
+    <Link color={false} onClick={forceRefresh}>Refresh</Link>
+    <BulletSeparator/>
+    <Link color={false} onClick={unsubscribe}>Unsubscribe</Link>
+    
+    {data?.feedItems && data.feedItems.map(item =>
+      <FeedItem key={item.id} item={item}/>
+    )}
+    
   </PageWrapper>
 }

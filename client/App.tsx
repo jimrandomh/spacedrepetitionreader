@@ -2,6 +2,7 @@ import React from 'react'
 import {routes,Endpoint} from '../pages/routes';
 import {UserContextProvider} from '../lib/useCurrentUser';
 import {Error404Page} from '../components/pages';
+import {ModalContextProvider} from '../lib/useModal';
 import type Route from 'route-parser';
 
 
@@ -30,7 +31,9 @@ export function App() {
   const CurrentRouteComponent = currentRoute.component;
   return <div className="root">
     <UserContextProvider>
+    <ModalContextProvider>
       <CurrentRouteComponent {...routeProps}/>
+    </ModalContextProvider>
     </UserContextProvider>
   </div>
 }
