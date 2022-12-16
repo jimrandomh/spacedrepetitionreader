@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(cuid())
   name         String   @unique
   email        String   @unique
   passwordHash String
@@ -22,17 +22,17 @@ model User {
 }
 
 model LoginToken {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   token     String   @unique
   createdAt DateTime @default(now())
   valid     Boolean  @default(true)
 
   owner   User @relation(fields: [ownerId], references: [id])
-  ownerId Int
+  ownerId String
 }
 
 model Deck {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
 
@@ -40,47 +40,47 @@ model Deck {
   cards Card[]
 
   author   User @relation(fields: [authorId], references: [id])
-  authorId Int
+  authorId String
 }
 
 model Card {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   front     String
   back      String
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
 
   deck        Deck             @relation(fields: [deckId], references: [id])
-  deckId      Int
+  deckId      String
   impressions CardImpression[]
 }
 
 model CardImpression {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(cuid())
   date       DateTime @default(now())
   timeSpent  Float
   resolution String
 
   user   User @relation(fields: [userId], references: [id])
-  userId Int
+  userId String
 
   card   Card @relation(fields: [cardId], references: [id])
-  cardId Int
+  cardId String
 }
 
 model RssSubscription {
-  id      Int     @id @default(autoincrement())
+  id      String  @id @default(cuid())
   deleted Boolean @default(false)
 
   user   User @relation(fields: [userId], references: [id])
-  userId Int
+  userId String
 
   feed   RssFeed @relation(fields: [feedId], references: [id])
-  feedId Int
+  feedId String
 }
 
 model RssFeed {
-  id              Int               @id @default(autoincrement())
+  id              String            @id @default(cuid())
   rssUrl          String            @unique
   title           String            @default("")
   lastSync        DateTime
@@ -89,7 +89,7 @@ model RssFeed {
 }
 
 model RssItem {
-  id            Int             @id @default(autoincrement())
+  id            String          @id @default(cuid())
   title         String
   link          String
   content       String
@@ -99,15 +99,15 @@ model RssItem {
   impressions RssImpression[]
 
   feed   RssFeed @relation(fields: [feedId], references: [id])
-  feedId Int
+  feedId String
 }
 
 model RssImpression {
-  id Int @id @default(autoincrement())
+  id     String @id @default(cuid())
 
-  userId Int
+  userId String
   user   User @relation(fields: [userId], references: [id])
 
-  rssItemId Int
+  rssItemId String
   rssItem   RssItem @relation(fields: [rssItemId], references: [id])
 }

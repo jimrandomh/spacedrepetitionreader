@@ -1,4 +1,3 @@
-import * as React from 'react'
 import * as Pages from '../components/pages';
 import Route from 'route-parser';
 
@@ -37,16 +36,12 @@ export const routes: Endpoint[] = [
   {
     path: new Route("/feeds/:id"),
     access: "LoggedIn",
-    component: ({id}: {id: string}) => {
-      return <Pages.ViewFeedPage id={parseInt(id)}/>
-    },
+    component: Pages.ViewFeedPage,
   },
   {
     path: new Route("/decks/edit/:id"),
     access: "LoggedIn",
-    component: ({id}: {id: string}) => {
-      return <Pages.EditDeck id={parseInt(id)}/>
-    },
+    component: Pages.EditDeck,
   },
   {
     path: new Route("/about"),
@@ -56,8 +51,6 @@ export const routes: Endpoint[] = [
   {
     path: new Route("/card/:id"),
     access: "LoggedIn",
-    component: ({id}: {id: string}) => {
-      return <Pages.ViewCardPage id={parseInt(id)}/>
-    },
+    component: Pages.ViewCardPage,
   },
 ];

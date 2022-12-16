@@ -90,7 +90,7 @@ export function assertLoggedIn(ctx: ServerApiContext): User {
 }
 
 export function assertIsKey(value: any): DbKey {
-  return assertIsInt(value);
+  return assertIsString(value);
 }
 
 export function assertIsInt(value: any): number {

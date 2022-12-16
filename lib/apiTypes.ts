@@ -1,7 +1,7 @@
 export const dummy=0;
 
 declare global {
-export type DbKey = number;
+export type DbKey = string;
 
 namespace ApiTypes {
 
