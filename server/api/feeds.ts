@@ -2,7 +2,7 @@ import RssParser from 'rss-parser';
 import {sanitizeHtml} from '../htmlUtil';
 import type {Express} from 'express';
 import type {PrismaClient,User,RssFeed,RssItem} from '@prisma/client'
-import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound,ApiErrorNotImplemented} from '../serverApiUtil';
+import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound} from '../serverApiUtil';
 import keyBy from 'lodash/keyBy';
 
 const feedRefreshIntervalMs = 1000*60*60; //1hr
@@ -59,7 +59,7 @@ export function addFeedEndpoints(app: Express) {
     
     const unreadCountsByFeedId: Record<DbKey,number> = {};
     await Promise.all(subscriptions.map(async (subscription) => {
-      unreadCountsByFeedId[subscription.feed.id] = await getUnreadCount(subscription.feed, ctx)
+      unreadCountsByFeedId[subscription.feed.id] = await getUnreadCount(currentUser, subscription.feed, ctx)
     }));
     
     return {
@@ -131,11 +131,24 @@ export function addFeedEndpoints(app: Express) {
   });
   defineGetApi<ApiTypes.ApiGetRecentFeedItems>(app, "/api/feeds/:id/recent", async (ctx) => {
     const _currentUser = assertLoggedIn(ctx);
-    throw new ApiErrorNotImplemented; //TODO
+    const id = assertIsKey(ctx.query.id);
+    const items = await ctx.db.rssItem.findMany({
+      where: { feedId: id },
+      orderBy: { pubDate: 'desc' },
+    });
+    return {
+      items: items.map(item => apiFilterRssItem(item, ctx))
+    };
   });
   defineGetApi<ApiTypes.ApiGetUnreadFeedItems>(app, "/api/feeds/:id/unread", async (ctx) => {
-    const _currentUser = assertLoggedIn(ctx);
-    throw new ApiErrorNotImplemented; //TODO
+    const currentUser = assertLoggedIn(ctx);
+    const id = assertIsKey(ctx.query.id);
+    const feed = await ctx.db.rssFeed.findUnique({where: {id}});
+    if (!feed) throw new ApiErrorNotFound();
+    const unreadItems = await getUnreadItems(currentUser, feed, ctx.db)
+    return {
+      items: unreadItems.map(item => apiFilterRssItem(item, ctx))
+    }
   });
   
   defineGetApi<ApiTypes.ApiGetFeedPreview>(app, "/api/feeds/preview/:url", async (ctx) => {
@@ -147,12 +160,12 @@ export function addFeedEndpoints(app: Express) {
   });
   
   definePostApi<ApiTypes.ApiMarkFeedItemRead>(app, "/api/feedItems/markAsRead", async (ctx) => {
-    const _currentUser = assertLoggedIn(ctx);
-    throw new ApiErrorNotImplemented; //TODO
-  });
-  definePostApi<ApiTypes.ApiMarkFeedItemUnread>(app, "/api/feedItems/markAsUnread", async (ctx) => {
-    const _currentUser = assertLoggedIn(ctx);
-    throw new ApiErrorNotImplemented; //TODO
+    const currentUser = assertLoggedIn(ctx);
+    const rssItemId = assertIsKey(ctx.body.itemId);
+    const rssItem = await ctx.db.rssItem.findUnique({where: {id: rssItemId}});
+    if (!rssItem) throw new ApiErrorNotFound();
+    await markAsRead(currentUser, rssItem, ctx);
+    return {};
   });
 }
 
@@ -196,8 +209,17 @@ export async function maybeRefreshFeed(feed: RssFeed, db: PrismaClient) {
   }
 }
 
-async function getUnreadCount(_feed: RssFeed, _ctx: ServerApiContext): Promise<number> {
-  return 0; //TODO
+async function getUnreadCount(user: User, feed: RssFeed, ctx: ServerApiContext): Promise<number> {
+  return await ctx.db.rssItem.count({
+    where: {
+      feedId: feed.id,
+      impressions: {
+        none: {
+          userId: user.id
+        }
+      }
+    }
+  });
 }
 
 async function refreshFeed(feed: RssFeed, db: PrismaClient) {

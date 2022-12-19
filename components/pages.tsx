@@ -123,7 +123,7 @@ export function LandingPage() {
   
   return <div>
     <h1 className={classes.title}>SRSR . SR ... SR</h1>
-    <p>Space repetition with an integrated RSS reader</p>
+    <p>Spaced repetition with an integrated RSS reader</p>
     
     <LoginForm/>
   </div>

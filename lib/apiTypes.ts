@@ -284,11 +284,4 @@ export interface ApiMarkFeedItemRead extends RestApiPost { //{{_}}
   responseType: object
 }
 
-export interface ApiMarkFeedItemUnread extends RestApiPost { //{{_}}
-  path: "/api/feedItems/markAsUnread"
-  queryArgs: object
-  bodyArgs: {itemId: DbKey}
-  responseType: object
-}
-
 }}
