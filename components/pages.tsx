@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import {PageWrapper} from './layout';
 import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm} from './forms';
-import {ErrorMessage,Link,Loading,BulletSeparator,FeedItem} from './widgets';
+import {ErrorMessage,Link,Loading,BulletSeparator,FeedItem,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {useCurrentUser} from '../lib/useCurrentUser';
@@ -120,6 +120,10 @@ export function LandingPage() {
       color: "#006"
     },
   }));
+  const currentUser = useCurrentUser();
+  if(currentUser) {
+    return <Redirect to="/dashboard"/>
+  }
   
   return <div>
     <h1 className={classes.title}>SRSR . SR ... SR</h1>

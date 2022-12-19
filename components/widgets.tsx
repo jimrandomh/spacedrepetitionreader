@@ -1,6 +1,8 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {useJssStyles} from '../lib/useJssStyles';
+import {redirect} from '../lib/browserUtil';
 import classNames from 'classnames';
+
 
 export function Link({href, onClick, className, color=true, children}: {
   href?: string
@@ -153,4 +155,14 @@ export function Button({label,onClick}: {
   >
     {label}
   </div>
+}
+
+export function Redirect({to}: {to: string}) {
+  useEffect(() => {
+    if(to) {
+      redirect(to);
+    }
+  }, [to]);
+  
+  return null;
 }
