@@ -18,7 +18,12 @@ export function addDeckEndpoints(app: Express) {
     });
     
     return {
-      decks: decks.map(deck => apiFilterDeck(deck, ctx))
+      decks: decks.map(deck => {
+        return {
+          ...apiFilterDeck(deck, ctx),
+          due: 0, //TODO
+        };
+      })
     }
   });
   
@@ -96,11 +101,6 @@ export function addDeckEndpoints(app: Express) {
     });
     
     return {id: card.id};
-  });
-  
-  defineGetApi<ApiTypes.ApiListCards>(app, "/api/cards/list", async (ctx) => {
-    assertLoggedIn(ctx);
-    return {} //TODO
   });
   
   definePostApi<ApiTypes.ApiDeleteCard>(app, "/api/cards/delete", async (ctx) => {
@@ -239,3 +239,6 @@ function apiFilterCard(card: Card, _ctx: ServerApiContext): ApiTypes.ApiObjCard 
     back: card.back,
   };
 }
+
+
+

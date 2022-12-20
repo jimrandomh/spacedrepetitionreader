@@ -39,6 +39,15 @@ export interface ApiObjRssItem { //{{_}}
 }
 
 
+export interface ApiObjDeckWithDueCount extends ApiObjDeck { //{{_}}
+  due: number
+}
+
+export interface ApiObjFeedWithUnreadCount extends ApiObjFeed { //{{_}}
+  unreadCount: number
+}
+
+
 export interface RestApi { //{{_}}
   path: string
   method: string
@@ -98,7 +107,7 @@ export interface ApiListDecks extends RestApiGet { //{{_}}
   path: "/api/decks/list"
   queryArgs: object
   responseType: {
-    decks: ApiObjDeck[]
+    decks: ApiObjDeckWithDueCount[]
   }
 }
 
@@ -140,14 +149,6 @@ export interface ApiCreateCard extends RestApiPost { //{{_}}
   }
   responseType: {
     id: DbKey
-  }
-}
-
-export interface ApiListCards extends RestApiGet { //{{_}}
-  path: "/api/cards/list"
-  queryArgs: object
-  responseType: {
-    //TODO
   }
 }
 
@@ -229,7 +230,7 @@ export interface ApiListSubscriptions extends RestApiGet { //{{_}}
   path: "/api/feeds/subscribed"
   queryArgs: object
   responseType: {
-    feeds: (ApiObjFeed & {unreadCount: number})[]
+    feeds: ApiObjFeedWithUnreadCount[]
   }
 }
 

@@ -98,6 +98,11 @@ export function LeftSidebar() {
     spacer: {
       height: 16,
     },
+    sectionHeader: {
+      display: "block",
+      marginTop: 16,
+      marginBottom: 16,
+    },
     sidebarSection: {
     },
   }));
@@ -120,25 +125,39 @@ export function LeftSidebar() {
     <div className={classes.spacer}/>
     
     <div className={classes.sidebarSection}>
-      <Link href="/decks/manage" color={false}>Decks</Link>
+      <Link href="/decks/manage" color={false} className={classes.sectionHeader}>Decks</Link>
       {loadingDecks && <Loading/>}
-      <ul>
-        {decksResponse?.decks && decksResponse.decks.map(deck => <li key={""+deck.id}>
-          <Link color={false} href={`/decks/edit/${deck.id}`}>{deck.name}</Link>
-        </li>)}
-      </ul>
+      {decksResponse?.decks && decksResponse.decks.map(deck => <div key={""+deck.id}>
+        <Link color={false} href={`/decks/edit/${deck.id}`}>{deck.name}</Link>
+      </div>)}
     </div>
     <div className={classes.sidebarSection}>
-      <Link href="/feeds/manage" color={false}>Feeds</Link>
+      <Link href="/feeds/manage" color={false} className={classes.sectionHeader}>Feeds</Link>
       {loadingFeeds && <Loading/>}
-      <ul>
-        {subscriptionsResponse?.feeds && subscriptionsResponse.feeds.map(feed => <li key={""+feed.id}>
-          <Link color={false} href={`/feeds/${feed.id}`}>
-            {feed.title || feed.url}
-          </Link>
-        </li>)}
-      </ul>
+      
+      {subscriptionsResponse?.feeds && subscriptionsResponse.feeds.map(feed => <FeedsListItem key={feed.id} feed={feed}/>)}
     </div>
   </div>;
 }
 
+function FeedsListItem({feed}: {
+  feed: ApiTypes.ApiObjFeedWithUnreadCount
+}) {
+  const classes = useJssStyles("FeedListItem", () => ({
+    root: {
+      display: "flex",
+    },
+    link: {
+      flexGrow: 1,
+    },
+    unreadCount: {
+    },
+  }));
+  
+  return <div className={classes.root}>
+    <Link color={false} href={`/feeds/${feed.id}`} className={classes.link}>
+      {feed.title || feed.url}
+    </Link>
+    <div className={classes.unreadCount}>{feed.unreadCount}</div>
+  </div>
+}
