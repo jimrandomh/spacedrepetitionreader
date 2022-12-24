@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Overcoming Bias</title>
+	<atom:link href="https://www.overcomingbias.com/feed" rel="self" type="application/rss+xml" />
+	<link>https://www.overcomingbias.com</link>
+	<description>This is a blog on why we believe and do what we do, why we pretend otherwise, how we might do better, and what our descendants might do, if they don&#039;t all die.</description>
+	<lastBuildDate>Tue, 20 Dec 2022 01:39:23 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.0.3</generator>
+	<item>
+		<title>Less Talk Context</title>
+		<link>https://www.overcomingbias.com/2022/12/less-talk-context.html</link>
+					<comments>https://www.overcomingbias.com/2022/12/less-talk-context.html#respond</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Tue, 20 Dec 2022 01:30:51 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Hypocrisy]]></category>
+		<category><![CDATA[Language]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33322</guid>
+
+					<description><![CDATA[Here’s a long-term trend I don’t recall hearing much about: over time, talk has been losing its non-talk context. That is, over time listeners have known less about the context of speaker talk. Though animals have quite limited languages, they &#8230; <a href="https://www.overcomingbias.com/2022/12/less-talk-context.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<p>Here’s a long-term trend I don’t recall hearing much about: over time, talk has been losing its non-talk context. That is, over time listeners have known less about the context of speaker talk.</p>
+<p>Though animals have quite limited languages, they often manage to say what they need to say. And shared context helps with that. For example, each animal may see a lot about where they each are and what they are each doing.</p>
+<p>Human language allows for a lot more to be said via our words, and even more via style, such as tone, pacing, etc. But in private talk, we humans still rely heavily on context to make ourselves understood. This context includes not just where we are and what we are doing, but also our histories, relations to each other, and what we have heard about each other via gossip.</p>
+<p>Humans also often distinguish between “text” and “subtext”. The literal meanings of our words often differ from, and even contradict, what we say via style and context. As quotable texts are usually designed internally to make subtext deniable, seeing style and context help a lot for inferring subtext.</p>
+<p>How much context humans have to interpret words has always varied. For example, when humans addressed larger groups, less could be inferred from their relation to particular audience members. And low context situations have increased over time. For example, with rising population densities, individuals more often talk to relative strangers.</p>
+<p>While the introduction of writing has allowed the exchange of letters between friends, writing also allowed a single speaker to address many diverse people across space and time. Furthermore, schools and mass media have greatly encouraged many to spend a lot of time reading such low-context writings. In the last few decades, social media has gone further, encouraged many ordinary people to spend a lot of time <em>writing</em> in a lower-context mode as well. And very recently, large language models trained on big datasets of such public talk have been able to mimic this low-context talk style impressively well.</p>
+<p>We humans change our talk in many ways to deal with lower context. For example, speakers add more expressive language, and distinctive talk styles, in order to create stronger packages of listener expectations. And because listeners consistently seek subtext, they more aggressively infer “implicatures” from what speakers say. For example, we feel more free to attribute motives according to speaker demographics, or by “political” associations.</p>
+<p>Low context writers seeking to avoid accusations of subtext often use a defensive low-emotional “bureaucratic” or “official” “<a href="https://www.overcomingbias.com/2009/03/deceptive-writing-styles.html">classic</a>” style. This style admits of no motives other than telling you simply and directly what the writer sees. And as this is style of much of the text on which large language models have been trained, as as the sponsors of such models seek to avoid criticism of their models, these models also tend to admit to no other motives. Also, as classic official talk tends to be “socially desirable”, avoiding cynical appearances, these language models also tend to be reluctant to suspect low motives for human behaviors.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/12/less-talk-context.html/feed</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>We Sweat Big Stuff Badly</title>
+		<link>https://www.overcomingbias.com/2022/12/we-sweat-the-big-stuff-badly.html</link>
+					<comments>https://www.overcomingbias.com/2022/12/we-sweat-the-big-stuff-badly.html#respond</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Sat, 17 Dec 2022 20:45:58 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Agents]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33320</guid>
+
+					<description><![CDATA[Don’t sweat the small stuff; and its all small stuff. Compared to unimportant decisions, for moderately important decisions we tend to do more thorough practical decision analyses. This is mainly because we try harder. Yet when we get to our &#8230; <a href="https://www.overcomingbias.com/2022/12/we-sweat-the-big-stuff-badly.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<blockquote><p><em>Don’t sweat the small stuff; and its all small stuff.</em></p></blockquote>
+<p>Compared to unimportant decisions, for moderately important decisions we tend to do more thorough practical decision analyses. This is mainly because we try harder. Yet when we get to our most important decisions, our decision analyses tend to be <em>less </em>explicit, thorough, or practical. This is in part because we tend to see such issues as more symbolic, and more sacred.</p>
+<p>For example, we think more carefully about if and how to repair a car, compared to a broken pencil. Yet when it comes to thinking about repairing our bodies, our thinking tends to get <em>less</em> thorough and analytic. We would rather just trust our prestigious doctor, and those who conferred prestige on them, and not think about the subject. It seems that we mainly use medicine as a way to show that we care, instead of as a way to get well. And as a result, people who we randomly induce to get more medicine are <em>not</em> on average substantially healthier. That’s a pretty big fail.</p>
+<p>We handle small conflicts all the time, and we put more effort into handling moderately important conflicts. Yet our biggest conflicts get handed over to a quite dysfunctional legal system. (A system few are willing to think of redesigning.) We each assume it works well until we personally have to deal with it. Then we try to just trust our prestigious lawyer. We show little interest in lawyer track records or incentive contracts; we just don’t want to think about the topic.</p>
+<p>We are eager to connect with each other socially, and in a low key informal contexts where the same people regularly come into contact with each other, people will in fact chat, socialize, and get to know each other. In in those processes, they will successfully tend to get more contact with people they like better. But even the loneliest people are quite reluctant to directly approach strangers. We’d rather stay lonely than to risk a clear public rejection.</p>
+<p>At home, we are generally capable of doing modest chores, and of learning the skills needed to do them. And we put more effort into learning the chores that matter more. But at school and on jobs, we often <a href="https://en.wikipedia.org/wiki/Self-handicapping">self-sabotage</a> and put in low effort on the biggest choices, in order to make failure less of a signal of what we could accomplish if only we’d try harder. I’ve done this many times in my life. Often I was most productive when I’d play hokey from one “should do” project to work on another “not supposed to be doing” project.</p>
+<p>Our disfunction re big work choices seems especially dramatic in the case of people who choose hobbies and video games with tasks, and related performance feedback, are quite similar to those on real jobs. They say they’d rather not work for money because they hate the prospect of being criticized or looked down on for poor job performance.</p>
+<p>Yes many, perhaps even most, people slowly “mature” over time into becoming better able to “own” and practically consider big decisions. But even so, most of us still aren’t very good at this. So as a lot rides on such big decisions, how can we get people to better sweat the big stuff?</p>
+<p>One approach is to pair people with incentivized expert advisors who can push particular decisions, more or less gently. These advisors can be more calculating and dispassionate, as such decisions don’t loom as large for them personally. And less individual more communal societies often do pair people with associates who advise them, though it is often unclear how expert or well-incentivized is such advice. Fans of regulation also suggest that regulators would do well in this advisor role, though critics of regulation have doubts.</p>
+<p>This issue is one of the reasons I’m so interested in designing and testing better personal <a href="https://www.overcomingbias.com/2019/07/radical-pay-for-results.html">agents</a>. Like tax <a href="https://www.overcomingbias.com/2022/10/new-tax-career-agent-test.html">career</a> <a href="https://www.overcomingbias.com/2021/09/are-you-your-best-career-agent.html">agents</a>, <a href="https://www.overcomingbias.com/2007/10/buy-health-not.html">life maintenance organizations</a>, or legal liability <a href="https://www.overcomingbias.com/2019/09/who-vouches-for-you.html">vouchers</a>. Such agents can arguably be both expert and well-incentivized to advise well. Making us more comfortable with encouraging ordinary folks to rely more on their advice, instead of on their own broken decision-making.</p>
+<p><strong>Added 18Dec:</strong> Thought some <a href="https://www.cambridge.org/core/journals/royal-institute-of-philosophy-supplements/article/abs/big-decisions-opting-converting-drifting/F77544FB8EF40A35F963431223E85A37">claim</a> that standard decision theory is inadequate for big decisions, I&#8217;m not at all persuaded of that.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/12/we-sweat-the-big-stuff-badly.html/feed</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Who Owes Who What?</title>
+		<link>https://www.overcomingbias.com/2022/12/who-owes-who-what.html</link>
+					<comments>https://www.overcomingbias.com/2022/12/who-owes-who-what.html#respond</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Thu, 15 Dec 2022 19:25:06 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Morality]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33317</guid>
+
+					<description><![CDATA[One of the reasons I’ve always shied away from moral questions is that I’ve lacked a relevant analysis system as powerful as those I rely on in many other areas. My thinking has always relied heavily on intellectual systems. Oh &#8230; <a href="https://www.overcomingbias.com/2022/12/who-owes-who-what.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<p>One of the reasons I’ve always shied away from moral questions is that I’ve lacked a relevant analysis system as powerful as those I rely on in many other areas. My thinking has always relied heavily on intellectual <a href="https://www.overcomingbias.com/2021/11/minds-almost-meeting.html">systems</a>. Oh sure, one can ask what social norms might evolve culturally or biologically, and which norms might individuals deeply internalize. But that framework seems at quite a distance from our usual moral questions.</p>
+<p>Recently, however, I’ve noticed a relevant relatively-systematic framework that seems closer to our usual moral questions. And that framework is: <em>debt</em>. Not only is this framework quite ancient, and robustly recognized by most cultures, but it offers some quite clear and concrete prototypical cases on which to build.</p>
+<p>For example, if I borrow money from you now, then I owe more money back to you later. Or if I ask a favor from you now, I owe you a comparable favor back later. As these scenarios can be seen as contracts, we can inherit to them our many good principles (elaborated in the field of law and economics) regarding when one may be excused for breaching contracts. And we often extend these concepts to include implicit versions. For example, you often are still seen as owing someone for doing you a favor, even if you didn’t ask for the favor, and even if you explicitly asked them not to do it.</p>
+<p>Often when I talk to you, I seem to be promising to tell you the truth, in which case I owe you that truth, and thus owe you more if I instead lie to you. Many other actions seem to have associated expectations to do them in certain ways, so that I owe others more if I fail to meet such expectations. And sometimes when an initially-similar and connected-enough pool of people diverge in terms of later success, we see the more successful as having as later owing something to the less successful; some sort of implicit insurance contract re this risk.</p>
+<p>This framing of moral questions in terms of debt seems more local and concrete compared to two other popular frameworks. One such framework asks what actions you have good <em>reasons</em> to choose, while the other asks what <em>rights</em> people have. From the point of view of the debt framework, the reasons framework suppresses the particular parties you have reasons to repay, while the rights framework suppresses who it is exactly that owes you the effort to guarantee these rights. For example, instead of saying that it is good to help sick people get well, or saying that everyone has a right to medical care, we can ask to whom in particular you might owe what sort of medical help, and why.</p>
+<p>A few recent Twitter polls of mine <a href="https://twitter.com/robinhanson/status/1603204851839672327">found</a> that 4.5 times more people think they owe the world, compared to the world owing them. And their median estimate is that <a href="https://twitter.com/robinhanson/status/1603201550834360320">roughly</a> 2/3 of others owe more than they are owed. So many do feel that they and others owe a lot; the urge to repay can drive a lot of moral action.</p>
+<p>Here are some other nice features of a debt analysis framework. First, repaying debts seems humbler and less braggy than doing or being good, and thus it induces less envy and contrary responses from others. Yes, you are entitled to go beyond repaying your debts, to do more to be virtuous or to help others, in which case maybe you do claim more virtue and goodness, which yes may induce envious responses.</p>
+<p>Second, debt repayment can make sense of partisanship and selective allegiances. If you have had different interactions and relations to different actors, and thus don’t owe them the same amounts, you don’t have to treat them all the same. You can owe your family more than you owe distant foreigners.</p>
+<p>Third, a debt framing calls for more flexibility and effectiveness, and less paternalism. If I did you favors re X, you may return the favors re Y, as long as these favors are similarly valuable. And if you owe me $10,000, neither I nor observers may credit you for repayment if you give me magic beans that you say cost this much. Even if you really really believe in magic beans. For debt, the relevant standard is anchored more in what what the party who is owed sees as valuable than in what the party who owes sees as valuable.</p>
+<p>Graeber&#8217;s book<em> <a href="https://www.overcomingbias.com/2013/10/debt-the-first-5000-years.html">Debt</a></em> suggests that debt is older than money, and first arose in the context of legal rulings. Interestingly, he and other progressives seek to undermine the moral framing of financial debt, as they see debt default and forgiveness as forms of redistribution. Ironically, they try to convince the rest of us that we <em>owe</em> debtors such forgiveness.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/12/who-owes-who-what.html/feed</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Explaining Christmas</title>
+		<link>https://www.overcomingbias.com/2022/12/explaining-christmas.html</link>
+					<comments>https://www.overcomingbias.com/2022/12/explaining-christmas.html#respond</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Tue, 13 Dec 2022 23:30:44 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Holiday]]></category>
+		<category><![CDATA[Sacred]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33315</guid>
+
+					<description><![CDATA[Less than 25% of the population seem to think religion is an important part of Christmas (more) 7 Common Tropes Found in Hallmark Holiday Movies: rekindled romance, bad boyfriends dropped, royalty, family secrets, small towns, aspirational jobs, magic. (more) The &#8230; <a href="https://www.overcomingbias.com/2022/12/explaining-christmas.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<blockquote><p>Less than 25% of the population seem to think religion is an important part of Christmas (<a href="https://revisesociology.com/2017/12/18/sociology-christmas/">more</a>)</p>
+<p>7 Common Tropes Found in Hallmark Holiday Movies: rekindled romance, bad boyfriends dropped, royalty, family secrets, small towns, aspirational jobs, magic. (<a href="https://www.tvinsider.com/gallery/hallmark-christmas-movie-tropes/">more</a>)</p>
+<p>The most memorable and popular Christmas-themed [stories], each … offers up a different &#8220;True Meaning of Christmas&#8221;. For example: <em>A Charlie Brown Christmas</em> … birth of Jesus Christ … <em>It&#8217;s a Wonderful Life</em> … lives can touch one another … [also] <em>A Christmas Carol</em> … <em>Miracle on 34th Street</em> … power of faith/belief … <em>Rudolph the Red-Nosed Reindeer</em> … tolerance … <em>A Christmas Story</em> … joy of a child at receiving gifts (<a href="https://tvtropes.org/pmwiki/pmwiki.php/Main/TrueMeaningOfChristmas">more</a>)</p>
+<p>Reversing the meaning of pseudo-profound bullshit sentences did not impact people’s perception of their profundity. (<a href="https://twitter.com/DegenRolf/status/1600873029290315776">more</a>)</p></blockquote>
+<p>Christmas seems to me under-theorized. I find few attempts to summarize its main distinctive features, and even fewer attempts to explain such patterns. For some reason, this topic is seen as low status among intellectuals, even though Christmas is a prime example of ritual, religion, and the sacred, all topics in which intellectuals claim to be quite interested. So in this post I’ll take a first cut; I hope to inspire others to do more.</p>
+<p>Let’s start with some styled facts. At Christmas, we mostly give presents, eat, and socialize, mostly with family. Much as we do at many other holidays. But in many places, Christmas is special; it is our premiere holiday, collecting the most time and effort. It has more of its own distinct styles in clothes, decorations, food, movies/stories, and songs. More so than at other holidays, people claim to want to “get into the spirt of” Christmas with others. We are more eager to defend Christmas against enemies real and imagined. Christmas has even induces pauses during wars.</p>
+<p>Christmas songs tend to sound bittersweet, older/“timeless”, major key, and they can be more easily sung well by ordinary people. Christmas stories are simpler, more heart-warming, and cover a wide range of relatively sacred themes, including children, family, nostalgia, pro-sociality, and gratitude. Compared to other stories, Christmas stories are more allowed to explicitly endorse and embrace sacred themes. Two common story themes are the power of belief, and characters (re-?) discovering a “true meaning of Christmas”. For both songs and stories, the artist/author tends to fade more into the background.</p>
+<p>We humans use gifts, food, and holiday gatherings to bond together, and we also bond via shared views of the sacred. So it makes sense that we’d associate holidays with sacred themes. However, as Christmas used to be associated with a quite religious theme, it seems puzzling that it has become all the more popular and meaningful over a period of great decline in religious influence. How could that happen?</p>
+<p>Let me suggest that the key to Christmas&#8217; success lies in a synergy between two key elements. First, children are given many gifts at Christmas, but on the apparent condition that they believe implausible claims about Santa, and get into a spirit of Christmas. Second, we often repeat key Christmas myths which say that adults often lose touch with that spirit, but that they can and should find it again.</p>
+<p>To find a Christmas spirit, it can help to see Christmas through children’s eyes. And our task of getting in the spirit is made especially easy by generous criteria on what can count as your “true meaning” of Christmas. As explained in the TV Show <em>Community</em>:</p>
+<blockquote><p>“The meaning of Christmas is: the idea that Christmas has meaning, and it can mean whatever we want.” S2E11, min. 20.</p></blockquote>
+<p>Our many Christmas movies make clear that while we want all adults to get into a spirit of Christmas with us, we will accept reverence of quite a wide range of sacred things for this purpose.</p>
+<p>That is, Christmas more celebrates the sacred in general, and less particular sacred things; Christmas is a more of a sacred salad than a particular structured dish. And if you can’t find such a Christmas spirit in yourself, we will accept your appreciating this spirt in the kids around you. Which we make easy by maxing out kids’ enthusiasm for Christmas, and thus their eagerness to try to believe in it, even in the face of contrary evidence.</p>
+<p>This seems to me to add up to a pretty strong setup for getting everyone into the Christmas spirit. And it seems a stronger setup than for most other holidays. For example, while Halloween is competitive with Christmas in terms of kids’ enthusiasm, we don’t so much try to guilt adults into getting into a spirit of Halloween. And while we do try to guilt adults into getting into a patriotic spirit of nationalism on holidays like July 4 in the U.S., kids aren’t nearly as eager to find that spirit, and many adults don’t see national identity as especially sacred.</p>
+<p>And that’s my simple theory of why Christmas is our premiere holiday, at least in places like the U.S. Which I offer to try to prod intellectuals into theorizing more about Christmas. It is actually an important and promising topic for inquiry. So if you don’t like my theory; what other theories you got?</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/12/explaining-christmas.html/feed</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Yet More Elites Vs Experts</title>
+		<link>https://www.overcomingbias.com/2022/12/yet-more-elites-vs-experts.html</link>
+					<comments>https://www.overcomingbias.com/2022/12/yet-more-elites-vs-experts.html#respond</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Thu, 08 Dec 2022 03:22:13 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Elites]]></category>
+		<category><![CDATA[Experts]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33313</guid>
+
+					<description><![CDATA[In a stereotypic rich household of long ago, servants and the served had different roles, and different styles of talk. Servant areas of responsibility were practical, concrete and narrow, and servants were subject to being overruled by the served. The &#8230; <a href="https://www.overcomingbias.com/2022/12/yet-more-elites-vs-experts.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<p>In a stereotypic rich household of long ago, servants and the served had different roles, and different styles of talk. Servant areas of responsibility were practical, concrete and narrow, and servants were subject to being overruled by the served. The served were responsible for overall policy, especially those that reflected value choices. The served set overall goals, and servants figured out how to achieve them. The served made the biggest choices, including when to punish anyone, while servants made smaller choices.</p>
+<p>Talk between servants, qua servant, tended to be concrete, expert, professional, and instrumental. That is, servants could usually agree on what ends they were trying to achieve, they had relatively fast feedback on what worked or didn’t, they allowed pointed criticisms and rebuttals, and their talk was generally organized to aggregate info well and fast within their areas of responsibility.</p>
+<p>Talk between the served was usually less precise, and more eloquent, emotional, and aspirational. It allowed less for frank direct pointed criticisms and rebuttals. But their talk better managed the greater complexities of their social world. For example, their talk better allowed speakers to show off their prestigious qualities, it better protected them from pointed criticism, and it better navigated treacherous waters of motivations, alliances, and conflict.</p>
+<p>Talk between servants and the served was asymmetric. The served could much more freely initiate topics, proposals, and complaints to servants than vice versa. The served could be more casual and arbitrary. Only the served could give direct orders, while servants were not to contradict the served who pretended to have as much expertise as servants.</p>
+<p>Many of us are aware that a similar relation exists today between employees and bosses. Except that instead of wealth (or a master-slave relation) it is organizational authority that puts bosses in their higher role, and both sides do more to hide their hierarchical relationship. For example, both sides often wear similar clothes, and bosses tend to make suggestions, rather than giving direct orders.</p>
+<p>But most of us seem far less aware that a similar relation also exists today more generally between our entire classes of <a href="https://www.overcomingbias.com/2021/02/experts-versus-elites.html">experts</a> and <a href="https://www.overcomingbias.com/2021/02/more-on-experts-vs-elites.html">elites</a>. Experts are the people who know and do the most on particular valuable topics, while elites are the people of highest status (status includes dominance and prestige), status based on weightings of wealth, smarts, artfulness, beauty, achievement, celebrity, and much more, all combined and ranked via a gossip-induced consensus of elites on who has how much status. The same person can sometimes sit in an expert role, and at other times sit in an elite role.</p>
+<p>While we often pretend that everyone is equally allowed to take important actions, we in fact tend to accept many important actions only if they are taken by elites, who do it in a sufficiently elite style. For example, most are reluctant to consider proposals for innovations, reforms, or new research topics unless they come from sufficiently high elites. We disapprove of non-elites who try to complain, even about their own personal mistreatment, or who try to directly punish wrong-doers. Such things are to be expressed and suggested first in private to appropriate elites, who then might or might not choose to take such matters further. Cynical observations, sexual advances, commentary near sensitive topics, and bad news that might implicitly criticize elites are all tolerated far more from sufficiently high elites who do these things in sufficiently artful styles.</p>
+<p>Many experts enforce such rules on associates, insisting that, when speaking qua expert, they only speak precisely, narrowly, and when asked. But many other experts chafe at these limits. They feel that experts should be encouraged to speak up on important political and social topics where they know the most. Experts should propose innovations and reforms, and criticize existing practices and dysfunctional elites. Furthermore, such advocates feel that public discourse on such topics should be done in a more expert-like “rational” style, with more precise language, arguments clear enough to allow refutations, and others encouraged to attempt such refutations. They blame poor policy in part on the usual elite talk styles, with their vagueness, emotional appeals, and implicit appeals to group attachments.</p>
+<p>Many elites claim to agree with this, and say that they listen lots to experts and adopt their more rational styles. But in fact, elites mostly continue to do as elites have always done. And most everyone else ignores these uppity experts, looking instead only to elites for innovations, reforms, criticisms, and punishments.</p>
+<p>Surely we should consider the possibility that these long-standing non-expert elite styles at least constitute a social equilibrium, wherein deviations would tend to be punished. And furthermore such elite styles may have functional advantages in terms of managing motivations and alliances, and avoiding criticism. Improvements might well require coordinated moves to alternate equilibria, and/or institutional changes that encourage and reward such moves. But until we find such reforms, we should wonder how sure we can be that they aren&#8217;t at least doing things roughly right.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/12/yet-more-elites-vs-experts.html/feed</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Heresy Helps You Think</title>
+		<link>https://www.overcomingbias.com/2022/11/heresy-makes-you-think.html</link>
+					<comments>https://www.overcomingbias.com/2022/11/heresy-makes-you-think.html#comments</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Wed, 30 Nov 2022 20:00:54 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Academia]]></category>
+		<category><![CDATA[Disagreement]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33310</guid>
+
+					<description><![CDATA[The main social functions of school seem to be to help students show off their smarts, conformity, and conscientiousness. Schools also babysit, socialize, and indoctrinate. But run my experience the two stated functions that school fans tout most often are (A) &#8230; <a href="https://www.overcomingbias.com/2022/11/heresy-makes-you-think.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<p>The main social functions of school seem to be to help students show off their smarts, conformity, and conscientiousness. Schools also babysit, socialize, and indoctrinate. But run my experience the two <em>stated</em> functions that school fans tout most often are (A) teaching students particular useful facts and theories,  and(B) teaching students how to <a href="https://www.overcomingbias.com/2022/11/thinkers-must-be-heretics.html">think for themselves</a>.<span class="Apple-converted-space"> </span></p>
+<p>When teaching students to think for themselves, it is not enough to just assign though-provoking essays or stories; students at some point must practice generating, supporting, and debating their opinions on particular example topics. And it doesn’t work to use topics with obvious agreed-on answers, like “is the sky blue?” No, to practice thinking for themselves, students need to engage topics where plausible arguments and evidence can be found on at least two sides.<span class="Apple-converted-space"> </span></p>
+<p>One standard set of example topics is offered by philosophy, topics such as free will, determinism, infinity, solipsism, or nihilism. But these topics tend to be pretty far from the interests and experiences of most students. Students are much more easily and usefully engaged on topics that are currently considered “controversial” in their world. But most schools are quite reluctant to let their students debate most such topics. Why?</p>
+<p>When people listen to a debate on a topic, their opinions consistently <a href="https://marginalrevolution.com/marginalrevolution/2009/04/debating-economics.html">tend</a> <a href="https://www.overcomingbias.com/2009/04/why-refuse-to-debate.html">to</a> move toward the middle of the range of possible opinions on that topic. Thus increasing public attention to a topic is a reliable way to influence public opinion on it. And thus the eagerness of authorities to allow student attention on a topic depends greatly on whether this predictable movement is or is not in their favored direction.</p>
+<p>For example, fans of <a href="https://www.overcomingbias.com/2008/05/expelled-beats-sicko.html">intelligent design</a> push schools to “<a href="https://en.wikipedia.org/wiki/Teach_the_controversy_(campaign)">teach the controversy</a>”, while its opponents want the topic ignored. Vaccine skeptics would love students to consider vaccine skepticism, while the usual elites would not. And progressive teachers happily encourage students to discuss progressive proposals currently unpopular with most citizens, such as race reparations, universal basic income, or a wealth tax.<span class="Apple-converted-space"> </span></p>
+<p>Thus schools that are responsive to parents, politicians, or academic elites mostly do not allow students to debate topics where such powers dislike middle positions there, relative to status quo opinions.<span class="Apple-converted-space"> But most</span><span class="Apple-converted-space"> &#8220;controversial&#8221; topics are exactly of this form; some existing confident </span>position, like &#8220;vaccines are safe&#8221;, is challenged by some contrarians, who win even if audiences only move to middle positions of uncertainty.</p>
+<p>Thus while school fans claim that an important function of school is to help students learn to &#8220;think for themselves&#8221;, school authorities mostly won&#8217;t let students practice such thinking on the controversial topics most suitable for such practice. Me, I&#8217;d be happy to use public polls or votes to select the topics students are allowed to engage in public schools. But I expect that most public school authorities, including most teachers, would strongly opposed such a proposal.</p>
+<p><strong>Added 5Dec</strong>: Yes, there&#8217;s a decent case for the view that schools mostly select for skills, rather than actually improving them. Even so, thinking for yourself seems one of those skills that schools should be selecting for, even if they don&#8217;t improve them.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/11/heresy-makes-you-think.html/feed</wfw:commentRss>
+			<slash:comments>1</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Thinkers Must Be Heretics</title>
+		<link>https://www.overcomingbias.com/2022/11/thinkers-must-be-heretics.html</link>
+					<comments>https://www.overcomingbias.com/2022/11/thinkers-must-be-heretics.html#respond</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Tue, 29 Nov 2022 19:50:09 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Disagreement]]></category>
+		<category><![CDATA[Politics]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33308</guid>
+
+					<description><![CDATA[When we form opinions on topics, the depth of our efforts vary. On some topics we put in no effort, and hold no opinions. On other topics, we notice what are the opinions of standard authorities, and adopt those. We &#8230; <a href="https://www.overcomingbias.com/2022/11/thinkers-must-be-heretics.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<p>When we form opinions on topics, the depth of our efforts vary. On some topics we put in no effort, and hold no opinions. On other topics, we notice what are the opinions of standard authorities, and adopt those. We often go further to learn of some arguments offered by such authorities, and mostly accept those arguments.</p>
+<p>Sometimes we feel contrarian and make up an opinion we know to be contrary to standard ones. Sometimes we instead seek out non-standard authorities that we more respect, and adopt their opinions and maybe also arguments. Contrarian authorities often explicitly mention and rebut the arguments of standard authorities, and sometimes we also learn and adopt those counter-arguments.</p>
+<p>Sometimes we try to learn about many arguments on a topic from many sides, and then try to compare and evaluate them more directly, paying less attention to how much we respect their sources. Sometimes we generate our own arguments to add to this mix. Sometimes we do this alone, and sometimes in collaboration with close associates. Compared to the other approaches mentioned above, this last set of approaches can be described as more “thinking for ourselves”.</p>
+<p>In general, arguments try to draw conclusions from widely accept claims and assumptions. So to dig deeper, we can recurse, by taking the claims X used to support arguments on topic T, and treat some of those X as new topics to consider in this same way.</p>
+<p>Our associates are interested in judging how well we think, and we are eager to impress them. And as all of these effort levels are appropriate in various practical cases, in principle our associates should want to judge our abilities at all of these different levels. However, as we tend to see deeper thinking as harder, where our thinking skills matter more, and the more usual practical task, as authorities haven&#8217;t spoken to most of the practical issues we face, we are more eager to demonstrate and judge abilities to do deeper thinking.</p>
+<p>Thus we all tend to present ourselves as thinking more deeply than we actually do. Not arbitrarily deeply, which isn’t believable. But maybe as deep as is plausible in a given case. So we tend to present ourselves, when possible, as “thinking for ourselves”.</p>
+<p>Note that this thinking-for-yourself approach plausibly produces <em>less</em> accurate and reliable beliefs on each particular topic. Most people are usually less able to integrate info and arguments into an accurate total opinion than is the collective action of the usual authorities. Even so, showing off your abilities, and improving them via practice, often matters more to us than accuracy on each topic. We might be collectively better off due to us all doing more thinking, but this isn&#8217;t obvious.</p>
+<p>We could of course get <em>both</em> accuracy and practice in thinking if we’d do our own analysis, but then adopt authority opinions even when that disagreed with our personal analysis. But we rarely do that, as we consider it “insincere” and &#8220;two-faced”.</p>
+<p>Thinking-for-yourself, however, has a big problem on topics where there are orthodox opinions, opinions on which all good thinking people in some community are supposed to agree. The problem is that thinking for yourself is usually noisy and context-dependent. That is, the process of thinking for ourselves doesn’t consistently produce the same outputs given the same inputs. Many random factors re what arguments we notice, and how we framed or ordered our thoughts, often substantially influence our conclusions. And thus people who think for themselves must be expected to reach contrarian conclusions a substantial (~5-50%) fraction of the time.</p>
+<p>Note that people who want to create the impression that they think for themselves, without putting in the effort of actually doing so, can just randomly adopt contrarian conclusions at roughly this rate. And this does seem to be the strategy of most ordinary people, who have quite high rates of variation in their opinions, and yet who don’t seem to think very deeply. Their opinions even vary widely across time, as they usually can’t recall the random opinions that they generated even a few months before.</p>
+<p>However, this rate of variation is a much bigger problem for people whose opinions are more prominent. If someone publicly states their think-for-themself conclusions on twenty orthodox-adjacent topics, they should expect an average of ~1-10 heressy-adjacent opinions in that set. Yet often a prominent enough person publicly seeming to endorse even a <em>single</em> heresy is enough to get them cancelled in a community. Such as losing their job, or any chance for advancement or entry into that community. What to do?</p>
+<p>One traditional solution has been for the usual authorities to present themselves as focused on particular topics associated with their positions of authority, and <em>not</em> thinking for themselves on most other topics. Especially re most orthodox topics. This was long the usual position of CEOs, for example. Another traditional solution was for scholars, who do often specialize as thinkers on topics at least adjacent to orthodox ones, to speak <a href="https://www.overcomingbias.com/2014/10/philosophy-between-the-lines.html">esoterically</a>, i.e., evasively in public, and only frankly in private to other scholars.</p>
+<p>In our society today, however, a great <a href="https://twitter.com/robinhanson/status/1597691763350962176">many</a> people present themselves as</p>
+<ol>
+<li>relatively prominent and thus worth cancelling,</li>
+<li>largely thinking for themselves even on orthodox-adjacent topics,</li>
+<li>offering their opinions in public on many such topics, and yet</li>
+<li>none of these public opinions are heresies.</li>
+</ol>
+<p>In fact they often express outrage when they encounter another such person expressing even a single heresy. But if they offer non-heresy opinions on twenty such topics, it is quite hard to believe that all those opinions are a random sample of their opinions generated by thinking for themselves; the natural rate of opinion variation due to thinking for yourself is just too high to produce such a result. Such people are probably being selective in what they say, or deceiving themselves into seeing themselves as thinking for themselves more than they actually do.</p>
+<p>And thus we reach the thesis in my title: <em>thinkers must be heretics</em>. If you see people with many opinions none of which are heretical, this just can&#8217;t be a random sample of topics on which they are mostly thinking for themselves. And if you plan to manage a herd of deep thinkers in our world today, people who spend a lot of time showing off how well they can think for themselves, you need to either need to keep them away from orthodox-adjacent topics, or keep their discussions internal and private; don’t let them speak on such things in public. Or be securely insulated from cancellation, if that’s really possible.</p>
+<p>Note that there might exist a minority of thinkers good enough that their think-for-themselves estimates are actually more accurate than the official opinions of the usual authorities. After all, existing institutions often allow entrenched powers to, for a time, resist switching to better estimates. In this case, we might coordinate to make such better estimates more visible, such as via prediction markets. But such entrenched powers have so far prevented this reform.</p>
+<p>Note also that I&#8217;ve avoided listing particular heresies here, for fear of seeming to endorse them. Which suggests how strong social pressures regarding them may be.</p>
+<p><strong>Added 1Dec</strong>: <a href="https://www.overcomingbias.com/2022/02/losing-my-religion.html">Here</a> I describe myself as a &#8220;think for myself polymath.&#8221;</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/11/thinkers-must-be-heretics.html/feed</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>An Alien War Nightmare</title>
+		<link>https://www.overcomingbias.com/2022/11/an-alien-war-nightmare.html</link>
+					<comments>https://www.overcomingbias.com/2022/11/an-alien-war-nightmare.html#respond</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Thu, 24 Nov 2022 22:30:43 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Aliens]]></category>
+		<category><![CDATA[War]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33305</guid>
+
+					<description><![CDATA[Grabby aliens are advanced civs who change the stuff they touch in big visible ways, and who keep expanding fast until they meet each other. Our recent analysis suggests that they appear at random stars roughly once per million galaxies, &#8230; <a href="https://www.overcomingbias.com/2022/11/an-alien-war-nightmare.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<p>Grabby aliens are advanced civs who change the stuff they touch in big visible ways, and who keep expanding fast until they meet each other. Our <a href="http://grabbyaliens.com">recent analysis</a> suggests that they appear at random stars roughly once per million galaxies, and then expand at roughly half the speed of light. Right now, they have filled roughly half of the universe, and if we join them we’ll meet them in roughly a billion years. There may be far more quiet than grabby alien civs out there, but those don’t usually do much or last long, and even the ruins of the nearest are quite far away.</p>
+<p>While I’ve so far avoided thinking about much war within this scenario, I’ve decided to go there now. So here we go.</p>
+<p>First, consider quiet alien wars. Such quiet civs may have internal wars, but different civs rarely get close enough to each other for physical fights. Maybe more advanced ones would sometimes conquer less advanced ones via malicious messages, but I’m skeptical that such events are common. The rare civs who expanded long and quietly mainly to preserve a natural universe and prevent grabby origins within their sphere of control should share goals and thus have little reason to war when they meet. Furthermore, when grabby civs meet quiet ones, abilities would be terribly unequal, and so not much of an occasion for war.</p>
+<p>What about grabby civs? After a few million years they’d probably reach near max possible tech abilities. Which I guess makes them pretty immune to malicious messages. But such civs and their parts might vary in how well they had used a shared origin to promote internal cooperation. And a lack of perfect cooperation would likely result in some internal wars. The higher the rate at which they spend a fraction of their fast-access resources to fight or prevent fights, the <a href="https://www.overcomingbias.com/2015/04/stock-vs-flow-war.html">faster</a> they’d use up such resources. As a result, such fast spending civs might only get resources for a long time if some of their resource sources, like black holes, only allowed slow extraction.</p>
+<p>Long-distance ballistic directed energy weapons, which couldn’t be redirected along the way, would only be of use on targets whose locations could be predicted long enough in advance. As a result, grabby cis would usually ensure that the locations of important resources vulnerable to such attacks could not be so predicted. Similarly, they’d end or stay away from objects like stars that might be induced to explode by outside prods. Thus militarily-useful resources would likely need to maintain unpredictable locations and would need to be located quite close to where they’d be used. So conflicts would tend to be won locally by those with more military resources locally available near the point of conflict.</p>
+<p>If grabby civs are not more able to or inclined to cooperate internally than with other civs, then each small part of such a civ should be similarly wary of neighboring advanced life, regardless of its civ of origin. In which case, the boundary at which different grabby civs meet might not have that much significance. Who wins each local conflict would mainly depend on their relative size, resources, level of internal cooperation, and local geography, but not civ of origin. On 100Mlyr and larger scales, this should add up to a pretty uniform picture.</p>
+<p>However, what if at least some parts of some grabby cigs could use their shared origin to cooperate more strongly internally than they could with other grabby civs? In this case, they’d expect more conflict at the border where grabby civs meet, compared to at other locations. As a result, the cooperating units on both sides might then try to send resources to that border, in anticipation of such conflicts. And then a key question arises: just how fast is it feasible to move militarily useful resources?</p>
+<p>Grabby civs expanding at half the speed might seem surprisingly fast, but this does seem roughly feasible given that they can afford to spend huge resources on speeding tiny seeds that can then use local resources to quickly grow exponentially into huge civs. Alas, no similar exponential strategy seems available to move resources from one place to another. If the resources required to accelerate resources to near the speed of light can be efficiently recaptured at a designation location, then perhaps resources could in fact be efficiently sent very far very fast. But otherwise, sending resources far fast (e.g., &gt;2% of c) may only be possible at crazy high costs.</p>
+<p>At the border between two grabby civs, imagine that one of the civs had better managed to tax internal regions to send more resources to that border from within that civ, and at a very rapid speed. In this case, then after a while the resources accumulated on one side of that border might be far larger than that on the other side. Then if the natural advantage of defense over offense were not too large, the stronger side might be able to initiate a war and take territory from the other side. And in fact this outcome might become so obvious that the losing side would be very sure to lose, and not even want to fight.</p>
+<p>If merely threatening to attack with overwhelming force was usually sufficient to quickly rout the weaker side and win new territory, via induced surrender or flight, or if actual fights did not take too long or destroy too much of an attacker’s resources, then an attacker might continue to move forward into the other side’s territory at a rapid pace. And if that pace were on the order of 2% of the speed of light, that might be sufficient to completely take over all the territory of a neighboring grabby civ within the roughly hundred billion years remaining before the time when, it is now estimated, dark energy makes galaxy clusters disconnected, never more able to see or reach each other. Such attack threats might then be seen as existential risks to such a civ.</p>
+<p>Putting this all together seems to me to create a nightmare scenario, one which might greatly worry many young grabby civs who take very long term views. And, importantly, they’d have to decide how scared to be of this scenario long before they had much info on each particular neighboring civ, or even on any other civs besides themselves. Thus fear of the unknown might push many such civs into paying huge costs to maintain strong governance able to heavily tax internal activity to fund the movement of large amounts of resources out to be ready for unknown future border conflicts. Resources which might be mostly wasted if two such well-prepared civs were to meet.</p>
+<p>Thus the possibilities of (A) long term civ-level views, (B) cheap fast movement of military resources which were hard to convert back to civilian use, (C) a sufficiently low advantage of defense over offense, (D) within-civ governance strong enough to tax and transfer resources to the border, and (E) weak enough governance unable to prevent your side from fleeing or surrendering given overwhelming attackers, all of this together might induce the waste of much, or perhaps even the vast majority of, available resources. Resources that could instead be used to compute far more meaningful peaceful lives near where the required resources sat originally.</p>
+<p>Also note that at the line-shaped borders where three grabby civs meet, all three might have equal resources. Even so, two of them allying against the third would gain an advantage. And if this were sufficient, they might together advanced into the third region, sharing the gains. After which, each of them might have a geometric advantage, partially encircling the other side where their border bends. The possibility of this ally advantage should induce grabby civs to try to seem more similar to each other, to induce others to ally with them.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/11/an-alien-war-nightmare.html/feed</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Sacred Money</title>
+		<link>https://www.overcomingbias.com/2022/11/sacred-money.html</link>
+					<comments>https://www.overcomingbias.com/2022/11/sacred-money.html#respond</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Sat, 19 Nov 2022 21:00:00 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[PayForResults]]></category>
+		<category><![CDATA[Sacred]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33302</guid>
+
+					<description><![CDATA[In many important areas of life like medicine, law, counseling, education, journalism, charity, governance, etc. we rely on giving great discretion to prestigious professionals, who tell us we can trust them due their professional ethics, internal professional review, and deep &#8230; <a href="https://www.overcomingbias.com/2022/11/sacred-money.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<p>In many important areas of life like medicine, law, counseling, education, journalism, charity, governance, etc. we rely on giving great discretion to prestigious professionals, who tell us we can trust them due their professional ethics, internal professional review, and deep devotion to these sacred causes. No need for incentives, transparency, outcome tracking, or legal liability, really; you can just trust them. We usually pay extra for this prestige, validated by prestigious schools.</p>
+<p>Some of us suspect we might do better in such areas to instead give strong results-based financial incentives to for-profit organizations. But alas many see this as sacrilegious. Such sacred ends are instead to be pursued “for themselves”, not selfishly. Using money is seen as encouraging selfishness. In addition, money uses numbers when sacred things aren’t supposed to be measurable, and money highlights tradeoffs, when sacred things are said to not conflict; we can have them all.</p>
+<p>Now many of these rules of the sacred are rules of delusion; while our priests in each area are well aware that tradeoffs exist, numbers are relevant, selfishness is rampant, and money deeply involved, the veneer of priestly devotion can hide all this from those who don’t want to see.</p>
+<p>To try to break through this wall of denial, or at least to reveal its contours, I suggest a provocation: <em>sacred money</em>. Create a kind of money that can only be spent on sacred things. People and orgs could convert ordinary money into sacred money, but not vice versa, and then spend sacred money on sacred activities and outcomes. With sacred money, people and orgs could create sacred property, sacred debt, and sell shares in sacred ventures.</p>
+<p>Importantly, if someone offered sacred money as an incentive to others to produce measurable sacred outcomes (as <a href="https://en.wikipedia.org/wiki/Social_impact_bond">with</a> social impact bonds), it would become harder to object that doing so was profane. After all, it would be harder to complain that people seeking to win sacred money were doing so for selfish reasons, as such money could only be spent on more sacred things.</p>
+<p>There are many details to work out here, and I expect efforts here to expose many delusions and disagreements on what should count as how sacred. For example, a famous “<a href="https://www.overcomingbias.com/2017/12/automatic-norms.html">Taboo Tradeoffs</a>” study found that many are irate to hear of a hospital administrator who spent money on hospital maintenance and salaries instead of saving the life of a particular patient. And they were almost as irate if that administrator thought a lot about the decision before choosing instead to save the life. Is hospital maintenance and salary spending really profane? Are efforts spent on deciding what to do profane? And is money spent on salaries to produce sacred outcomes still sacred if recipients spend some of those salaries on luxuries rather than necessities?</p>
+<p>I don’t have answers to offer here. The point of this exercise would be to force people to make such choices, so as to come up with a more coherent and less delusional way to manage the sacred. One that might allow for more sensible mechanisms and institutions. Such as paying for results.</p>
+<p><strong>Added:</strong> A relevant SMBC <a href="https://www.smbc-comics.com/?id=3540">comic</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/11/sacred-money.html/feed</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Clean Politician Bonds</title>
+		<link>https://www.overcomingbias.com/2022/11/clean-politician-bonds.html</link>
+					<comments>https://www.overcomingbias.com/2022/11/clean-politician-bonds.html#comments</comments>
+		
+		<dc:creator><![CDATA[Robin Hanson]]></dc:creator>
+		<pubDate>Thu, 17 Nov 2022 21:10:33 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<category><![CDATA[Law]]></category>
+		<category><![CDATA[Media]]></category>
+		<category><![CDATA[Politics]]></category>
+		<guid isPermaLink="false">https://www.overcomingbias.com/?p=33300</guid>
+
+					<description><![CDATA[Used to be, many ads appeared in local newspapers, which competed for attention via their local news coverage. This induced such papers to fund local investigative journalism, often looking for dirt on local politicians, which induced such politicians to avoid &#8230; <a href="https://www.overcomingbias.com/2022/11/clean-politician-bonds.html">Continue reading <span class="meta-nav">&#8594;</span></a>]]></description>
+										<content:encoded><![CDATA[<p>Used to be, many ads appeared in local newspapers, which competed for attention via their local news coverage. This induced such papers to fund local investigative journalism, often looking for dirt on local politicians, which induced such politicians to avoid looking dirty. Which was good.</p>
+<p>Alas, in the last few decades local ads have become disconnected from local news, contributing to a great fall in local investigative journalism, and likely a big rise in dirty politicians. But I see a simple fix:</p>
+<blockquote class="twitter-tweet">
+<p dir="ltr" lang="en">Assume you will vote for 1 of 2 candidates for US Mayor, Governor, or House of Repr. Only 1 has posted $1M bond payable to anyone who proves their misbehavior re lies, bribes, or other cheating. On average, what is chance you vote for this candidate?</p>
+<p>— Robin Hanson (@robinhanson) <a href="https://twitter.com/robinhanson/status/1593310203407015936?ref_src=twsrc%5Etfw">November 17, 2022</a></p></blockquote>
+<p><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+<p>If typical voters are anywhere this responsive to such a move, candidates would face strong incentives to offer such bonds. They&#8217;d ask their donors to give them money to create such bonds, or to more directly back such bonds. Which would fund more journalists to seek such dirt, again inducing politicians to avoid looking dirty. Which would again be good.</p>
+<p>Here is a more detailed vision, in time order.</p>
+<p>A) Groups of apparently-politically-neutral investigation-experts team with financial orgs to offer bond holding and judging services. Each such service J would declare the kinds of dirt topics T they feel qualified to judge, and the kinds of assets they can bond. For each such topic T, they declare an evaluation fee $E.</p>
+<p>B) A politician P approaches such a service J, deposits asset $X of appropriate form, and chooses a topic set S. Judge J then creates a bond that pays $X to anyone who, by deadline D, proves dirt on P re any topic T in set S.  Politician P can now publicly announce the existence of this bond, to induce voter confidence.</p>
+<p>C) Any investigator who thinks they have found dirt on P of such a type T in S can approach service J by deadline D, pay appropriate evaluation fee $E, and then present their evidence in support of this dirt claim. This induces J to evaluate this claim. If J decides that the claim is valid, this fact is announced, and the $X asset is transferred to this investigator.</p>
+<p>D) If deadline D is passed, no investigator has been awarded the bond, and no investigator evaluation remains in progress, then the asset $X is returned to the politician or their backer.</p>
+<p>Prediction markets on whether any investigator will ever win a particular bond could offer voters more refined confidence indicators on a candidate.</p>
+<p>This system design should handle most cases, though I could imagine problematic cases in which an investigator&#8217;s evidence raises many suspicions, but doesn&#8217;t quite rise to the level of persuading the judges J. Then a subsequent investigator might collect more evidence, at which point the judges J are persuaded. Perhaps in this case the judges might split the asset $X across these investigators.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://www.overcomingbias.com/2022/11/clean-politician-bonds.html/feed</wfw:commentRss>
+			<slash:comments>1</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>
