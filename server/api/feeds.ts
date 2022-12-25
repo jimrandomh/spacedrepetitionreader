@@ -1,4 +1,4 @@
-import RssParser from 'rss-parser';
+import RssParser, {Item as RssParserItem} from 'rss-parser';
 import {sanitizeHtml} from '../htmlUtil';
 import type {Express} from 'express';
 import type {PrismaClient,User,RssFeed,RssItem} from '@prisma/client'
@@ -12,7 +12,7 @@ export function addFeedEndpoints(app: Express) {
   defineGetApi<ApiTypes.ApiPollFeed>(app, "/api/feed/poll/:feedUrl", async (ctx) => {
     const _currentUser = assertLoggedIn(ctx);
     const {feedUrl} = ctx.query;
-    const feedItems = await pollFeed(feedUrl);
+    const feedItems = await pollFeed(feedUrl, ctx);
     return {feedItems};
   });
   
@@ -37,14 +37,16 @@ export function addFeedEndpoints(app: Express) {
   });
   
   defineGetApi<ApiTypes.ApiLoadFeed>(app, "/api/feed/load/:id", async (ctx) => {
-    const _currentUser = assertLoggedIn(ctx);
+    const currentUser = assertLoggedIn(ctx);
     const id = assertIsKey(ctx.query.id);
     const feed = await ctx.db.rssFeed.findUnique({where:{id}});
     if (!feed) throw new ApiErrorNotFound;
     await maybeRefreshFeed(feed, ctx.db);
     
-    const feedItems = await loadCachedFeedItems(feed, ctx);
-    return {feedItems};
+    const feedItems = await getUnreadItems(currentUser, feed, ctx.db);
+    return {
+      feedItems: feedItems.map(item => apiFilterRssItem(item, ctx)),
+    };
   });
 
   defineGetApi<ApiTypes.ApiListSubscriptions>(app, "/api/feeds/subscribed", async (ctx) => {
@@ -155,7 +157,7 @@ export function addFeedEndpoints(app: Express) {
     const url = assertIsString(ctx.query.url);
     
     return {
-      items: await pollFeed(url)
+      items: await pollFeed(url, ctx)
     };
   });
   
@@ -170,17 +172,17 @@ export function addFeedEndpoints(app: Express) {
 }
 
 
-export async function pollFeed(feedUrl: string): Promise<ApiTypes.ApiObjRssItem[]> {
+export async function pollFeed(feedUrl: string, ctx: ServerApiContext): Promise<ApiTypes.ApiObjRssItem[]> {
   const parser = new RssParser();
   const feed = await parser.parseURL(feedUrl);
   
-  return feed.items.map(item => ({
-    title: item.title ?? "",
-    link: item.link ?? "",
-    pubDate: item.pubDate ?? "",
-    summary: sanitizeHtml(item.content ?? ""),
-    id: item.id ?? "",
-  }));
+  return feed.items.map(item => {
+    const feedItem = rssParserToFeedItem(item, "feedId");
+    return apiFilterRssItem({
+      id: "",
+      ...feedItem
+    }, ctx);
+  });
 }
 
 function apiFilterRssFeed(feed: RssFeed, _ctx: ServerApiContext): ApiTypes.ApiObjFeed {
@@ -248,15 +250,9 @@ async function refreshFeed(feed: RssFeed, db: PrismaClient) {
     } else {
       console.log(`Creating item in feed ${feed.id}`);
       console.log(item);
+      
       await db.rssItem.create({
-        data: {
-          title: item.title || "",
-          link: item.link || "",
-          content: sanitizeHtml(item.content || ""),
-          pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
-          remoteId: item.id || "",
-          feedId: feed.id,
-        }
+        data: rssParserToFeedItem(item, feed.id)
       });
     }
   }));
@@ -265,14 +261,6 @@ async function refreshFeed(feed: RssFeed, db: PrismaClient) {
     where: {id: feed.id},
     data: {lastSync: new Date()}
   });
-}
-
-async function loadCachedFeedItems(feed: RssFeed, ctx: ServerApiContext): Promise<ApiTypes.ApiObjRssItem[]> {
-  const items = await ctx.db.rssItem.findMany({
-    where: {feedId: feed.id}
-  });
-  
-  return items.map(item => apiFilterRssItem(item, ctx));
 }
 
 async function markAsRead(user: User, item: RssItem, ctx: ServerApiContext): Promise<void> {
@@ -298,6 +286,25 @@ export async function getUnreadItems(user: User, feed: RssFeed, db: PrismaClient
           userId: user.id
         }
       }
-    }
+    },
+    orderBy: {
+      pubDate: "desc",
+    },
   });
 }
+
+
+function rssParserToFeedItem(item: {[key: string]: any} & RssParserItem, feedId: DbKey) {
+  const content = item['content:encoded'] || item['content'] || item['summary'] || "";
+  
+  return {
+    title: item.title || "",
+    link: item.link || "",
+    content: sanitizeHtml(content),
+    pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
+    remoteId: item.id || "",
+    feedId: feedId,
+  };
+}
+
+

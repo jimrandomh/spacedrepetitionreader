@@ -170,7 +170,9 @@ export function ManageFeeds() {
     {loadingSubscriptions && <Loading/>}
     <ul>
       {data?.feeds && data.feeds.map(feed => <li key={feed.id}>
-        {feed.url}
+        <Link href={`/feeds/${feed.id}`}>
+          {feed.title || feed.url}
+        </Link>
       </li>)}
     </ul>
     
@@ -216,6 +218,15 @@ export function ViewCardPage({id}: {id: DbKey}) {
 }
 
 export function ViewFeedPage({id}: {id: DbKey}) {
+  const classes = useJssStyles("ViewFeedPage", () => ({
+    buttons: {},
+    feed: {
+      marginTop: 32,
+    },
+    caughtUp: {
+      textAlign: "center",
+    },
+  }));
   const {data, loading} = useGetApi<ApiTypes.ApiLoadFeed>({
     endpoint: "/api/feed/load/:id",
     query: {id}
@@ -257,16 +268,23 @@ export function ViewFeedPage({id}: {id: DbKey}) {
   return <PageWrapper>
     {loading && <Loading/>}
     
-    <Link color={false} onClick={markAllAsRead}>Mark All As Read</Link>
-    <BulletSeparator/>
-    <Link color={false} onClick={forceRefresh}>Refresh</Link>
-    <BulletSeparator/>
-    <Link color={false} onClick={unsubscribe}>Unsubscribe</Link>
-    {error && <div><ErrorMessage message={error}/></div>}
+    <div className={classes.buttons}>
+      <Link color={false} onClick={markAllAsRead}>Mark All As Read</Link>
+      <BulletSeparator/>
+      <Link color={false} onClick={forceRefresh}>Refresh</Link>
+      <BulletSeparator/>
+      <Link color={false} onClick={unsubscribe}>Unsubscribe</Link>
+      {error && <div><ErrorMessage message={error}/></div>}
+    </div>
     
-    {data?.feedItems && data.feedItems.map(item =>
-      <FeedItem key={item.id} item={item}/>
-    )}
+    <div className={classes.feed}>
+      {data?.feedItems && data.feedItems.length===0 && <div className={classes.caughtUp}>
+        You&apos;re all caught up
+      </div>}
+      {data?.feedItems && data.feedItems.map(item =>
+        <FeedItem key={item.id} item={item}/>
+      )}
+    </div>
     
   </PageWrapper>
 }

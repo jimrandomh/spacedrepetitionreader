@@ -118,11 +118,29 @@ export function FeedItem({item}: {
   item: ApiTypes.ApiObjRssItem
 }) {
   const classes = useJssStyles("FeedItem", () => ({
-    rssTitle: {},
+    root: {
+      border: "1px solid #888",
+      marginLeft: "auto",
+      marginRight: "auto",
+      marginBottom: 16,
+      padding: 16,
+      maxWidth: 600,
+      borderRadius: 8,
+      
+      "& img": {
+        maxWidth: "100%",
+      },
+    },
+    rssTitle: {
+      marginBottom: 12,
+      fontSize: 20,
+    },
     rssBody: {},
   }));
-  return <div>
-    <div className={classes.rssTitle}>{item.title}</div>
+  return <div className={classes.root}>
+    <div className={classes.rssTitle}>
+      <Link href={item.link}>{item.title}</Link>
+    </div>
     <div className={classes.rssBody}>
       <div dangerouslySetInnerHTML={{__html: item.summary}}/>
     </div>
