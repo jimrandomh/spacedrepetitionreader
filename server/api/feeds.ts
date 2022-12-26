@@ -244,15 +244,17 @@ async function refreshFeed(feed: RssFeed, db: PrismaClient) {
   const existingItemsByRemoteId = keyBy(existingItems, item=>item.remoteId);
   
   await Promise.all(feedResponse.items.map(async (item) => {
-    const matchingItem = existingItemsByRemoteId[item.remoteId];
-    if (matchingItem) {
+    const translated = rssParserToFeedItem(item, feed.id);
+    const matchingItem = existingItemsByRemoteId[translated.remoteId];
+    if (translated.remoteId && matchingItem) {
       // TODO: Check if changed and maybe update
+      //console.log(`Not replacing item in feed ${feed.id}`);
     } else {
-      console.log(`Creating item in feed ${feed.id}`);
-      console.log(item);
+      //console.log(`Creating item in feed ${feed.id}`);
+      //console.log(item);
       
       await db.rssItem.create({
-        data: rssParserToFeedItem(item, feed.id)
+        data: translated
       });
     }
   }));
@@ -296,14 +298,14 @@ export async function getUnreadItems(user: User, feed: RssFeed, db: PrismaClient
 
 function rssParserToFeedItem(item: {[key: string]: any} & RssParserItem, feedId: DbKey) {
   const content = item['content:encoded'] || item['content'] || item['summary'] || "";
+  const remoteId = item.guid || item.id || item.link || item.pubDate || item.title || "";
   
   return {
     title: item.title || "",
     link: item.link || "",
     content: sanitizeHtml(content),
     pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
-    remoteId: item.id || "",
-    feedId: feedId,
+    remoteId, feedId,
   };
 }
 
