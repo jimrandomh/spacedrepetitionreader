@@ -11,8 +11,8 @@ import {useJssStyles} from '../lib/useJssStyles';
 
 export function AboutPage() {
   return <div className="aboutPage">
-    <h1>About SRSRSR</h1>
-    <p>SRSRSR is spaced repetition software with RSS integration</p>
+    <h1>About Spaced Repetition Reader</h1>
+    <p>Spaced Repetition Reader is spaced repetition software with RSS integration</p>
   </div>
 }
 
@@ -126,7 +126,7 @@ export function LandingPage() {
   }
   
   return <div>
-    <h1 className={classes.title}>SRSR . SR ... SR</h1>
+    <h1 className={classes.title}>Spaced Repetition Reader</h1>
     <p>Spaced repetition with an integrated RSS reader</p>
     
     <LoginForm/>
