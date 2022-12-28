@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import {PageWrapper} from './layout';
 import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm} from './forms';
-import {ErrorMessage,Link,Loading,BulletSeparator,FeedItem,Redirect} from './widgets';
+import {ErrorMessage,Link,Loading,BulletSeparator,FeedItem,FeedItemFrame,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {useCurrentUser} from '../lib/useCurrentUser';
@@ -282,7 +282,9 @@ export function ViewFeedPage({id}: {id: DbKey}) {
         You&apos;re all caught up
       </div>}
       {data?.feedItems && data.feedItems.map(item =>
-        <FeedItem key={item.id} item={item}/>
+        <FeedItemFrame key={item.id}>
+          <FeedItem item={item}/>
+        </FeedItemFrame>
       )}
     </div>
     

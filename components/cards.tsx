@@ -143,7 +143,12 @@ export function RSSCard({card, onFinish}: {
   card: ApiTypes.ApiObjRssItem,
   onFinish: ()=>void,
 }) {
-  const classes = useJssStyles("RSSCad", () => ({
+  const classes = useJssStyles("RSSCard", () => ({
+    root: {
+    },
+    contents: {
+      textAlign: "left",
+    },
     next: {},
   }));
   
@@ -152,7 +157,9 @@ export function RSSCard({card, onFinish}: {
   }
   
   return <CardFrame
-    contents={<FeedItem item={card}/>}
+    contents={<div className={classes.contents}>
+      <FeedItem item={card}/>
+    </div>}
     buttons={<>
       <CardButton className={classes.next} onClick={() => clickNext()} label="Next"/>
     </>}

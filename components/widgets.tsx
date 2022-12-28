@@ -119,14 +119,6 @@ export function FeedItem({item}: {
 }) {
   const classes = useJssStyles("FeedItem", () => ({
     root: {
-      border: "1px solid #888",
-      marginLeft: "auto",
-      marginRight: "auto",
-      marginBottom: 16,
-      padding: 16,
-      maxWidth: 600,
-      borderRadius: 8,
-      
       "& img": {
         maxWidth: "100%",
       },
@@ -141,9 +133,30 @@ export function FeedItem({item}: {
     <div className={classes.rssTitle}>
       <Link href={item.link}>{item.title}</Link>
     </div>
-    <div className={classes.rssBody}>
-      <div dangerouslySetInnerHTML={{__html: item.summary}}/>
-    </div>
+    <div
+      className={classes.rssBody}
+      dangerouslySetInnerHTML={{__html: item.summary}}
+    />
+  </div>
+}
+
+export function FeedItemFrame({children}: {
+  children: React.ReactNode,
+}) {
+  const classes = useJssStyles("FeedItemFrame", () => ({
+    root: {
+      border: "1px solid #888",
+      marginLeft: "auto",
+      marginRight: "auto",
+      marginBottom: 16,
+      padding: 16,
+      maxWidth: 600,
+      borderRadius: 8,
+    },
+  }));
+  
+  return <div className={classes.root}>
+    {children}
   </div>
 }
 
