@@ -54,3 +54,16 @@ export const routes: Endpoint[] = [
     component: Pages.ViewCardPage,
   },
 ];
+
+export function pathToRoute(pathname: string): {
+  route: Endpoint|null
+  routeProps: object
+} {
+  for (const route of routes) {
+    const match = route.path.match(pathname)
+    if(match) {
+      return {route, routeProps: match};
+    }
+  }
+  return {route: null, routeProps: {}};
+}

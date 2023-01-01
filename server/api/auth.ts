@@ -1,4 +1,4 @@
-import type {Express} from 'express';
+import type {Express,Request,Response} from 'express';
 import type {PrismaClient, User} from '@prisma/client'
 import {defineGetApi,definePostApi,ServerApiContext,assertIsString} from '../serverApiUtil';
 import bcrypt from 'bcrypt';
@@ -11,7 +11,7 @@ function generateTokenString(): string {
   return crypto.randomBytes(20).toString('hex');
 }
 
-export async function getUserFromReq(req: Express.Request, db: PrismaClient): Promise<User|null> {
+export async function getUserFromReq(req: Request, db: PrismaClient): Promise<User|null> {
   const cookies = new Cookies((req as any).headers.cookie);
   const loginCookie = cookies.get('login')
   if (!loginCookie || !loginCookie.length) {
@@ -29,7 +29,7 @@ export async function getUserFromReq(req: Express.Request, db: PrismaClient): Pr
   return user;
 }
 
-async function createAndAssignLoginToken(req: Express.Request, res: Express.Response, user: User, db: PrismaClient) {
+async function createAndAssignLoginToken(req: Request, res: Response, user: User, db: PrismaClient) {
   const token = generateTokenString();
   await db.loginToken.create({
     data: {
@@ -72,7 +72,10 @@ export function addAuthEndpoints(app: Express) {
         email, passwordHash,
       }
     });
-    await createAndAssignLoginToken(ctx.req, ctx.res, user, ctx.db);
+    
+    if (ctx.req && ctx.res) {
+      await createAndAssignLoginToken(ctx.req, ctx.res, user, ctx.db);
+    }
     
     return {};
   });
@@ -87,7 +90,10 @@ export function addAuthEndpoints(app: Express) {
       throw new Error("Incorrect username or password");
     }
     
-    await createAndAssignLoginToken(ctx.req, ctx.res, user, ctx.db);
+    if (ctx.req && ctx.res) {
+      await createAndAssignLoginToken(ctx.req, ctx.res, user, ctx.db);
+    }
+    
     return {};
   });
   definePostApi<ApiTypes.ApiLogout>(app, "/api/users/logout", async (ctx) => {

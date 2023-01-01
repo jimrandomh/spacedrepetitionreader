@@ -10,6 +10,10 @@ build({
   minify: false,
   outfile: 'build/client.js',
   run: false,
+  define: {
+    isClient: true,
+    isServer: false,
+  },
 }).catch(() => process.exit(1))
 
 build({
@@ -21,5 +25,9 @@ build({
   outfile: 'build/server.js',
   minify: false,
   run: true,
+  define: {
+    isClient: false,
+    isServer: true,
+  },
 }).catch(() => process.exit(1))
 

@@ -1,4 +1,4 @@
-import type {Express} from 'express';
+import type {Express,Request,Response} from 'express';
 import type {User} from '@prisma/client'
 import type {PrismaClient} from '@prisma/client'
 import {getPrisma} from './db';
@@ -8,8 +8,8 @@ import Route from 'route-parser';
 import bodyParser from 'body-parser';
 
 export interface ServerApiContext {
-  req: Express.Request
-  res: Express.Response
+  req: Request|null
+  res: Response|null
   db: PrismaClient
   currentUser: User|null
 }
@@ -22,6 +22,8 @@ export interface ServerApiPostContext<QueryArgs,BodyArgs> extends ServerApiConte
   body: BodyArgs
 }
 
+export const getApiRoutes: {route: Route, fn: any}[] = [];
+
 export function defineGetApi<T extends ApiTypes.RestApiGet>(
   app: Express,
   endpoint: T["path"],
@@ -29,9 +31,9 @@ export function defineGetApi<T extends ApiTypes.RestApiGet>(
 ) {
   const route = new Route(endpoint);
   
-  app.get(endpoint, async (req,res) => {
+  const getFn = async (req: Request, res: Response) => {
     const parsedRoute = route.match(req.url);
-    if (!parsedRoute) throw new Error("Invalid URL");
+    if (!parsedRoute) throw new Error("Invalid URL: "+req.url);
     const queryArgs = mapValues(parsedRoute, (v:string)=>decodeURIComponent(v));
     const db = getPrisma();
     const ctx: ServerApiGetContext<T["queryArgs"]> = {
@@ -47,7 +49,16 @@ export function defineGetApi<T extends ApiTypes.RestApiGet>(
       console.log(e.message);
       res.json({error: e.message});
     }
-  });
+  };
+  
+  getApiRoutes.push({
+    route,
+    fn: async (ctx: ServerApiGetContext<T["queryArgs"]>) => {
+      return await fn(ctx);
+    }
+  })
+  
+  app.get(endpoint, getFn);
 }
 
 export function definePostApi<T extends ApiTypes.RestApiPost>(

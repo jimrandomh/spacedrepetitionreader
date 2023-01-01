@@ -4,7 +4,28 @@ import {Link, Loading} from './widgets';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
+import {UserContextProvider} from '../lib/useCurrentUser';
+import {ModalContextProvider} from '../lib/useModal';
+import type {Endpoint} from '../lib/routes';
+import {Error404Page} from '../components/pages';
 
+export function App({route, routeProps}: {
+  route: Endpoint|null
+  routeProps: object
+}) {
+  if (!route) {
+    return <Error404Page/>
+  }
+  
+  const CurrentRouteComponent = route.component;
+  return <div className="root">
+    <UserContextProvider>
+    <ModalContextProvider>
+      <CurrentRouteComponent {...routeProps}/>
+    </ModalContextProvider>
+    </UserContextProvider>
+  </div>
+}
 
 export function PageWrapper({children}: {
   children: React.ReactNode
