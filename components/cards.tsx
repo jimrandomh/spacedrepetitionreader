@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import shuffle from 'lodash/shuffle';
 import take from 'lodash/take';
 
+
 export function CardChallenge({card, onFinish}: {
   card: {
     id: DbKey
@@ -182,7 +183,6 @@ export function ReviewWrapper({cards, feedItems}: {
       ...limit3feedItems.map((feedItem): CardOrFeedItem => ({type:"feedItem", feedItem})),
     ];
     const shuffled = shuffle(allItems);
-    console.log(shuffled);
     setShuffledDeck(shuffled);
     setStarted(true);
   }
@@ -228,3 +228,5 @@ function ReviewInProgress({items}: {
   </>
   return <div/>
 }
+
+export const components = {CardChallenge,CardFrame,CardButton,RSSCard,ReviewWrapper,ReviewInProgress};

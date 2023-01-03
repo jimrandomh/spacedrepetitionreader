@@ -197,3 +197,6 @@ export function Redirect({to}: {to: string}) {
   
   return null;
 }
+
+
+export const components = {Link,ErrorMessage,Loading,TextAreaInput,BulletSeparator,FeedItem,FeedItemFrame,Button,Redirect};

@@ -84,7 +84,7 @@ export function TopBar() {
   return <div className={classes.root}>
     <div className={classes.siteName}>
       <Link href="/" color={false}>
-        {"SRSR . SR ... SR"}
+        Spaced Repetition Reader
       </Link>
     </div>
     
@@ -182,3 +182,5 @@ function FeedsListItem({feed}: {
     <div className={classes.unreadCount}>{feed.unreadCount}</div>
   </div>
 }
+
+export const components = {App,PageWrapper,TopBar,LeftSidebar,FeedsListItem};

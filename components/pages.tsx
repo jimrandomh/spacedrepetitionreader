@@ -290,3 +290,6 @@ export function ViewFeedPage({id}: {id: DbKey}) {
     
   </PageWrapper>
 }
+
+
+export const components = {AboutPage,DashboardPage,EditDeck,Error404Page,LandingPage,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage};

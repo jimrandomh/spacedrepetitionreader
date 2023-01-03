@@ -9,6 +9,8 @@ import {GetApiProvider,GetApiContext} from '../lib/apiUtil';
 import {getApiRoutes} from './serverApiUtil';
 import {getUserFromReq} from './api/auth';
 import {getPrisma} from './db';
+import {getStaticStylesheet, StylesheetWithHash} from './staticStylesheet';
+import {initJss} from '../lib/useJssStyles';
 
 const projectRoot = path.join(__dirname, '..');
 const staticFilesPath = path.join(projectRoot, 'static');
@@ -22,19 +24,25 @@ function serverStartup() {
   const app = express()
   const port = 5000
   
+  initJss();
   addApiEndpoints(app);
-  serveStaticFiles(app);
+  serverRoutes(app);
   
   app.listen(port, () => {
     console.log(`Listening on port ${port}`)
   })
 }
 
-function serveStaticFiles(app: Express) {
+function serverRoutes(app: Express) {
   app.use('/static', express.static(staticFilesPath))
   //app.use('/', express.static(path.join(projectRoot, 'index.html')));
   app.use('/client.js', express.static(path.join(projectRoot, 'build/client.js')));
   app.use('/client.js.map', express.static(path.join(projectRoot, 'build/client.js.map')));
+  app.get('/jssStyles.css', (req, res) => {
+    const {css,hash} = getStaticStylesheet();
+    // TODO: Set cache-control headers. Make the cache-control headers different if the hash is wrong.
+    res.end(css);
+  });
   app.get('*', async (req, res) => {
     const {status, html} = await renderSSR(req, res, req.url)
     res.writeHead(status);
@@ -44,14 +52,16 @@ function serveStaticFiles(app: Express) {
   console.log(`Serving static files from ${staticFilesPath}`);
 }
 
-const pageTemplate = ({bodyHtml, ssrCache}: {
+const pageTemplate = ({bodyHtml, ssrCache, stylesheet}: {
   bodyHtml: string
   ssrCache: any
+  stylesheet: StylesheetWithHash
 }) => (`<!doctype html>
 <head>
   <title>Spaced Repetition Reader</title>
   <script defer src="/client.js"></script>
   <link rel="stylesheet" type="text/css" href="/static/styles.css"></link>
+  <link rel="stylesheet" type="text/css" href="/jssStyles.css?hash=${stylesheet.hash}"></link>
 </head>
 <body><div id="react-root">${bodyHtml}</div></body>
 <script>window.ssrCache = ${escapeJsonForScriptTag(ssrCache)}</script>`);
@@ -84,11 +94,9 @@ async function renderSSR(req: Request, res: Response, url: string): Promise<SsrR
     apiProvider={apiProvider}
   />
   const bodyHtml = await repeatRenderingUntilSettled(reactTree, apiProvider);
+  const stylesheet = getStaticStylesheet();
   
-  const html = pageTemplate({
-    bodyHtml,
-    ssrCache,
-  });
+  const html = pageTemplate({ bodyHtml, ssrCache, stylesheet });
 
   return {
     status: 200,

@@ -255,3 +255,5 @@ function FeedPreview({feedUrl,onError,onClose}: {
     <Button label="Cancel" onClick={cancel}/>
   </div>
 }
+
+export const components = {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview};
