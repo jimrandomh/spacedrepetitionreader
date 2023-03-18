@@ -21,10 +21,10 @@ build({
   bundle: true,
   sourcemap: true,
   sourcesContent: true,
-  external: ["express","path","fs","rss-parser","body-parser","bcrypt","@prisma","@prisma/client","crypto"],
+  external: ["express","path","fs","rss-parser","body-parser","bcrypt","@prisma","@prisma/client","crypto","rel-to-abs"],
   outfile: 'build/server.js',
   minify: false,
-  run: true,
+  run: cliopts.run && ['node', '-r', 'source-map-support/register', '--inspect', 'build/server.js'],
   define: {
     isClient: false,
     isServer: true,

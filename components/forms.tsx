@@ -117,6 +117,10 @@ export function CreateCardForm({deck}: {
   const [error,setError] = useState<string|null>(null);
   
   async function createCard() {
+    if(!cardFront || !cardBack) {
+      setError("You must provide a front and back.");
+      return;
+    }
     const {result:_,error} = await doPost<ApiTypes.ApiCreateCard>({
       endpoint: "/api/cards/create",
       query: {},
@@ -152,6 +156,10 @@ export function CreateDeckForm() {
   const [error,setError] = useState<string|null>(null);
   
   async function createDeck() {
+    if(!deckName) {
+      setError("You must provide a name.");
+      return;
+    }
     const {result,error} = await doPost<ApiTypes.ApiCreateDeck>({
       endpoint: "/api/decks/create",
       query: {},

@@ -4,6 +4,7 @@ import type {Express} from 'express';
 import type {PrismaClient,User,RssFeed,RssItem} from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound} from '../serverApiUtil';
 import keyBy from 'lodash/keyBy';
+import relToAbs from 'rel-to-abs';
 
 const feedRefreshIntervalMs = 1000*60*60; //1hr
 
@@ -303,7 +304,7 @@ function rssParserToFeedItem(item: {[key: string]: any} & RssParserItem, feedId:
   return {
     title: item.title || "",
     link: item.link || "",
-    content: sanitizeHtml(content),
+    content: sanitizeHtml(relToAbs.convert(content, item.link)),
     pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
     remoteId, feedId,
   };

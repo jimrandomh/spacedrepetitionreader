@@ -22,7 +22,7 @@ interface SsrResult {
 
 function serverStartup() {
   const app = express()
-  const port = 5000
+  const port = 8000
   
   initJss();
   addApiEndpoints(app);
@@ -62,6 +62,7 @@ const pageTemplate = ({bodyHtml, ssrCache, stylesheet}: {
   <script defer src="/client.js"></script>
   <link rel="stylesheet" type="text/css" href="/static/styles.css"></link>
   <link rel="stylesheet" type="text/css" href="/jssStyles.css?hash=${stylesheet.hash}"></link>
+  <meta charset="utf-8"/>
 </head>
 <body><div id="react-root">${bodyHtml}</div></body>
 <script>window.ssrCache = ${escapeJsonForScriptTag(ssrCache)}</script>`);
