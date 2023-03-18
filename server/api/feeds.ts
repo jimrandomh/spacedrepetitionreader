@@ -84,7 +84,7 @@ export function addFeedEndpoints(app: Express) {
       feed = await ctx.db.rssFeed.create({
         data: {
           rssUrl: feedUrl,
-          title: feedUrl,
+          title: feedURLToFeedTitle(feedUrl),
           lastSync: new Date("1970-01-01"),
         }
       });
@@ -310,4 +310,7 @@ function rssParserToFeedItem(item: {[key: string]: any} & RssParserItem, feedId:
   };
 }
 
-
+function feedURLToFeedTitle(feedUrl: string): string {
+  const url = new URL(feedUrl);
+  return url.hostname;
+}
