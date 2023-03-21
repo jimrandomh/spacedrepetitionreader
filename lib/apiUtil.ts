@@ -4,7 +4,7 @@ import Route from 'route-parser';
 import mapValues from 'lodash/mapValues';
 
 type ApiQueryStatus = {
-  result: {loading: boolean, result: any}
+  result: {loading: boolean, result: any, error: any}
   subscribers: Set<any>
 }
 export class GetApiProvider {
@@ -51,7 +51,7 @@ export class GetApiProvider {
   addToCache(cacheEntries: Record<string,any>) {
     for(const uri of Object.keys(cacheEntries)) {
       this.queries[uri] = {
-        result: {loading:false, result: cacheEntries[uri]},
+        result: {loading:false, result: cacheEntries[uri], error: null},
         subscribers: new Set()
       };
     }
@@ -64,15 +64,24 @@ export class GetApiProvider {
   _createRequest(uri: string) {
     if(!(uri in this.queries)) {
       const queryStatus = {
-        result: {loading: true, result: null},
+        result: {loading: true, result: null, error: null},
         subscribers: new Set<any>(),
       };
       this.queries[uri] = queryStatus;
       void (async () => {
-        const fetchResult = await this.fetch(uri);
-        queryStatus.result = {
-          loading: false,
-          result: fetchResult,
+        try {
+          const fetchResult = await this.fetch(uri);
+          queryStatus.result = {
+            loading: false,
+            result: fetchResult,
+            error: null,
+          }
+        } catch(e) {
+          queryStatus.result = {
+            loading: false,
+            result: null,
+            error: e,
+          };
         }
         this._notifySubscribers(queryStatus);
       })();
