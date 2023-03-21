@@ -14,5 +14,11 @@
 	},
 	"pushFilesIntoSubfolder": [
 		"^(\\.\\/)?[^/]*$"
-	]
+	],
+	"languageServers": [
+		{
+			"regex": "\\.ts$|\\.tsx$",
+			"command": "typescript-language-server --stdio --log-level 4 --tsserver-path /opt/homebrew/bin/tsserver"
+		}
+	],
 }

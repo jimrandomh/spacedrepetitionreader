@@ -231,36 +231,50 @@ function FeedPreview({feedUrl,onError,onClose}: {
   });
   
   async function subscribe() {
-    const {result,error} = await doPost<ApiTypes.ApiSubscribeToFeed>({
-      endpoint: "/api/feeds/subscribe",
-      query: {}, body: {feedUrl},
-    });
-    
-    if (error!==null) {
-      onError(error);
-      onClose();
-    } else {
-      const feedId = result.feedId;
-      redirect(`/feeds/${feedId}`);
+    if (data && data.url) {
+      const {result,error} = await doPost<ApiTypes.ApiSubscribeToFeed>({
+        endpoint: "/api/feeds/subscribe",
+        query: {}, body: {feedUrl: data.url},
+      });
+      
+      if (error!==null) {
+        onError(error);
+        onClose();
+      } else {
+        const feedId = result.feedId;
+        redirect(`/feeds/${feedId}`);
+      }
     }
   }
   function cancel() {
     onClose();
   }
   
+  if (loading || !data) {
+    return <Loading/>
+  }
+  if (!data.success) {
+    return <div>
+      Could not load feed: {data.error}
+    </div>
+  }
+  
   return <div>
     <h1>Feed Preview</h1>
+    <div>{data.url}</div>
     
     {loading && <Loading/>}
-    {data && <div className={classes.scrollingRegion}>
-      {data.items.map((feedItem,i) =>
-        <FeedItemFrame key={""+i}>
-          <FeedItem item={feedItem}/>
-        </FeedItemFrame>)}
-    </div>}
+    {data && <>
+      <div className={classes.scrollingRegion}>
+        {data.items.map((feedItem,i) =>
+          <FeedItemFrame key={""+i}>
+            <FeedItem item={feedItem}/>
+          </FeedItemFrame>)}
+      </div>
     
-    <Button label="Subscribe" onClick={subscribe}/>
-    <Button label="Cancel" onClick={cancel}/>
+      <Button label="Subscribe" onClick={subscribe}/>
+      <Button label="Cancel" onClick={cancel}/>
+    </>}
   </div>
 }
 

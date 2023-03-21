@@ -274,6 +274,9 @@ export interface ApiGetFeedPreview extends RestApiGet { //{{_}}
   path: "/api/feeds/preview/:url",
   queryArgs: {url: string}
   responseType: {
+    success: boolean
+    url: string|null
+    error: string|null
     items: ApiObjRssItem[]
   }
 }

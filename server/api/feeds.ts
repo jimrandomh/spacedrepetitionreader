@@ -3,6 +3,7 @@ import {sanitizeHtml} from '../htmlUtil';
 import type {Express} from 'express';
 import type {PrismaClient,User,RssFeed,RssItem} from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound} from '../serverApiUtil';
+import { siteUrlToFeedUrl } from '../feeds/findFeedForPage';
 import keyBy from 'lodash/keyBy';
 import relToAbs from 'rel-to-abs';
 
@@ -156,9 +157,19 @@ export function addFeedEndpoints(app: Express) {
   
   defineGetApi<ApiTypes.ApiGetFeedPreview>(app, "/api/feeds/preview/:url", async (ctx) => {
     const url = assertIsString(ctx.query.url);
+    const {url: feedUrl, error} = await siteUrlToFeedUrl(url);
+    if (!feedUrl) {
+      return {
+        success: false,
+        url: null, error,
+        items: [],
+      }
+    }
     
     return {
-      items: await pollFeed(url, ctx)
+      success: true,
+      url: feedUrl, error: null,
+      items: await pollFeed(feedUrl, ctx),
     };
   });
   
@@ -171,6 +182,7 @@ export function addFeedEndpoints(app: Express) {
     return {};
   });
 }
+
 
 
 export async function pollFeed(feedUrl: string, ctx: ServerApiContext): Promise<ApiTypes.ApiObjRssItem[]> {
