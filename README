@@ -1,0 +1,30 @@
+Spaced Repetition Reader
+========================
+Spaced repetition is a study technique for improving retention of information
+that comes in the form of memorized key-value associations, by repeating
+flashcards on a schedule with exponentially increasing spacing. However, using
+spaced repetition in practice has a problem: it requires maintaining a habit,
+but people who try to do it tend to fall out of the habit because reviewing
+flashcards isn't a very rewarding activity.
+
+This project attempts to solve that problem by hybridizing a spaced repetition
+system with an RSS reader. The idea is, you subscribe to RSS feeds that are
+rewarding to read (eg webcomics), and when new posts appear in these feeds,
+they're mixed into your flashcard decks.
+
+Setup
+=====
+First run `yarn install`. Then set up a locally running postgres database: run
+`psql -d postgres`, and in the SQL shell run:
+    ```
+    CREATE DATABASE spacedrepetitionreader;
+    CREATE USER spacedrepetitionreader WITH PASSWORD '<INSERTPASSWORDHERE>';
+    GRANT ALL PRIVILEGES ON DATABASE spacedrepetitionreader TO spacedrepetitionreader;
+    ```
+Next, edit config.js, in particular adding the the database password you set
+in the previous step to the connection string. Finally, initialize the database
+to empty with
+    ```
+    yarn prisma db push
+    ```
+

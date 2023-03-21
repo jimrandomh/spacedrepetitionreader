@@ -1,4 +1,5 @@
 node_modules
 build/*
 prisma/dev.db*
+config.js
 

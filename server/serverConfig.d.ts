@@ -1,0 +1,5 @@
+
+type SpacedRepetitionServerConfig = {
+  psqlConnectionString: string
+};
+

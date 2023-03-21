@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 const {build,cliopts} = require("estrella");
+const serverConfig = require("./config");
+
+const connectionString = serverConfig.psqlConnectionString;
+process.env.DATABASE_URL = connectionString;
 
 build({
   entryPoints: ['client/client.tsx'],

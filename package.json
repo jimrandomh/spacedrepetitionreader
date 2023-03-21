@@ -6,13 +6,16 @@
   "license": "AGPL-3.0-only",
   "scripts": {
     "build": "node ./build.js",
+    "postinstall": "scripts/postinstall.sh",
     "tsc": "tsc --noEmit",
     "start": "./build.js --run",
     "watch": "./build.js --watch --run",
     "sqlite": "sqlite3 prisma/dev.db",
     "generate": "prisma generate",
-    "lint": "eslint client components lib server",
-    "test": "jest"
+    "lint": "eslint client components lib server test config.js",
+    "test": "jest",
+    "prisma": "DATABASE_URL=\"$(scripts/getConnectionString.js)\" prisma",
+    "psql": "psql \"$(scripts/getConnectionString.js)\""
   },
   "dependencies": {
     "@prisma/client": "4.7.1",
