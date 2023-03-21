@@ -4,9 +4,10 @@ import {redirect} from '../lib/browserUtil';
 import classNames from 'classnames';
 
 
-export function Link({href, onClick, className, color=true, children}: {
+export function Link({href, onClick, alwaysNewTab=false, className, color=true, children}: {
   href?: string
   onClick?: ()=>void
+  alwaysNewTab?: boolean,
   className?: string
   color?: boolean
   children: React.ReactNode
@@ -31,6 +32,7 @@ export function Link({href, onClick, className, color=true, children}: {
       {[classes.noColor]: !color}
     )}
     href={href || "#"}
+    target={alwaysNewTab ? "_blank" : undefined}
   >
     {children}
   </a>;
@@ -128,10 +130,17 @@ export function FeedItem({item}: {
       fontSize: 20,
     },
     rssBody: {},
+    date: {
+      fontSize: 14,
+      color: "#444",
+    },
   }));
   return <div className={classes.root}>
     <div className={classes.rssTitle}>
-      <Link href={item.link}>{item.title}</Link>
+      <Link href={item.link} alwaysNewTab={true}>
+        {item.title}
+      </Link>
+      <div className={classes.date}>{item.pubDate}</div>
     </div>
     <div
       className={classes.rssBody}
