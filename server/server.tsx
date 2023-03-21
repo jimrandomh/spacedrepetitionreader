@@ -11,6 +11,7 @@ import {getUserFromReq} from './api/auth';
 import {getPrisma} from './db';
 import {getStaticStylesheet, StylesheetWithHash} from './staticStylesheet';
 import {initJss} from '../lib/useJssStyles';
+import process from 'process';
 
 const projectRoot = path.join(__dirname, '..');
 const staticFilesPath = path.join(projectRoot, 'static');
@@ -164,5 +165,9 @@ function sleep(delayMs: number): Promise<void> {
     setTimeout(accept, delayMs);
   });
 }
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
 
 serverStartup();
