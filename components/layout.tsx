@@ -119,12 +119,15 @@ export function LeftSidebar() {
     spacer: {
       height: 16,
     },
+    sidebarSection: {
+    },
     sectionHeader: {
       display: "block",
       marginTop: 16,
-      marginBottom: 16,
+      marginBottom: 6,
     },
-    sidebarSection: {
+    sectionBody: {
+      marginLeft: 16,
     },
   }));
   
@@ -147,16 +150,21 @@ export function LeftSidebar() {
     
     <div className={classes.sidebarSection}>
       <Link href="/decks/manage" color={false} className={classes.sectionHeader}>Decks</Link>
-      {loadingDecks && <Loading/>}
-      {decksResponse?.decks && decksResponse.decks.map(deck => <div key={""+deck.id}>
-        <Link color={false} href={`/decks/edit/${deck.id}`}>{deck.name}</Link>
-      </div>)}
+      <div className={classes.sectionBody}>
+        {loadingDecks && <Loading/>}
+        {decksResponse?.decks && decksResponse.decks.map(deck => <div key={""+deck.id}>
+          <Link color={false} href={`/decks/edit/${deck.id}`}>{deck.name}</Link>
+        </div>)}
+        <Link color={true} href="/decks/manage">New Deck</Link>
+      </div>
     </div>
     <div className={classes.sidebarSection}>
       <Link href="/feeds/manage" color={false} className={classes.sectionHeader}>Feeds</Link>
-      {loadingFeeds && <Loading/>}
-      
-      {subscriptionsResponse?.feeds && subscriptionsResponse.feeds.map(feed => <FeedsListItem key={feed.id} feed={feed}/>)}
+      <div className={classes.sectionBody}>
+        {loadingFeeds && <Loading/>}
+        {subscriptionsResponse?.feeds && subscriptionsResponse.feeds.map(feed => <FeedsListItem key={feed.id} feed={feed}/>)}
+        <Link color={true} href="/feeds/add">Add Feed</Link>
+      </div>
     </div>
   </div>;
 }
