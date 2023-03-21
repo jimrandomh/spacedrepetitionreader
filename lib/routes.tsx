@@ -34,6 +34,11 @@ export const routes: Endpoint[] = [
     component: Pages.ManageFeeds,
   },
   {
+    path: new Route("/feeds/add"),
+    access: "LoggedIn",
+    component: Pages.AddFeedPage,
+  },
+  {
     path: new Route("/feeds/:id"),
     access: "LoggedIn",
     component: Pages.ViewFeedPage,

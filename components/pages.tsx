@@ -180,6 +180,12 @@ export function ManageFeeds() {
   </PageWrapper>
 }
 
+export function AddFeedPage() {
+  return <PageWrapper>
+    <SubscribeToFeedForm/>
+  </PageWrapper>
+}
+
 export function ViewCardPage({id}: {id: DbKey}) {
   const {data, loading} = useGetApi<ApiTypes.ApiGetCard>({
     endpoint: "/api/cards/:cardId",
