@@ -213,7 +213,7 @@ export function SubscribeToFeedForm() {
   </div>
 }
 
-function FeedPreview({feedUrl,onError,onClose}: {
+export function FeedPreview({feedUrl,onError,onClose}: {
   feedUrl: string
   onError: (message: string)=>void
   onClose: ()=>void
@@ -255,7 +255,8 @@ function FeedPreview({feedUrl,onError,onClose}: {
   }
   if (!data.success) {
     return <div>
-      Could not load feed: {data.error}
+      <div>Could not load feed: {data.error}</div>
+      <Button label="Cancel" onClick={cancel}/>
     </div>
   }
   

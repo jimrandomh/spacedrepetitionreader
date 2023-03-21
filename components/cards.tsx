@@ -226,7 +226,6 @@ function ReviewInProgress({items}: {
       You&apos;re all caught up!
     </div>}
   </>
-  return <div/>
 }
 
 export const components = {CardChallenge,CardFrame,CardButton,RSSCard,ReviewWrapper,ReviewInProgress};
