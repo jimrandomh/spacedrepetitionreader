@@ -85,7 +85,11 @@ async function resultIsFeed(fetchResult: Response, body: string): Promise<boolea
     console.log(`Fetch of ${fetchResult.url} failed: ${fetchResult.status}`);
     return false;
   }
-  return !!body.match(/^\s*(<\?xml[^>]*>\s*)<\s*(rss|feed)/);
+  return pageBodyIsFeed(body);
+}
+
+export function pageBodyIsFeed(body: string): boolean {
+  return !!body.match(/^\s*(<\?xml[^>]*>\s*)?<\s*(rss|feed)/);
 }
 
 /// Given the result of a fetch() call which might or might not have succeeded
