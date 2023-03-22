@@ -11,7 +11,14 @@ export function sanitizeHtml(html: string): string {
       "em", "i", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s",
       "samp", "small", "span", "strong", "sub", "sup", "time", "u", "var",
       "wbr", "caption", "col", "colgroup", "table", "tbody", "td", "tfoot",
-      "th", "thead", "tr"
-    ]
+      "th", "thead", "tr",
+      "iframe",
+    ],
+    allowedAttributes: {
+      iframe: ["src", "allowfullscreen"],
+    },
+    allowedIframeHostnames: [
+      "www.youtube.com", "youtube.com",
+    ],
   });
 }
