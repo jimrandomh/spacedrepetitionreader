@@ -32,7 +32,10 @@ export function Link({href, onClick, alwaysNewTab=false, className, color=true, 
       {[classes.noColor]: !color}
     )}
     href={href || "#"}
-    target={alwaysNewTab ? "_blank" : undefined}
+    {...alwaysNewTab  && {
+      target: "_blank",
+      rel: "noopener"
+    }}
   >
     {children}
   </a>;
@@ -116,6 +119,17 @@ export function BulletSeparator() {
   return <span>{" • "}</span>
 }
 
+export function FeedScrollList({items}: {
+  items: ApiTypes.ApiObjRssItem[]
+}) {
+  return <>
+    {items.map((feedItem,i) =>
+      <FeedItemFrame key={feedItem.id || (""+i)}>
+        <FeedItem item={feedItem}/>
+      </FeedItemFrame>
+    )}
+  </>
+}
 export function FeedItem({item}: {
   item: ApiTypes.ApiObjRssItem
 }) {
@@ -208,4 +222,4 @@ export function Redirect({to}: {to: string}) {
 }
 
 
-export const components = {Link,ErrorMessage,Loading,TextAreaInput,BulletSeparator,FeedItem,FeedItemFrame,Button,Redirect};
+export const components = {Link,ErrorMessage,Loading,TextAreaInput,BulletSeparator,FeedScrollList, FeedItem,FeedItemFrame,Button,Redirect};

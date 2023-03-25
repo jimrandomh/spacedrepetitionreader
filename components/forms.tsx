@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {useGetApi,doPost} from '../lib/apiUtil';
-import {TextInput,TextAreaInput,ErrorMessage,Loading,FeedItem,FeedItemFrame,Button} from './widgets';
+import {TextInput,TextAreaInput,ErrorMessage,Loading,FeedScrollList,Button} from './widgets';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import {useModal,ModalDialog} from '../lib/useModal';
@@ -267,10 +267,7 @@ export function FeedPreview({feedUrl,onError,onClose}: {
     {loading && <Loading/>}
     {data && <>
       <div className={classes.scrollingRegion}>
-        {data.items.map((feedItem,i) =>
-          <FeedItemFrame key={""+i}>
-            <FeedItem item={feedItem}/>
-          </FeedItemFrame>)}
+        <FeedScrollList items={data.items}/>
       </div>
     
       <Button label="Subscribe" onClick={subscribe}/>
