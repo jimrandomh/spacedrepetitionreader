@@ -89,7 +89,7 @@ export function TopBar() {
     </div>
     
     {currentUser && <>
-      <Link href="/users/profile" className={classes.userNameButton}>{currentUser.name}</Link>
+      <Link href="/profile" className={classes.userNameButton}>{currentUser.name}</Link>
       <Link onClick={logOut} className={classes.logOutButton}>Log Out</Link>
     </>}
     {!currentUser && <>

@@ -293,5 +293,13 @@ export function ViewFeedPage({id}: {id: DbKey}) {
   </PageWrapper>
 }
 
+export function UserProfilePage() {
+  return <PageWrapper>
+    <h1>Settings</h1>
+    
+    <div>{"There aren't any configuration settings yet."}</div>
+  </PageWrapper>
+}
 
-export const components = {AboutPage,DashboardPage,EditDeck,Error404Page,LandingPage,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage};
+
+export const components = {AboutPage,DashboardPage,EditDeck,Error404Page,LandingPage,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,UserProfilePage};

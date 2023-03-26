@@ -58,6 +58,11 @@ export const routes: Endpoint[] = [
     access: "LoggedIn",
     component: Pages.ViewCardPage,
   },
+  {
+    path: new Route("/profile"),
+    access: "LoggedIn",
+    component: Pages.UserProfilePage,
+  },
 ];
 
 export function pathToRoute(pathname: string): {
