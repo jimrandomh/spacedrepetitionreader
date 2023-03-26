@@ -15,7 +15,10 @@ export function sanitizeHtml(html: string): string {
       "iframe",
     ],
     allowedAttributes: {
+      ...sanitize.defaults.allowedAttributes,
       iframe: ["src", "allowfullscreen"],
+      td: ['rowspan','colspan'],
+      th: ['rowspan','colspan'],
     },
     allowedIframeHostnames: [
       "www.youtube.com", "youtube.com",
