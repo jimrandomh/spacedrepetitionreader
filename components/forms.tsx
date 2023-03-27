@@ -9,6 +9,8 @@ import {useModal,ModalDialog} from '../lib/useModal';
 export function LoginForm() {
   const classes = useJssStyles("LoginForm", () => ({
     root: {
+      width: 510,
+      margin: "0 auto",
     },
     form: {
       border: "1px solid #ccc",
@@ -16,10 +18,28 @@ export function LoginForm() {
       display: "inline-block",
       verticalAlign: "top",
       margin: 16,
+      width: 220,
+      height: 165,
+    },
+    input: {
+      "& label": {
+        minWidth: 80,
+      },
+      "& input": {
+        width: 100,
+      },
     },
     formTitle: {
       marginBottom: 8,
       textAlign: "center",
+    },
+    button: {
+      width: 100,
+      marginLeft: 80,
+      marginTop: 8,
+    },
+    oauthSection: {
+      marginTop: 16,
     },
   }));
   
@@ -83,9 +103,9 @@ export function LoginForm() {
       onSubmit={(ev) => {ev.preventDefault(); logIn()}}
     >
       <div className={classes.formTitle}>Log In</div>
-      <TextInput label="Username" value={loginUsername} setValue={setLoginUsername}/>
-      <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword}/>
-      <input type="submit" value="Log In"/>
+      <TextInput label="Username" value={loginUsername} setValue={setLoginUsername} className={classes.input}/>
+      <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword} className={classes.input}/>
+      <input type="submit" value="Log In" className={classes.button}/>
       {loginError && <div><ErrorMessage message={loginError}/></div>}
     </form>
     <form
@@ -93,11 +113,11 @@ export function LoginForm() {
       onSubmit={(ev) => {ev.preventDefault(); createAccount()}}
     >
       <div className={classes.formTitle}>Sign Up</div>
-      <TextInput label="Username" value={createAccountUsername} setValue={setCreateAccountUsername}/>
-      <TextInput label="Email" value={createAccountEmail} setValue={setCreateAccountEmail}/>
-      <TextInput label="Password" inputType="password" value={createAccountPassword} setValue={setCreateAccountPassword}/>
-      <TextInput label="Confirm Password" inputType="password" value={confirmPassword} setValue={setConfirmPassword}/>
-      <input type="submit" value="Create Account"/>
+      <TextInput label="Username" value={createAccountUsername} setValue={setCreateAccountUsername} className={classes.input}/>
+      <TextInput label="Email" value={createAccountEmail} setValue={setCreateAccountEmail} className={classes.input}/>
+      <TextInput label="Password" inputType="password" value={createAccountPassword} setValue={setCreateAccountPassword} className={classes.input}/>
+      <TextInput label="Confirm" inputType="password" value={confirmPassword} setValue={setConfirmPassword} className={classes.input}/>
+      <input type="submit" value="Create Account" className={classes.button}/>
       
       {signupError && <div><ErrorMessage message={signupError}/></div>}
     </form>

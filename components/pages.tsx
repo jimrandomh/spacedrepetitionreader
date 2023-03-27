@@ -117,7 +117,17 @@ export function Error404Page() {
 export function LandingPage() {
   const classes = useJssStyles("LandingPage", () => ({
     title: {
-      color: "#006"
+      color: "#006",
+      textAlign: "center",
+      marginTop: 64,
+      marginBottom: 48,
+    },
+    pitchText: {
+      maxWidth: 600,
+      margin: "0 auto",
+    },
+    loginForm: {
+      margin: "0 auto",
     },
   }));
   const currentUser = useCurrentUser();
@@ -127,9 +137,20 @@ export function LandingPage() {
   
   return <div>
     <h1 className={classes.title}>Spaced Repetition Reader</h1>
-    <p>Spaced repetition with an integrated RSS reader</p>
+    <div className={classes.pitchText}>
+      <p>Spaced Repetition Reader makes reviewing flashcards motivating by mixing
+      webcomics (or anything with an RSS feed) into your decks. It uses a
+      repetition schedule optimized for maximizing your retention of information
+      and will support sharing decks, integration with Roam and other note-taking
+      tools, and import from Anki.</p>
+      
+      <p>Spaced Repetition Reader is open source (AGPL-v3.0), so you can run your
+      own server if you wish to do so. Check it out <a href="https://wwww.github.com/jimrandomh/spacedrepetitionreader">on GitHub</a>.</p>
+    </div>
     
-    <LoginForm/>
+    <div className={classes.loginForm}>
+      <LoginForm/>
+    </div>
   </div>
 }
 

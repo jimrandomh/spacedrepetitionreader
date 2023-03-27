@@ -87,11 +87,12 @@ export function TextAreaInput({label, value, setValue}: {
   </div>
 }
 
-export function TextInput({label, value, setValue, inputType}: {
+export function TextInput({label, value, setValue, inputType, className}: {
   label: string,
   value: string,
   setValue: (newValue: string)=>void,
   inputType?: string,
+  className?: string,
 }) {
   const classes = useJssStyles("TextInput", () => ({
     root: {
@@ -104,8 +105,8 @@ export function TextInput({label, value, setValue, inputType}: {
     },
   }));
   
-  return <div className={classes.root}>
-    <span className={classes.label}>{label}</span>
+  return <div className={classNames(className,classes.root)}>
+    <label className={classes.label}>{label}</label>
     <input
       value={value}
       onChange={ev=>setValue(ev.target.value)}
@@ -222,4 +223,4 @@ export function Redirect({to}: {to: string}) {
 }
 
 
-export const components = {Link,ErrorMessage,Loading,TextAreaInput,BulletSeparator,FeedScrollList, FeedItem,FeedItemFrame,Button,Redirect};
+export const components = {Link,ErrorMessage,Loading,TextInput,TextAreaInput,BulletSeparator,FeedScrollList, FeedItem,FeedItemFrame,Button,Redirect};
