@@ -5,25 +5,30 @@ import {useGetApi,doPost} from '../lib/apiUtil';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import {UserContextProvider} from '../lib/useCurrentUser';
+import {LocationContextProvider} from '../lib/useLocation';
 import {ModalContextProvider} from '../lib/useModal';
 import type {Endpoint} from '../lib/routes';
 import {Error404Page} from '../components/pages';
 
-export function App({route, routeProps}: {
+export function App({route, routeProps, url}: {
   route: Endpoint|null
   routeProps: object
+  url: string 
 }) {
   if (!route) {
     return <Error404Page/>
   }
+
   
   const CurrentRouteComponent = route.component;
   return <div className="root">
+    <LocationContextProvider value={url}>
     <UserContextProvider>
     <ModalContextProvider>
       <CurrentRouteComponent {...routeProps}/>
     </ModalContextProvider>
     </UserContextProvider>
+    </LocationContextProvider>
   </div>
 }
 

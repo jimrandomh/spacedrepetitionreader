@@ -150,7 +150,7 @@ export function addDeckEndpoints(app: Express) {
     
     // Compute a due date for each card
     const cards = flatten(decks.map(deck=>deck.cards));
-    const now = new Date();
+    const now = ctx.query.date ? new Date(ctx.query.date) : new Date();
     const cardsDue = filter(cards, card => {
       const dueDate = getDueDate(card, card.impressions, ctx);
       return dueDate<now;
@@ -187,6 +187,7 @@ export function addDeckEndpoints(app: Express) {
     const cardId = assertIsKey(ctx.body.cardId);
     const timeSpent = assertIsNumber(ctx.body.timeSpent);
     const resolution = assertIsString(ctx.body.resolution);
+    const now = ctx.query.date ? new Date(ctx.query.date) : new Date();
     
     // Check that cardId is a card that exists
     const card = await ctx.db.card.findUnique({
@@ -197,7 +198,7 @@ export function addDeckEndpoints(app: Express) {
     
     await ctx.db.cardImpression.create({
       data: {
-        date: new Date(),
+        date: now,
         timeSpent, resolution, cardId,
         userId: currentUser.id,
       }

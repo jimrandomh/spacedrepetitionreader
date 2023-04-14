@@ -174,7 +174,9 @@ export interface ApiGetCard extends RestApiGet { //{{_}}
 
 export interface ApiCardsDue extends RestApiGet { //{{_}}
   path: "/api/cards/due"
-  queryArgs: object
+  queryArgs: {
+    date?: string
+  }
   responseType: {
     cards: ApiObjCard[]
     feedItems: ApiObjRssItem[]
@@ -217,7 +219,9 @@ export interface ApiLoadFeed extends RestApiGet { //{{_}}
 
 export interface ApiRecordCardImpression extends RestApiPost { //{{_}}
   path: "/api/cards/impression"
-  queryArgs: object
+  queryArgs: {
+    date?: string
+  }
   bodyArgs: {
     cardId: DbKey,
     timeSpent: number, //in milliseconds

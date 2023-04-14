@@ -19,7 +19,7 @@ export function AppClient() {
   }
   
   return <GetApiContext.Provider value={apiProvider}>
-    <App route={currentRoute} routeProps={routeProps}/>
+    <App route={currentRoute} routeProps={routeProps} url={location.href}/>
   </GetApiContext.Provider>
 }
 declare global {

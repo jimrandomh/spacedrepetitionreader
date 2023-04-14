@@ -1,4 +1,5 @@
 import React,{useState} from 'react'
+import DatePicker from "react-datepicker";
 import {PageWrapper} from './layout';
 import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm} from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
@@ -7,6 +8,7 @@ import {useGetApi,doPost} from '../lib/apiUtil';
 import {useCurrentUser} from '../lib/useCurrentUser';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
+import { useLocation } from '../lib/useLocation';
 
 
 export function AboutPage() {
@@ -18,11 +20,17 @@ export function AboutPage() {
 
 export function DashboardPage() {
   const currentUser = useCurrentUser();
+  // const [overrideDate, setOverrideDate] = useState<Date|null>(null);
+  const { query } = useLocation();
+  const overrideDate = query.get('overrideDate') ? new Date(query.get('overrideDate')!) : null;
+  console.log(overrideDate?.toISOString());
   
   const {data, loading} = useGetApi<ApiTypes.ApiCardsDue>({
     skip: !currentUser,
     endpoint: "/api/cards/due",
-    query: {},
+    query: {
+      date: overrideDate?.toISOString(),
+    },
   });
   
   if (!currentUser) {
@@ -32,6 +40,13 @@ export function DashboardPage() {
   
   return <PageWrapper>
     {loading && <Loading/>}
+    <DatePicker selected={overrideDate} showTimeSelect onChange={(date) => {
+      if(!date) {
+        window.location.assign('/dashboard');
+      } else {
+        window.location.assign(`/dashboard?overrideDate=${date.toISOString()}`);
+      }
+    }} />
     {data && <ReviewWrapper
       cards={data.cards}
       feedItems={data.feedItems}

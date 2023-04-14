@@ -58,7 +58,7 @@ export class GetApiProvider {
   }
   
   refetch(_uri: string) {
-    //TODO
+    this.fetch(_uri);
   }
   
   _createRequest(uri: string) {

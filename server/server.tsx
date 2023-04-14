@@ -62,6 +62,7 @@ const pageTemplate = ({bodyHtml, ssrCache, stylesheet}: {
   <title>Spaced Repetition Reader</title>
   <script defer src="/client.js"></script>
   <link rel="stylesheet" type="text/css" href="/static/styles.css"></link>
+  <link rel="stylesheet" type="text/css" href="/static/react-datepicker.css"></link>
   <link rel="stylesheet" type="text/css" href="/jssStyles.css?hash=${stylesheet.hash}"></link>
   <meta charset="utf-8"/>
 </head>
@@ -132,7 +133,7 @@ function AppServer({url, apiProvider}: {
   const {route,routeProps} = pathToRoute(url);
   
   return <GetApiContext.Provider value={apiProvider}>
-    <App route={route} routeProps={routeProps}/>
+    <App route={route} routeProps={routeProps} url={url}/>
   </GetApiContext.Provider>
 }
 
