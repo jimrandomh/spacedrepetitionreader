@@ -100,10 +100,11 @@ export const GetApiContext = createContext<GetApiProvider|null>(null);
 
 export function useGetApi<
   T extends ApiTypes.RestApiGet,
->({ endpoint, query, skip }: {
+>({ endpoint, query, skip, searchParams }: {
   endpoint: T["path"],
   query: T["queryArgs"],
   skip?: boolean,
+  searchParams?: URLSearchParams,
 }): {
   loading: boolean
   data: T["responseType"]|null
@@ -119,15 +120,17 @@ export function useGetApi<
   const withArgs = new Route(endpoint).reverse(mapValues(query, (v:any)=>encodeURIComponent(v)));
   if (!withArgs) throw new Error("Route-parsing failed");
   
+  const withSearchParams = searchParams ? withArgs+"?"+searchParams.toString() : withArgs;
+
   const {loading,result} = useSyncExternalStore(
-    apiProvider.subscribe(withArgs),   //subscribe
-    apiProvider.getSnapshot(withArgs), //getSnapshot
-    apiProvider.getSnapshot(withArgs), //getSnapshot
+    apiProvider.subscribe(withSearchParams),   //subscribe
+    apiProvider.getSnapshot(withSearchParams), //getSnapshot
+    apiProvider.getSnapshot(withSearchParams), //getSnapshot
   );
   
   const refetch = useCallback(() => {
-    apiProvider.refetch(withArgs);
-  }, [apiProvider,withArgs]);
+    apiProvider.refetch(withSearchParams);
+  }, [apiProvider,withSearchParams]);
   
   return {loading, data:result, refetch};
 }

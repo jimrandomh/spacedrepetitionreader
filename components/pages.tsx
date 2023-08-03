@@ -23,14 +23,14 @@ export function DashboardPage() {
   // const [overrideDate, setOverrideDate] = useState<Date|null>(null);
   const { query } = useLocation();
   const overrideDate = query.get('overrideDate') ? new Date(query.get('overrideDate')!) : null;
-  console.log(overrideDate?.toISOString());
   
   const {data, loading} = useGetApi<ApiTypes.ApiCardsDue>({
     skip: !currentUser,
     endpoint: "/api/cards/due",
-    query: {
+    searchParams:  overrideDate ? new URLSearchParams({
       date: overrideDate?.toISOString(),
-    },
+    }) : undefined,
+    query: {},
   });
   
   if (!currentUser) {
@@ -40,6 +40,7 @@ export function DashboardPage() {
   
   return <PageWrapper>
     {loading && <Loading/>}
+    Simulated date:{' '}
     <DatePicker selected={overrideDate} showTimeSelect onChange={(date) => {
       if(!date) {
         window.location.assign('/dashboard');

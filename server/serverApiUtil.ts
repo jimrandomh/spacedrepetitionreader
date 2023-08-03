@@ -15,6 +15,7 @@ export interface ServerApiContext {
 }
 export interface ServerApiGetContext<QueryArgs> extends ServerApiContext {
   query: QueryArgs
+  searchParams: URLSearchParams
 }
 
 export interface ServerApiPostContext<QueryArgs,BodyArgs> extends ServerApiContext {
@@ -33,12 +34,14 @@ export function defineGetApi<T extends ApiTypes.RestApiGet>(
   
   const getFn = async (req: Request, res: Response) => {
     const parsedRoute = route.match(req.url);
+    const parsedUrl = new URL(req.url, "http://localhost");
     if (!parsedRoute) throw new Error("Invalid URL: "+req.url);
     const queryArgs = mapValues(parsedRoute, (v:string)=>decodeURIComponent(v));
     const db = getPrisma();
     const ctx: ServerApiGetContext<T["queryArgs"]> = {
       req, res, query: queryArgs, db,
       currentUser: await getUserFromReq(req, db),
+      searchParams: parsedUrl.searchParams,
     };
     
     try {

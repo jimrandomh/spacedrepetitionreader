@@ -6,7 +6,7 @@ import {addApiEndpoints} from './apiEndpoints';
 import {App} from '../components/layout';
 import {pathToRoute} from '../lib/routes';
 import {GetApiProvider,GetApiContext} from '../lib/apiUtil';
-import {getApiRoutes} from './serverApiUtil';
+import {ServerApiGetContext, getApiRoutes} from './serverApiUtil';
 import {getUserFromReq} from './api/auth';
 import {getPrisma} from './db';
 import {getStaticStylesheet, StylesheetWithHash} from './staticStylesheet';
@@ -81,11 +81,12 @@ async function renderSSR(req: Request, res: Response, url: string): Promise<SsrR
     if (!parsedRoute) throw new Error("Invalid URL in server API: "+uri);
     const {fn,query} = parsedRoute;
     
-    const ctx = {
+    const ctx: ServerApiGetContext<any> = {
       req: null,
       res: null,
       db, currentUser,
       query,
+      searchParams: parsedUrl.searchParams,
     }
     const result = await fn(ctx);
     ssrCache[uri] = result;

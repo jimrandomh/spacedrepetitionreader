@@ -150,7 +150,8 @@ export function addDeckEndpoints(app: Express) {
     
     // Compute a due date for each card
     const cards = flatten(decks.map(deck=>deck.cards));
-    const now = ctx.query.date ? new Date(ctx.query.date) : new Date();
+    const dateStr = ctx.searchParams.get('date');
+    const now = dateStr ? new Date(dateStr) : new Date();
     const cardsDue = filter(cards, card => {
       const dueDate = getDueDate(card, card.impressions, ctx);
       return dueDate<now;
