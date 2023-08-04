@@ -12,15 +12,24 @@ export function getDueDate(card: Card, pastImpressions: CardImpression[], _ctx: 
   const sortedImpressions = orderBy(pastImpressions, imp=>imp.date);
   const lastImpression = sortedImpressions[sortedImpressions.length-1];
   const lastImpressionTime = lastImpression.date.getTime();
-  
-  switch (lastImpression.resolution) {
-    default:
-    case "Easy":
-      return new Date(lastImpressionTime + 60*60*1000); //1hr
-    case "Hard":
-      return new Date(lastImpressionTime + 5*60*1000); //5min
-    case "Repeat":
-      return new Date(lastImpressionTime + 5*1000); //5s
+
+  // TODO: algorithm below is part of the algorithm from here, not including review mode subtleties: https://docs.ankiweb.net/studying.html
+  const steps = [0, 10, 60*24, 60*24*3, 60*24*6, 60*24*12, 60*24*24, 60*24*48];
+
+  let currentStepIndex = 0;
+  for(const impression of sortedImpressions) {
+    switch(impression.resolution) {
+      case "Easy":
+        currentStepIndex = Math.min(currentStepIndex+1, steps.length-1);
+        break;
+      case "Hard":
+        break;
+      case "Repeat":
+        currentStepIndex = 0;
+        break;
+    }
   }
+
+  return new Date(lastImpressionTime + steps[currentStepIndex] * 60*1000);
 }
 

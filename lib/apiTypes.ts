@@ -219,13 +219,11 @@ export interface ApiLoadFeed extends RestApiGet { //{{_}}
 
 export interface ApiRecordCardImpression extends RestApiPost { //{{_}}
   path: "/api/cards/impression"
-  queryArgs: {
-    date?: string
-  }
   bodyArgs: {
     cardId: DbKey,
     timeSpent: number, //in milliseconds
     resolution: string,
+    date?: string,
   }
 }
 

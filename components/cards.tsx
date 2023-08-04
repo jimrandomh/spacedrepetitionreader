@@ -7,12 +7,13 @@ import shuffle from 'lodash/shuffle';
 import take from 'lodash/take';
 
 
-export function CardChallenge({card, onFinish}: {
+export function CardChallenge({card, onFinish, simulatedDate}: {
   card: {
     id: DbKey
     front: string,
     back: string
   },
+  simulatedDate?: Date,
   onFinish: ()=>void,
 }) {
   const classes = useJssStyles("CardChallenge", () => ({
@@ -51,6 +52,7 @@ export function CardChallenge({card, onFinish}: {
           resolution,
           timeSpent: timeSpentMS,
           cardId: card.id,
+          date: simulatedDate?.toISOString(),
         },
       });
     })();
@@ -169,9 +171,10 @@ export function RSSCard({card, onFinish}: {
 
 type CardOrFeedItem = {type:"card",card:ApiTypes.ApiObjCard}|{type:"feedItem",feedItem:ApiTypes.ApiObjRssItem};
 
-export function ReviewWrapper({cards, feedItems}: {
+export function ReviewWrapper({cards, feedItems, simulatedDate}: {
   cards: ApiTypes.ApiObjCard[]
   feedItems: ApiTypes.ApiObjRssItem[]
+  simulatedDate?: Date
 }) {
   const [started,setStarted] = useState(false);
   const [shuffledDeck,setShuffledDeck] = useState<CardOrFeedItem[]|null>(null);
@@ -192,7 +195,7 @@ export function ReviewWrapper({cards, feedItems}: {
   }
   
   if (started && shuffledDeck) {
-    return <ReviewInProgress items={shuffledDeck}/>
+    return <ReviewInProgress items={shuffledDeck} simulatedDate={simulatedDate}/>
   } else {
     return <div>
       <div>You have {cards.length} cards and {feedItems.length} RSS feed items ready.</div>
@@ -201,8 +204,9 @@ export function ReviewWrapper({cards, feedItems}: {
   }
 }
 
-function ReviewInProgress({items}: {
+function ReviewInProgress({items, simulatedDate}: {
   items: Array<CardOrFeedItem>
+  simulatedDate?: Date
 }) {
   const [cardPos,setCardPos] = useState(0);
   const currentCard = items[cardPos];
@@ -214,6 +218,7 @@ function ReviewInProgress({items}: {
       onFinish={() => {
         setCardPos(cardPos+1)
       }}
+      simulatedDate={simulatedDate}
     />}
     {currentCard && currentCard.type==="feedItem" && <RSSCard
       key={cardPos}

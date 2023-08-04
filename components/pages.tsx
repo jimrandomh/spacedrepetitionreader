@@ -51,6 +51,7 @@ export function DashboardPage() {
     {data && <ReviewWrapper
       cards={data.cards}
       feedItems={data.feedItems}
+      simulatedDate={overrideDate ?? undefined}
     />}
   </PageWrapper>
 }

@@ -154,7 +154,7 @@ export function addDeckEndpoints(app: Express) {
     const now = dateStr ? new Date(dateStr) : new Date();
     const cardsDue = filter(cards, card => {
       const dueDate = getDueDate(card, card.impressions, ctx);
-      return dueDate<now;
+      return dueDate<=now;
     });
     
     // Get the user's RSS subscriptions
@@ -188,7 +188,7 @@ export function addDeckEndpoints(app: Express) {
     const cardId = assertIsKey(ctx.body.cardId);
     const timeSpent = assertIsNumber(ctx.body.timeSpent);
     const resolution = assertIsString(ctx.body.resolution);
-    const now = ctx.query.date ? new Date(ctx.query.date) : new Date();
+    const now = ctx.body.date ? new Date(ctx.body.date) : new Date();
     
     // Check that cardId is a card that exists
     const card = await ctx.db.card.findUnique({
