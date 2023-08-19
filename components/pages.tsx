@@ -162,7 +162,7 @@ export function LandingPage() {
       tools, and import from Anki.</p>
       
       <p>Spaced Repetition Reader is open source (AGPL-v3.0), so you can run your
-      own server if you wish to do so. Check it out <a href="https://wwww.github.com/jimrandomh/spacedrepetitionreader">on GitHub</a>.</p>
+      own server if you wish to do so. Check it out <a href="https://www.github.com/jimrandomh/spacedrepetitionreader">on GitHub</a>.</p>
     </div>
     
     <div className={classes.loginForm}>
