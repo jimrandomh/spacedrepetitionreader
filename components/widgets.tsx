@@ -26,7 +26,13 @@ export function Link({href, onClick, alwaysNewTab=false, className, color=true, 
   }));
   
   return <a
-    onClick={onClick ? (_ev => onClick()) : undefined}
+    onClick={onClick
+      ? (ev => {
+          ev.preventDefault();
+          onClick()
+        })
+      : undefined
+    }
     className={classNames(
       classes.link, className,
       {[classes.noColor]: !color}

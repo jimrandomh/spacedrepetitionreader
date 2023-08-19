@@ -1,12 +1,12 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {useCurrentUser} from '../lib/useCurrentUser';
-import {Link, Loading} from './widgets';
+import {BulletSeparator, Button, Link, Loading} from './widgets';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import {UserContextProvider} from '../lib/useCurrentUser';
 import {LocationContextProvider} from '../lib/useLocation';
-import {ModalContextProvider} from '../lib/useModal';
+import {ModalContextProvider, ModalDialog, useModal} from '../lib/useModal';
 import type {Endpoint} from '../lib/routes';
 import {Error404Page} from '../components/pages';
 
@@ -53,6 +53,20 @@ export function PageWrapper({children}: {
       paddingRight: 16,
     },
   }));
+
+  const {openModal} = useModal();
+  const canDebug = true; //TODO
+
+  const openDebugPanel = () => {
+    openModal({
+     fn: (onClose) => {
+       return <ModalDialog>
+         <h2>Debug Options</h2>
+          <Button label="Close" onClick={onClose}/>
+       </ModalDialog>
+     }
+    });
+  }
   
   return <div>
     <TopBar/>
@@ -62,8 +76,12 @@ export function PageWrapper({children}: {
         {children}
       </div>
       <div className={classes.footer}>
+        {canDebug && <>
+          <Link onClick={openDebugPanel}>Debug</Link>
+          <BulletSeparator/>
+        </>}
         <Link href="/about">About</Link>
-        {" · "}
+        <BulletSeparator/>
         <Link href="/privacy-policy">Privacy Policy</Link>
       </div>
     </div>
