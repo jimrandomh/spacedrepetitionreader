@@ -20,7 +20,6 @@ export function App({route, routeProps, url}: {
     return <Error404Page/>
   }
 
-  
   const CurrentRouteComponent = route.component;
   return <div className="root">
     <LocationContextProvider value={url}>
@@ -74,10 +73,18 @@ export function PageWrapper({children}: {
 export function LoggedOutAccessiblePage({children}: {
   children: React.ReactNode,
 }) {
-  // TODO: Show sidebar iff logged in
-  return <div>
-    {children}
-  </div>
+  const currentUser = useCurrentUser();
+  
+  // Show the side and top bars iff logged in
+  if (currentUser) {
+    return <PageWrapper>
+      {children}
+    </PageWrapper>
+  } else {
+    return <div>
+      {children}
+    </div>
+  }
 }
 
 export function TopBar() {
