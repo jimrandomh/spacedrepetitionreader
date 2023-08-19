@@ -7,8 +7,8 @@ test('parses feed test data', () => {
   const parser = new RssParser();
   const testFeedFilenames = fs.readdirSync(testDataDir);
   
-  for (let filename of testFeedFilenames) {
+  for (const filename of testFeedFilenames) {
     const fileContents = fs.readFileSync(`${testDataDir}/${filename}`, 'utf-8');
-    const parsedFeed = parser.parseString(fileContents);
+    const _parsedFeed = parser.parseString(fileContents);
   }
 });

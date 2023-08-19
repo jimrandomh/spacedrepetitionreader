@@ -21,7 +21,7 @@ function renderStaticStylesheet(): string {
     const componentFn = (allComponents as any)[componentName];
     const extractedStyles = getStylesFrom(componentFn);
     if (extractedStyles) {
-      const {name,styles} = extractedStyles;
+      const {name:_,styles} = extractedStyles;
       sb.push(styles);
     }
   }
