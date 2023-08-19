@@ -37,21 +37,46 @@ export function PageWrapper({children}: {
   children: React.ReactNode
 }) {
   const classes = useJssStyles("PageWrapper", () => ({
-    root: {
+    mainColumn: {
       position: "absolute",
       top: 48, bottom: 0,
       left: 200, right: 0,
       overflowY: "scroll",
+    },
+    body: {
+      minHeight: "calc(100% - 40px)",
       padding: 16,
+    },
+    footer: {
+      height: 40,
+      width: "100%",
+      textAlign: "right",
+      paddingRight: 16,
     },
   }));
   
   return <div>
     <TopBar/>
     <LeftSidebar/>
-    <div className={classes.root}>
-      {children}
+    <div className={classes.mainColumn}>
+      <div className={classes.body}>
+        {children}
+      </div>
+      <div className={classes.footer}>
+        <Link href="/about">About</Link>
+        {" · "}
+        <Link href="/privacy-policy">Privacy Policy</Link>
+      </div>
     </div>
+  </div>
+}
+
+export function LoggedOutAccessiblePage({children}: {
+  children: React.ReactNode,
+}) {
+  // TODO: Show sidebar iff logged in
+  return <div>
+    {children}
   </div>
 }
 
@@ -229,4 +254,4 @@ export function SidebarListItemWithCount({title, href, unreadCount}: {
   </div>
 }
 
-export const components = {App,PageWrapper,TopBar,LeftSidebar,DeckListItem,FeedsListItem,SidebarListItemWithCount};
+export const components = {App,PageWrapper,LoggedOutAccessiblePage,TopBar,LeftSidebar,DeckListItem,FeedsListItem,SidebarListItemWithCount};

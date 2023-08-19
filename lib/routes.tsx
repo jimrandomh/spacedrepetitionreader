@@ -54,6 +54,11 @@ export const routes: Endpoint[] = [
     component: Pages.AboutPage,
   },
   {
+    path: new Route("/privacy-policy"),
+    access: "LoggedOut",
+    component: Pages.PrivacyPolicyPage,
+  },
+  {
     path: new Route("/card/:id"),
     access: "LoggedIn",
     component: Pages.ViewCardPage,

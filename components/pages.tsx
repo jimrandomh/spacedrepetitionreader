@@ -1,6 +1,6 @@
 import React,{useState} from 'react'
 import DatePicker from "react-datepicker";
-import {PageWrapper} from './layout';
+import {LoggedOutAccessiblePage, PageWrapper} from './layout';
 import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm} from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
@@ -12,11 +12,19 @@ import { useLocation } from '../lib/useLocation';
 
 
 export function AboutPage() {
-  return <div className="aboutPage">
+  return <LoggedOutAccessiblePage>
     <h1>About Spaced Repetition Reader</h1>
     <p>Spaced Repetition Reader is spaced repetition software with RSS integration</p>
-  </div>
+  </LoggedOutAccessiblePage>
 }
+
+export function PrivacyPolicyPage() {
+  return <LoggedOutAccessiblePage>
+    <h1>Spaced Repetition Reader: Privacy Policy</h1>
+    <p>TODO: Write this</p>
+  </LoggedOutAccessiblePage>
+}
+
 
 export function DashboardPage() {
   const currentUser = useCurrentUser();
@@ -340,4 +348,4 @@ export function UserProfilePage() {
 }
 
 
-export const components = {AboutPage,DashboardPage,EditDeck,Error404Page,LandingPage,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,UserProfilePage};
+export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,UserProfilePage};
