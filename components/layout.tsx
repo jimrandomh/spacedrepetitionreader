@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {useCurrentUser} from '../lib/useCurrentUser';
 import {BulletSeparator, Button, Link, Loading} from './widgets';
 import {useGetApi,doPost} from '../lib/apiUtil';
@@ -9,6 +9,7 @@ import {LocationContextProvider} from '../lib/useLocation';
 import {ModalContextProvider, ModalDialog, useModal} from '../lib/useModal';
 import type {Endpoint} from '../lib/routes';
 import {Error404Page} from '../components/pages';
+import { DebugPanel, useDebugOptions } from './debug';
 
 
 export function App({route, routeProps, url}: {
@@ -59,12 +60,11 @@ export function PageWrapper({children}: {
 
   const openDebugPanel = () => {
     openModal({
-     fn: (onClose) => {
-       return <ModalDialog>
-         <h2>Debug Options</h2>
-          <Button label="Close" onClick={onClose}/>
+      fn: (onClose) => {
+      return <ModalDialog>
+        <DebugPanel onClose={onClose}/>
        </ModalDialog>
-     }
+      }
     });
   }
   
@@ -120,6 +120,9 @@ export function TopBar() {
     siteName: {
       flexGrow: 1,
     },
+    simulatedDate: {
+      marginRight: 8,
+    },
     userNameButton: {
       marginRight: 12,
     },
@@ -128,6 +131,7 @@ export function TopBar() {
   }));
   
   const currentUser = useCurrentUser();
+  const debugOptions = useDebugOptions();
   
   async function logOut() {
     await doPost<ApiTypes.ApiLogout>({
@@ -144,6 +148,11 @@ export function TopBar() {
       </Link>
     </div>
     
+    {debugOptions.overrideDate && <>
+      <div className={classes.simulatedDate}>
+        Simulated date: {debugOptions.overrideDate.toISOString()}
+      </div>
+    </>}
     {currentUser && <>
       <Link href="/profile" className={classes.userNameButton}>{currentUser.name}</Link>
       <Link onClick={logOut} className={classes.logOutButton}>Log Out</Link>

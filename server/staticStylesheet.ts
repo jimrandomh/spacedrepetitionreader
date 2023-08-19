@@ -3,6 +3,7 @@ import {components as formComponents} from '../components/forms';
 import {components as layoutComponents} from '../components/layout';
 import {components as pageComponents} from '../components/pages';
 import {components as widgetComponents} from '../components/widgets';
+import {components as debugComponents} from '../components/debug';
 import {getStylesFrom} from '../lib/useJssStyles';
 import crypto from 'crypto';
 
@@ -12,6 +13,7 @@ const allComponents = {
   ...layoutComponents,
   ...pageComponents,
   ...widgetComponents,
+  ...debugComponents,
 };
 
 function renderStaticStylesheet(): string {

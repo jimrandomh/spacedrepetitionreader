@@ -1,5 +1,4 @@
 import React,{useState} from 'react'
-import DatePicker from "react-datepicker";
 import {LoggedOutAccessiblePage, PageWrapper} from './layout';
 import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm} from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
@@ -9,6 +8,7 @@ import {useCurrentUser} from '../lib/useCurrentUser';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import {useLocation} from '../lib/useLocation';
+import { useDebugOptions } from './debug';
 
 export function AboutPage() {
   return <LoggedOutAccessiblePage>
@@ -29,15 +29,13 @@ export function PrivacyPolicyPage() {
 
 export function DashboardPage() {
   const currentUser = useCurrentUser();
-  // const [overrideDate, setOverrideDate] = useState<Date|null>(null);
-  const { query } = useLocation();
-  const overrideDate = query.get('overrideDate') ? new Date(query.get('overrideDate')!) : null;
+  const debugOptions = useDebugOptions();
   
   const {data, loading} = useGetApi<ApiTypes.ApiCardsDue>({
     skip: !currentUser,
     endpoint: "/api/cards/due",
-    searchParams:  overrideDate ? new URLSearchParams({
-      date: overrideDate?.toISOString(),
+    searchParams:  debugOptions.overrideDate ? new URLSearchParams({
+      date: debugOptions.overrideDate?.toISOString(),
     }) : undefined,
     query: {},
   });
@@ -49,18 +47,10 @@ export function DashboardPage() {
   
   return <PageWrapper>
     {loading && <Loading/>}
-    Simulated date:{' '}
-    <DatePicker selected={overrideDate} showTimeSelect onChange={(date) => {
-      if(!date) {
-        window.location.assign('/dashboard');
-      } else {
-        window.location.assign(`/dashboard?overrideDate=${date.toISOString()}`);
-      }
-    }} />
     {data && <ReviewWrapper
       cards={data.cards}
       feedItems={data.feedItems}
-      simulatedDate={overrideDate ?? undefined}
+      simulatedDate={debugOptions.overrideDate ?? undefined}
     />}
   </PageWrapper>
 }
