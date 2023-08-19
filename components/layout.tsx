@@ -10,6 +10,7 @@ import {ModalContextProvider} from '../lib/useModal';
 import type {Endpoint} from '../lib/routes';
 import {Error404Page} from '../components/pages';
 
+
 export function App({route, routeProps, url}: {
   route: Endpoint|null
   routeProps: object
@@ -158,7 +159,7 @@ export function LeftSidebar() {
       <div className={classes.sectionBody}>
         {loadingDecks && <Loading/>}
         {decksResponse?.decks && decksResponse.decks.map(deck => <div key={""+deck.id}>
-          <Link color={false} href={`/decks/edit/${deck.id}`}>{deck.name}</Link>
+          <DeckListItem deck={deck}/>
         </div>)}
         <Link color={true} href="/decks/manage">New Deck</Link>
       </div>
@@ -174,14 +175,39 @@ export function LeftSidebar() {
   </div>;
 }
 
-function FeedsListItem({feed}: {
+export function DeckListItem({deck}: {
+  deck: ApiTypes.ApiObjDeckWithDueCount
+}) {
+  return <SidebarListItemWithCount
+    title={deck.name}
+    href={`/decks/edit/${deck.id}`}
+    unreadCount={deck.due}
+  />
+}
+
+export function FeedsListItem({feed}: {
   feed: ApiTypes.ApiObjFeedWithUnreadCount
 }) {
-  const classes = useJssStyles("FeedListItem", () => ({
+  return <SidebarListItemWithCount
+    title={feed.title || feed.url}
+    href={`/feeds/${feed.id}`}
+    unreadCount={feed.unreadCount}
+  />
+}
+
+export function SidebarListItemWithCount({title, href, unreadCount}: {
+  title: string
+  href: string
+  unreadCount: number
+}) {
+  const classes = useJssStyles("SidebarListItemWithCount", () => ({
     root: {
-      display: "flex",
+      marginBottom: 8,
     },
     link: {
+      display: "flex",
+    },
+    title: {
       flexGrow: 1,
     },
     unreadCount: {
@@ -189,11 +215,18 @@ function FeedsListItem({feed}: {
   }));
   
   return <div className={classes.root}>
-    <Link color={false} href={`/feeds/${feed.id}`} className={classes.link}>
-      {feed.title || feed.url}
+    <Link
+      href={href}
+      color={false} className={classes.link}
+    >
+      <div className={classes.title}>
+        {title}
+      </div>
+      <div className={classes.unreadCount}>
+        {unreadCount}
+      </div>
     </Link>
-    <div className={classes.unreadCount}>{feed.unreadCount}</div>
   </div>
 }
 
-export const components = {App,PageWrapper,TopBar,LeftSidebar,FeedsListItem};
+export const components = {App,PageWrapper,TopBar,LeftSidebar,DeckListItem,FeedsListItem,SidebarListItemWithCount};
