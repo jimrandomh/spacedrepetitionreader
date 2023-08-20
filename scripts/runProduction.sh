@@ -16,5 +16,9 @@ rm ssh_key
 cp Credentials/config.js .
 rm -rf Credentials
 
+echo "Running yarn install"
+yarn install
+
+echo "Starting server"
 ./build.js --watch --run
 
