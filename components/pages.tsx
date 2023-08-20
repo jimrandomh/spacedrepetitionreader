@@ -138,6 +138,15 @@ export function LandingPage() {
       marginTop: 64,
       marginBottom: 48,
     },
+    developmentWarning: {
+      textAlign: "center",
+      background: "#fcc",
+      padding: 8,
+      maxWidth: 510,
+      margin: "0 auto",
+      border: "1px solid #f00",
+      borderRadius: 6,
+    },
     loginForm: {
       margin: "0 auto",
     },
@@ -152,6 +161,9 @@ export function LandingPage() {
     <PitchText/>
     
     <div className={classes.loginForm}>
+      <div className={classes.developmentWarning}>
+        This site is still under development. It might lose your data.
+      </div>
       <LoginForm/>
     </div>
   </div>
