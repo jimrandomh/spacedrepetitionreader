@@ -11,7 +11,7 @@ set -ex
 echo "$GITHUB_DEPLOY_KEY" >ssh_key
 
 echo "Cloning credentials repo"
-GIT_SSH_COMMAND="ssh -i ssh_key" git clone https://git@github.com/$GITHUB_CREDENTIALS_REPO Credentials
+GIT_SSH_COMMAND="ssh -i ssh_key" git clone ssh://git@github.com/$GITHUB_CREDENTIALS_REPO Credentials
 rm ssh_key
 cp Credentials/config.js .
 rm -rf Credentials
