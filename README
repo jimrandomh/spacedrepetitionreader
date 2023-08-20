@@ -20,6 +20,8 @@ First run `yarn install`. Then set up a locally running postgres database: run
     CREATE DATABASE spacedrepetitionreader;
     CREATE USER spacedrepetitionreader WITH PASSWORD '<INSERTPASSWORDHERE>';
     GRANT ALL PRIVILEGES ON DATABASE spacedrepetitionreader TO spacedrepetitionreader;
+    \c spacedrepetitionreader
+    GRANT ALL ON SCHEMA public TO spacedrepetitionreader;
     ```
 Next, edit config.js, in particular adding the the database password you set
 in the previous step to the connection string. Finally, initialize the database

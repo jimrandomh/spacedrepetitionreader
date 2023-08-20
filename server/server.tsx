@@ -12,6 +12,7 @@ import {getPrisma} from './db';
 import {getStaticStylesheet, StylesheetWithHash} from './staticStylesheet';
 import {initJss} from '../lib/useJssStyles';
 import process from 'process';
+import { getConfig } from './getConfig';
 
 const projectRoot = path.join(__dirname, '..');
 const staticFilesPath = path.join(projectRoot, 'static');
@@ -23,7 +24,7 @@ interface SsrResult {
 
 function serverStartup() {
   const app = express()
-  const port = 8000
+  const port = getConfig().port;
   
   initJss();
   addApiEndpoints(app);
