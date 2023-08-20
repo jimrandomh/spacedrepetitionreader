@@ -1,5 +1,4 @@
 #!/bin/bash
-set -ex
 
 # runProduction.sh: Run the server in production. This uses the enviornment variable
 # GITHUB_DEPLOY_KEY as an ssh priate key to load the github repo named in
@@ -12,8 +11,12 @@ echo "$GITHUB_DEPLOY_KEY" >ssh_key
 
 echo "Cloning credentials repo"
 GIT_SSH_COMMAND="ssh -i ssh_key" git clone ssh://git@github.com/$GITHUB_CREDENTIALS_REPO Credentials
-rm ssh_key
+
+echo "Copying config"
 cp Credentials/config.js .
+
+echo "Cleaning up temporaries"
+rm ssh_key
 rm -rf Credentials
 
 echo "Running yarn install"
