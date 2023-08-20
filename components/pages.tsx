@@ -7,8 +7,8 @@ import {useGetApi,doPost} from '../lib/apiUtil';
 import {useCurrentUser} from '../lib/useCurrentUser';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
-import {useLocation} from '../lib/useLocation';
 import { useDebugOptions } from './debug';
+
 
 export function AboutPage() {
   return <LoggedOutAccessiblePage>

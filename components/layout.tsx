@@ -1,6 +1,6 @@
 import React from 'react'
 import {useCurrentUser} from '../lib/useCurrentUser';
-import {BulletSeparator, Button, Link, Loading} from './widgets';
+import {BulletSeparator, Link, Loading} from './widgets';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';

@@ -88,10 +88,10 @@ function debugOptionsToQueryParams(debugOptions: DebugOptions): Partial<Record<s
 
 function mergeParams(a: Partial<Record<string,string|null>>, b: Partial<Record<string,string|null>>): Record<string,string> {
   const result = {...a};
-  for (let k of Object.keys(b)) {
+  for (const k of Object.keys(b)) {
     result[k] = b[k];
   }
-  for (let k of Object.keys(result)) {
+  for (const k of Object.keys(result)) {
     if (result[k]===null)
       delete result[k];
   }
@@ -101,7 +101,7 @@ function mergeParams(a: Partial<Record<string,string|null>>, b: Partial<Record<s
 /// Removes search params from a URI, if present. Eg
 ///   "http://localhost:3000/?x=1" -> "http://localhost:3000/"
 function stripSearchParams(url: string): string {
-  let urlObject = new URL(url);
+  const urlObject = new URL(url);
   urlObject.search = "";
   return urlObject.toString();
 }
