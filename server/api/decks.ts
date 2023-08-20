@@ -5,6 +5,7 @@ import {maybeRefreshFeed,getUnreadItems,apiFilterRssItem} from './feeds';
 import {getDueDate} from '../cardScheduler';
 import flatten from 'lodash/flatten';
 import filter from 'lodash/filter';
+import { userCanEditDeck, userCanViewDeck } from '../permissions';
 
 export function addDeckEndpoints(app: Express) {
   defineGetApi<ApiTypes.ApiListDecks>(app, "/api/decks/list", async (ctx) => {
@@ -18,12 +19,14 @@ export function addDeckEndpoints(app: Express) {
     });
     
     return {
-      decks: decks.map(deck => {
-        return {
-          ...apiFilterDeck(deck, ctx),
-          due: 0, //TODO
-        };
-      })
+      decks: decks
+        .filter(deck => userCanViewDeck(currentUser, deck))
+        .map(deck => {
+          return {
+            ...apiFilterDeck(deck, ctx),
+            due: 0, //TODO
+          };
+        })
     }
   });
   
@@ -50,10 +53,12 @@ export function addDeckEndpoints(app: Express) {
     const deck = await ctx.db.deck.findUnique({
       where: {id: deckId}
     });
-    if (!deck)
+    if (!deck) {
       throw new ApiErrorNotFound;
-    if (deck.authorId !== currentUser.id)
+    }
+    if (!userCanEditDeck(currentUser, deck)) {
       throw new ApiErrorAccessDenied;
+    }
     
     await ctx.db.deck.update({
       where: {id: deckId},
@@ -70,7 +75,12 @@ export function addDeckEndpoints(app: Express) {
     const deck = await ctx.db.deck.findFirst({
       where: {id, authorId: currentUser.id, deleted: false}
     });
-    if (!deck) throw new ApiErrorNotFound;
+    if (!deck) {
+      throw new ApiErrorNotFound;
+    }
+    if (!userCanViewDeck(currentUser, deck)) {
+      throw new ApiErrorAccessDenied;
+    }
     
     const cards = await ctx.db.card.findMany({
       where: { deleted: false, deckId: id }
@@ -84,7 +94,7 @@ export function addDeckEndpoints(app: Express) {
 
 
   definePostApi<ApiTypes.ApiCreateCard>(app, "/api/cards/create", async (ctx) => {
-    const _currentUser = assertLoggedIn(ctx);
+    const currentUser = assertLoggedIn(ctx);
     const deckId = assertIsKey(ctx.body.deckId);
     const front = assertIsString(ctx.body.front);
     const back = assertIsString(ctx.body.back);
@@ -93,6 +103,11 @@ export function addDeckEndpoints(app: Express) {
     const deck = await ctx.db.deck.findUnique({ where: {id: deckId} });
     if (!deck || deck.deleted) throw new ApiErrorNotFound;
     
+    // Check that the deck is owned by the right user
+    if (!userCanEditDeck(currentUser, deck)) {
+      throw new ApiErrorAccessDenied;
+    }
+
     const card = await ctx.db.card.create({
       data: {
         deckId, front, back,
@@ -108,11 +123,16 @@ export function addDeckEndpoints(app: Express) {
     const cardId = assertIsKey(ctx.body.cardId);
     
     const card = await ctx.db.card.findUnique({where: {id: cardId}});
-    if (!card || card.deleted)
+    if (!card || card.deleted) {
       throw new ApiErrorNotFound;
+    }
     const deck = await ctx.db.deck.findUnique({where: {id: card.deckId}});
-    if (!deck || deck.deleted || deck.authorId !== currentUser.id)
+    if (!deck || deck.deleted) {
       throw new ApiErrorNotFound;
+    }
+    if (!userCanEditDeck(currentUser, deck)) {
+      throw new ApiErrorAccessDenied;
+    }
     
     await ctx.db.card.update({
       where: {id: cardId},
@@ -194,8 +214,9 @@ export function addDeckEndpoints(app: Express) {
     const card = await ctx.db.card.findUnique({
       where: {id: cardId}
     });
-    if (!card || card.deleted)
+    if (!card || card.deleted) {
       throw new ApiErrorNotFound;
+    }
     
     await ctx.db.cardImpression.create({
       data: {
@@ -213,11 +234,16 @@ export function addDeckEndpoints(app: Express) {
     const cardId = assertIsKey(ctx.query.cardId);
     
     const card = await ctx.db.card.findUnique({where: {id: cardId}});
-    if (!card || card.deleted)
+    if (!card || card.deleted) {
       throw new ApiErrorNotFound;
+    }
     const deck = await ctx.db.deck.findUnique({where: {id: card.deckId}});
-    if (!deck || deck.deleted || deck.authorId !== currentUser.id)
+    if (!deck || deck.deleted) {
       throw new ApiErrorNotFound;
+    }
+    if (!userCanViewDeck(currentUser, deck)) {
+      throw new ApiErrorAccessDenied;
+    }
     
     return {
       card: apiFilterCard(card, ctx)

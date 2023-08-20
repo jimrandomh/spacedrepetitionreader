@@ -79,6 +79,7 @@ export function addAuthEndpoints(app: Express) {
     
     return {};
   });
+
   definePostApi<ApiTypes.ApiLogin>(app, "/api/users/login", async (ctx) => {
     const username = assertIsString(ctx.body.username);
     const password = assertIsString(ctx.body.password);
@@ -96,6 +97,7 @@ export function addAuthEndpoints(app: Express) {
     
     return {};
   });
+
   definePostApi<ApiTypes.ApiLogout>(app, "/api/users/logout", async (ctx) => {
     const cookies = new Cookies((ctx.req as any).headers.cookie);
     const loginCookie = cookies.get('login')

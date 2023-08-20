@@ -2,10 +2,11 @@ import RssParser, {Item as RssParserItem} from 'rss-parser';
 import {sanitizeHtml} from '../htmlUtil';
 import type {Express} from 'express';
 import type {PrismaClient,User,RssFeed,RssItem} from '@prisma/client'
-import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound} from '../serverApiUtil';
+import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound, ApiErrorAccessDenied} from '../serverApiUtil';
 import { siteUrlToFeedUrl } from '../feeds/findFeedForPage';
 import keyBy from 'lodash/keyBy';
 import relToAbs from 'rel-to-abs';
+import { userCanViewFeed } from '../permissions';
 
 const feedRefreshIntervalMs = 1000*60*60; //1hr
 
@@ -19,10 +20,17 @@ export function addFeedEndpoints(app: Express) {
   });
   
   definePostApi<ApiTypes.ApiRefreshFeed>(app, "/api/feed/refresh", async (ctx) => {
-    const _currentUser = assertLoggedIn(ctx);
+    const currentUser = assertLoggedIn(ctx);
     const id = assertIsKey(ctx.body.id);
     const feed = await ctx.db.rssFeed.findUnique({where:{id}});
-    if (!feed) throw new ApiErrorNotFound;
+
+    if (!feed) {
+      throw new ApiErrorNotFound;
+    }
+    if (!userCanViewFeed(currentUser, feed)) {
+      throw new ApiErrorAccessDenied;
+    }
+
     await refreshFeed(feed, ctx.db);
     return {};
   });
@@ -42,7 +50,12 @@ export function addFeedEndpoints(app: Express) {
     const currentUser = assertLoggedIn(ctx);
     const id = assertIsKey(ctx.query.id);
     const feed = await ctx.db.rssFeed.findUnique({where:{id}});
-    if (!feed) throw new ApiErrorNotFound;
+    if (!feed) {
+      throw new ApiErrorNotFound;
+    }
+    if (!userCanViewFeed(currentUser, feed)) {
+      throw new ApiErrorAccessDenied;
+    }
     await maybeRefreshFeed(feed, ctx.db);
     
     const feedItems = await getUnreadItems(currentUser, feed, ctx.db);
@@ -134,8 +147,15 @@ export function addFeedEndpoints(app: Express) {
     return {};
   });
   defineGetApi<ApiTypes.ApiGetRecentFeedItems>(app, "/api/feeds/:id/recent", async (ctx) => {
-    const _currentUser = assertLoggedIn(ctx);
+    const currentUser = assertLoggedIn(ctx);
     const id = assertIsKey(ctx.query.id);
+    const feed = await ctx.db.rssFeed.findUnique({ where: {id} });
+    if (!feed) {
+      throw new ApiErrorNotFound;
+    }
+    if (!userCanViewFeed(currentUser, feed)) {
+      throw new ApiErrorAccessDenied;
+    }
     const items = await ctx.db.rssItem.findMany({
       where: { feedId: id },
       orderBy: { pubDate: 'desc' },
@@ -148,7 +168,12 @@ export function addFeedEndpoints(app: Express) {
     const currentUser = assertLoggedIn(ctx);
     const id = assertIsKey(ctx.query.id);
     const feed = await ctx.db.rssFeed.findUnique({where: {id}});
-    if (!feed) throw new ApiErrorNotFound();
+    if (!feed) {
+      throw new ApiErrorNotFound();
+    }
+    if (!userCanViewFeed(currentUser, feed)) {
+      throw new ApiErrorAccessDenied;
+    }
     const unreadItems = await getUnreadItems(currentUser, feed, ctx.db)
     return {
       items: unreadItems.map(item => apiFilterRssItem(item, ctx))
@@ -176,14 +201,23 @@ export function addFeedEndpoints(app: Express) {
   definePostApi<ApiTypes.ApiMarkFeedItemRead>(app, "/api/feedItems/markAsRead", async (ctx) => {
     const currentUser = assertLoggedIn(ctx);
     const rssItemId = assertIsKey(ctx.body.itemId);
-    const rssItem = await ctx.db.rssItem.findUnique({where: {id: rssItemId}});
-    if (!rssItem) throw new ApiErrorNotFound();
+
+    const rssItem = await ctx.db.rssItem.findUnique({
+      where: {id: rssItemId},
+      include: {
+        feed: true,
+      }
+    });
+    if (!rssItem) {
+      throw new ApiErrorNotFound();
+    }
+    if (!userCanViewFeed(currentUser, rssItem.feed)) {
+      throw new ApiErrorAccessDenied;
+    }
     await markAsRead(currentUser, rssItem, ctx);
     return {};
   });
 }
-
-
 
 export async function pollFeed(feedUrl: string, ctx: ServerApiContext): Promise<ApiTypes.ApiObjRssItem[]> {
   const parser = new RssParser();
