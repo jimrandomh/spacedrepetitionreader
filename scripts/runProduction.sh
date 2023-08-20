@@ -1,5 +1,11 @@
 #!/bin/bash
 
+echo "Running iptables -L"
+iptables -L
+
+echo "Pinging github.com"
+ping -t 3 github.com
+
 # runProduction.sh: Run the server in production. This uses the enviornment variable
 # GITHUB_DEPLOY_KEY as an ssh priate key to load the github repo named in
 # GITHUB_CREDENTIALS_REPO, which should contain a config.js (which in turn contains
