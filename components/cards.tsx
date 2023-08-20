@@ -189,10 +189,12 @@ export function ReviewWrapper({cards, feedItems, simulatedDate}: {
   const [shuffledDeck,setShuffledDeck] = useState<CardOrFeedItem[]|null>(null);
   
   function begin() {
-    const limit3feedItems = take(feedItems, 2);
+    // TODO: Account for config option for presentation order (oldest first, newest first, etc)
+    const selectedFeedItems = take(feedItems, 2);
+
     const allItems: CardOrFeedItem[] = [
       ...cards.map((card): CardOrFeedItem => ({type:"card", card})),
-      ...limit3feedItems.map((feedItem): CardOrFeedItem => ({type:"feedItem", feedItem})),
+      ...selectedFeedItems.map((feedItem): CardOrFeedItem => ({type:"feedItem", feedItem})),
     ];
     const shuffled = shuffle(allItems);
     setShuffledDeck(shuffled);

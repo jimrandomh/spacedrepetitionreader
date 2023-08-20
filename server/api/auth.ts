@@ -70,6 +70,8 @@ export function addAuthEndpoints(app: Express) {
       data: {
         name: username,
         email, passwordHash,
+        isAdmin: false,
+        config: {},
       }
     });
     

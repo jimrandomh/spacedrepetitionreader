@@ -37,6 +37,7 @@ export function addDeckEndpoints(app: Express) {
     const deck = await ctx.db.deck.create({
       data: {
         name,
+        description: "",
         authorId: currentUser.id,
         deleted: false,
       }

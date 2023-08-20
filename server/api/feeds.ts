@@ -10,7 +10,6 @@ import { userCanViewFeed } from '../permissions';
 
 const feedRefreshIntervalMs = 1000*60*60; //1hr
 
-
 export function addFeedEndpoints(app: Express) {
   defineGetApi<ApiTypes.ApiPollFeed>(app, "/api/feed/poll/:feedUrl", async (ctx) => {
     const _currentUser = assertLoggedIn(ctx);
@@ -118,6 +117,7 @@ export function addFeedEndpoints(app: Express) {
         data: {
           userId: currentUser.id,
           feedId: feed.id,
+          config: {},
           deleted: false,
         }
       });
