@@ -10,7 +10,7 @@
 echo "$GITHUB_DEPLOY_KEY" >ssh_key
 
 echo "Cloning credentials repo"
-GIT_SSH_COMMAND="ssh -i ssh_key" git clone ssh://git@github.com/$GITHUB_CREDENTIALS_REPO Credentials
+GIT_SSH_COMMAND="ssh -v -i ssh_key -o StrictHostKeyChecking=no" git clone ssh://git@github.com/$GITHUB_CREDENTIALS_REPO Credentials
 
 echo "Copying config"
 cp Credentials/config.js .
