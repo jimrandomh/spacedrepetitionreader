@@ -13,6 +13,7 @@ import {getStaticStylesheet, StylesheetWithHash} from './staticStylesheet';
 import {initJss} from '../lib/useJssStyles';
 import process from 'process';
 import { getConfig } from './getConfig';
+import { PrismaClient, User } from '@prisma/client';
 
 const projectRoot = path.join(__dirname, '..');
 const staticFilesPath = path.join(projectRoot, 'static');
@@ -73,8 +74,28 @@ const pageTemplate = ({bodyHtml, ssrCache, stylesheet}: {
 async function renderSSR(req: Request, res: Response, url: string): Promise<SsrResult> {
   const db = getPrisma();
   const currentUser = await getUserFromReq(req, db);
-  const ssrCache: Record<string,any> = {};
+  const {apiProvider, ssrCache} = getApiProviderFromUser(currentUser, db);
   
+  const reactTree = <AppServer
+    url={url}
+    apiProvider={apiProvider}
+  />
+  const bodyHtml = await repeatRenderingUntilSettled(reactTree, apiProvider);
+  const stylesheet = getStaticStylesheet();
+  
+  const html = pageTemplate({ bodyHtml, ssrCache, stylesheet });
+
+  return {
+    status: 200,
+    html,
+  };
+}
+
+export function getApiProviderFromUser(currentUser: User|null, db: PrismaClient): {
+  apiProvider: GetApiProvider
+  ssrCache: Record<string,any>
+} {
+  const ssrCache: Record<string,any> = {};
   const apiProvider = new GetApiProvider(async (uri: string) => {
     const parsedUrl = new URL(uri,"http://localhost");
     const pathname = parsedUrl.pathname;
@@ -94,22 +115,10 @@ async function renderSSR(req: Request, res: Response, url: string): Promise<SsrR
     return result;
   });
   
-  const reactTree = <AppServer
-    url={url}
-    apiProvider={apiProvider}
-  />
-  const bodyHtml = await repeatRenderingUntilSettled(reactTree, apiProvider);
-  const stylesheet = getStaticStylesheet();
-  
-  const html = pageTemplate({ bodyHtml, ssrCache, stylesheet });
-
-  return {
-    status: 200,
-    html,
-  };
+  return {ssrCache, apiProvider};
 }
 
-async function repeatRenderingUntilSettled(tree: React.ReactElement, apiProvider: GetApiProvider): Promise<string> {
+export async function repeatRenderingUntilSettled(tree: React.ReactElement, apiProvider: GetApiProvider): Promise<string> {
   let lastHtml = "";
   let bodyHtml = "";
   
@@ -152,16 +161,6 @@ function pathToApiRoute(pathname: string): {
   }
   return null;
 }
-
-/*class ServerGetApiProvider implements GetApiProvider {
-  doGet<T extends ApiTypes.RestApiGet>(endpoint: T["path"], query: T["queryArgs"]): {
-    loading: boolean
-    result: T["responseType"]
-  } {
-    console.log(`ServerGetApiProvider.doGet ${endpoint}`);
-    throw new Error("Not implemented"); //TODO
-  }
-}*/
 
 function sleep(delayMs: number): Promise<void> {
   return new Promise<void>(accept => {
