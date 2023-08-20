@@ -156,6 +156,15 @@ export function RSSCard({card, onFinish}: {
   }));
   
   function clickNext() {
+    void (async function() {
+      doPost<ApiTypes.ApiMarkFeedItemRead>({
+        endpoint: "/api/feedItems/markAsRead",
+        query: {},
+        body: {
+          itemId: card.id,
+        },
+      });
+    })();
     onFinish();
   }
   
@@ -211,12 +220,16 @@ function ReviewInProgress({items, simulatedDate}: {
   const [cardPos,setCardPos] = useState(0);
   const currentCard = items[cardPos];
   
+  function advanceToNextCard() {
+    setCardPos(cardPos+1)
+  }
+  
   return <>
     {currentCard && currentCard.type==="card" && <CardChallenge
       key={cardPos}
       card={currentCard.card}
       onFinish={() => {
-        setCardPos(cardPos+1)
+        advanceToNextCard();
       }}
       simulatedDate={simulatedDate}
     />}
@@ -224,7 +237,7 @@ function ReviewInProgress({items, simulatedDate}: {
       key={cardPos}
       card={currentCard.feedItem}
       onFinish={() => {
-        setCardPos(cardPos+1)
+        advanceToNextCard();
       }}
     />}
     {!currentCard && <div>
