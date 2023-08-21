@@ -13,11 +13,18 @@ const serverConfig = require("./config");
 const connectionString = serverConfig.psqlConnectionString;
 process.env.DATABASE_URL = connectionString;
 
+const externalLibs = [
+  "express","path","fs","rss-parser","body-parser","bcrypt","@prisma",
+  "@prisma/client","crypto","rel-to-abs","process","html-to-text","mailgun",
+  "mailgun.js","mailgun.js/Interfaces","form-data","juice",
+];
+
 build({
   entryPoints: ['client/client.tsx'],
   bundle: true,
   sourcemap: true,
   sourcesContent: true,
+  external: externalLibs,
   keepNames: true,
   minify: false,
   outfile: 'build/client.js',
@@ -33,7 +40,7 @@ build({
   bundle: true,
   sourcemap: true,
   sourcesContent: true,
-  external: ["express","path","fs","rss-parser","body-parser","bcrypt","@prisma","@prisma/client","crypto","rel-to-abs","process","html-to-text","mailgun.js","form-data","juice"],
+  external: externalLibs,
   outfile: 'build/server.js',
   minify: false,
   run: cliopts.run && ['node', '-r', 'source-map-support/register', '--inspect', 'build/server.js'],
