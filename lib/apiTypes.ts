@@ -102,6 +102,34 @@ export interface ApiWhoami extends RestApiGet { //{{_}}
   }
 }
 
+export interface ApiRequestPasswordResetEmail extends RestApiPost { //{{_}}
+  path: "/api/users/requestPasswordReset",
+  queryArgs: object
+  bodyArgs: {
+    email: string
+  }
+  responseType: object
+}
+
+export interface ApiResetPassword extends RestApiPost { //{{_}}
+  path: "/api/users/resetPassword",
+  queryArgs: object
+  bodyArgs: {
+    token: string
+    password: string
+  }
+  responseType: object
+}
+
+export interface ApiConfirmEmail extends RestApiPost { //{{_}}
+  path: "/api/users/confirmEmail",
+  queryArgs: object
+  bodyArgs: {
+    token: string
+  }
+  responseType: object
+}
+
 
 export interface ApiListDecks extends RestApiGet { //{{_}}
   path: "/api/decks/list"

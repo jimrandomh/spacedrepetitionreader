@@ -68,6 +68,21 @@ export const routes: Endpoint[] = [
     access: "LoggedIn",
     component: Pages.UserProfilePage,
   },
+  {
+    path: new Route("/email/forgotPassword"),
+    access: "LoggedOut",
+    component: Pages.ForgotPasswordRequestPage,
+  },
+  {
+    path: new Route("/email/resetPassword/:token"),
+    access: "LoggedOut",
+    component: Pages.ResetPasswordPage,
+  },
+  {
+    path: new Route("/email/confirm/:token"),
+    access: "LoggedIn",
+    component: Pages.ConfirmEmailPage,
+  },
 ];
 
 export function pathToRoute(pathname: string): {

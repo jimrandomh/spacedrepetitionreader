@@ -23,21 +23,35 @@ model User {
   RssImpression   RssImpression[]
   CardImpression  CardImpression[]
   CardDueDate     CardDueDate[]
-  
+  EmailToken      EmailToken[]
+
   @@index([name])
   @@index([email])
 }
 
 model LoginToken {
   id        String   @id @default(cuid())
-  token     String   @unique
+  tokenHash String   @unique
   createdAt DateTime @default(now())
   valid     Boolean  @default(true)
 
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String
 
-  @@index([token])
+  @@index([tokenHash])
+}
+
+model EmailToken {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  usedAt    DateTime?
+  type      String
+  tokenHash String    @unique
+
+  userId String
+  owner  User   @relation(fields: [userId], references: [id])
+
+  @@index([tokenHash])
 }
 
 model Deck {
@@ -96,8 +110,8 @@ model CardDueDate {
   card   Card   @relation(fields: [cardId], references: [id])
   cardId String
 
-  @@index([userId,due])
-  @@index([cardId,userId])
+  @@index([userId, due])
+  @@index([cardId, userId])
 }
 
 model RssSubscription {
@@ -139,7 +153,7 @@ model RssItem {
   feed   RssFeed @relation(fields: [feedId], references: [id])
   feedId String
 
-  @@index([feedId,pubDate])
+  @@index([feedId, pubDate])
 }
 
 model RssImpression {
@@ -151,5 +165,5 @@ model RssImpression {
   rssItemId String
   rssItem   RssItem @relation(fields: [rssItemId], references: [id])
 
-  @@index([userId,rssItemId])
+  @@index([userId, rssItemId])
 }

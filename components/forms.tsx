@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {useGetApi,doPost} from '../lib/apiUtil';
-import {TextInput,TextAreaInput,ErrorMessage,Loading,FeedScrollList,Button} from './widgets';
+import {TextInput,TextAreaInput,ErrorMessage,Loading,FeedScrollList,Button, Link} from './widgets';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import {useModal,ModalDialog} from '../lib/useModal';
@@ -106,6 +106,7 @@ export function LoginForm() {
       <TextInput label="Username" value={loginUsername} setValue={setLoginUsername} className={classes.input}/>
       <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword} className={classes.input}/>
       <input type="submit" value="Log In" className={classes.button}/>
+      <Link href="/email/forgotPassword">Forgot Password</Link>
       {loginError && <div><ErrorMessage message={loginError}/></div>}
     </form>
     <form
@@ -120,6 +121,107 @@ export function LoginForm() {
       <input type="submit" value="Create Account" className={classes.button}/>
       
       {signupError && <div><ErrorMessage message={signupError}/></div>}
+    </form>
+  </div>;
+}
+
+export function RequestPasswordResetForm() {
+  const classes = useJssStyles("RequestPasswordResetForm", () => ({
+    root: {
+      width: 510,
+      margin: "0 auto",
+    },
+  }));
+  
+  const [email,setEmail] = useState("");
+  const [displayedError,setDisplayedError] = useState<string|null>(null);
+  const [finished,setFinished] = useState(false);
+  
+  async function requestPasswordReset() {
+    if (!email.length) {
+      setDisplayedError("Enter an email address");
+      return;
+    }
+    setDisplayedError(null);
+    const {result:_,error} = await doPost<ApiTypes.ApiRequestPasswordResetEmail>({
+      endpoint: "/api/users/requestPasswordReset",
+      query: {},
+      body: {email}
+    });
+    
+    if (error) {
+      setDisplayedError(error);
+    } else {
+      setFinished(true);
+    }
+  }
+  return <div className={classes.root}>
+    {!finished && <form
+      onSubmit={(ev) => {ev.preventDefault(); requestPasswordReset()}}
+    >
+      <TextInput label="Email" value={email} setValue={setEmail}/>
+      <input type="submit" value="Request Password Reset" className={classes.button}/>
+      {displayedError && <div><ErrorMessage message={displayedError}/></div>}
+    </form>}
+    {finished && <div>
+      An email was sent to {email}. Click the link in the email to reset your password.
+    </div>}
+  </div>
+}
+
+export function ResetPasswordForm({token}: {
+  token: string
+}) {
+  const [newPassword,setNewPassword] = useState("");
+  const [confirmPassword,setConfirmPassword] = useState("");
+  const [displayedError,setDisplayedError] = useState<string|null>(null);
+
+  const classes = useJssStyles("ResetPasswordForm", () => ({
+    root: {
+      width: 510,
+      margin: "0 auto",
+    },
+  }));
+  async function resetPassword() {
+    if (newPassword !== confirmPassword) {
+      setDisplayedError("Passwords do not match");
+      return;
+    }
+    if (!newPassword.length) {
+      setDisplayedError("Please choose a password");
+    }
+    const {result:_,error} = await doPost<ApiTypes.ApiResetPassword>({
+      endpoint: "/api/users/resetPassword",
+      query: {},
+      body: {
+        token,
+        password: newPassword
+      },
+    });
+    if (error) {
+      setDisplayedError(error);
+    } else {
+      setDisplayedError(null);
+    }
+  }
+
+  return <div className={classes.root}>
+    <form
+      className={classes.form}
+      onSubmit={(ev) => {ev.preventDefault(); resetPassword()}}
+    >
+      <TextInput
+        label="Password" inputType="password"
+        value={newPassword} setValue={setNewPassword}
+        className={classes.input}
+      />
+      <TextInput
+        label="Confirm" inputType="password"
+        value={confirmPassword} setValue={setConfirmPassword}
+        className={classes.input}
+      />
+      {displayedError && <div><ErrorMessage message={displayedError}/></div>}
+      <input type="submit" value="Reset Password" className={classes.button}/>
     </form>
   </div>;
 }
@@ -296,4 +398,4 @@ export function FeedPreview({feedUrl,onError,onClose}: {
   </div>
 }
 
-export const components = {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview};
+export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview};

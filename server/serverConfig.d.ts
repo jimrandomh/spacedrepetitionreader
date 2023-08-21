@@ -6,7 +6,7 @@ type SpacedRepetitionServerConfig = {
 
   enableEmail: boolean
   emailSubjectPrefix: string
-  emailFromAddress: string|null
+  emailFromAddress: string
   mailgunApiKey: string|null
 };
 

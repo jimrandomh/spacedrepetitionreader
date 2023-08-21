@@ -1,6 +1,6 @@
 import React,{useState} from 'react'
 import {LoggedOutAccessiblePage, PageWrapper} from './layout';
-import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm} from './forms';
+import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm} from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
@@ -356,5 +356,18 @@ export function UserProfilePage() {
   </PageWrapper>
 }
 
+export function ForgotPasswordRequestPage() {
+  return <RequestPasswordResetForm/>
+}
 
-export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,AddFeedPage,ViewCardPage,ViewFeedPage,UserProfilePage};
+export function ResetPasswordPage({token}: {token: string}) {
+  return <ResetPasswordForm token={token} />
+}
+
+export function ConfirmEmailPage({token}: {token: string}) {
+  // TODO
+}
+
+
+
+export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,AddFeedPage,ViewCardPage,ViewFeedPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage};
