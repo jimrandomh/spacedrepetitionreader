@@ -1,6 +1,6 @@
 import React,{useCallback, useEffect, useState} from 'react'
 import {LoggedOutAccessiblePage, PageWrapper} from './layout';
-import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm} from './forms';
+import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, UserConfiguration} from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
@@ -352,7 +352,7 @@ export function UserProfilePage() {
   return <PageWrapper>
     <h1>Settings</h1>
     
-    <div>{"There aren't any configuration settings yet."}</div>
+    <UserConfiguration/>
   </PageWrapper>
 }
 

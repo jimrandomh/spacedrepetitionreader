@@ -4,6 +4,8 @@ import {TextInput,TextAreaInput,ErrorMessage,Loading,FeedScrollList,Button, Link
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import {useModal,ModalDialog} from '../lib/useModal';
+import { useCurrentUser } from '../lib/useCurrentUser';
+import { getUserOptions, UserOptions } from '../lib/userOptions';
 
 
 export function LoginForm() {
@@ -172,16 +174,16 @@ export function RequestPasswordResetForm() {
 export function ResetPasswordForm({token}: {
   token: string
 }) {
-  const [newPassword,setNewPassword] = useState("");
-  const [confirmPassword,setConfirmPassword] = useState("");
-  const [displayedError,setDisplayedError] = useState<string|null>(null);
-
   const classes = useJssStyles("ResetPasswordForm", () => ({
     root: {
       width: 510,
       margin: "0 auto",
     },
   }));
+  const [newPassword,setNewPassword] = useState("");
+  const [confirmPassword,setConfirmPassword] = useState("");
+  const [displayedError,setDisplayedError] = useState<string|null>(null);
+
   async function resetPassword() {
     if (newPassword !== confirmPassword) {
       setDisplayedError("Passwords do not match");
@@ -398,4 +400,33 @@ export function FeedPreview({feedUrl,onError,onClose}: {
   </div>
 }
 
-export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview};
+export function UserConfiguration() {
+  const user = useCurrentUser()!;
+  const [currentOptions,setCurrentOptions] = useState(getUserOptions(user));
+  
+  async function updateOptions(options: Partial<UserOptions>) {
+    const mergedOptions = {...currentOptions, ...options};
+    setCurrentOptions(mergedOptions);
+    
+    const {result:_r, error:_e} = await doPost<ApiTypes.ApiChangeUserConfig>({
+      endpoint: "/api/users/changeConfig",
+      query: {},
+      body: { config: options },
+    });
+  }
+  
+  return <div>
+    <div>
+      <input
+        type="checkbox"
+        checked={currentOptions.enableCardsDueEmails}
+        onChange={ev => updateOptions({
+          enableCardsDueEmails: ev.target.checked
+        })}
+      />
+      Email once per day to remind me if I have cards due
+    </div>
+  </div>
+}
+
+export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview,UserConfiguration};

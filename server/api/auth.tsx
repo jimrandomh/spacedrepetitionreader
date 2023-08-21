@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import Cookies from 'universal-cookie';
 import { sendEmail } from '../email';
 import { getConfig } from '../getConfig';
+import { getUserOptions } from '../../lib/userOptions';
 
 const bcryptSaltRounds = 10;
 
@@ -225,6 +226,7 @@ function apiFilterCurrentUser(user: User|null, _ctx: ServerApiContext): ApiTypes
     id: user.id,
     name: user.name,
     email: user.email,
+    config: getUserOptions(user),
   }
 }
 

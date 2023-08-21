@@ -1,3 +1,5 @@
+import { UserOptions } from "./userOptions";
+
 export const dummy=0;
 
 declare global {
@@ -22,6 +24,7 @@ export interface ApiObjCurrentUser { //{{_}}
   id: DbKey
   name: string
   email: string
+  config: UserOptions
 }
 
 export interface ApiObjFeed { //{{_}}
@@ -126,6 +129,16 @@ export interface ApiConfirmEmail extends RestApiPost { //{{_}}
   queryArgs: object
   bodyArgs: {
     token: string
+  }
+  responseType: object
+}
+
+
+export interface ApiChangeUserConfig extends RestApiPost { //{{_}}
+  path: "/api/users/changeConfig",
+  queryArgs: object
+  bodyArgs: {
+    config: any
   }
   responseType: object
 }
