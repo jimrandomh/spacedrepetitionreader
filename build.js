@@ -25,7 +25,7 @@ build({
   bundle: true,
   sourcemap: true,
   sourcesContent: true,
-  external: ["express","path","fs","rss-parser","body-parser","bcrypt","@prisma","@prisma/client","crypto","rel-to-abs","process","html-to-text"],
+  external: ["express","path","fs","rss-parser","body-parser","bcrypt","@prisma","@prisma/client","crypto","rel-to-abs","process","html-to-text","mailgun.js","form-data","juice"],
   outfile: 'build/server.js',
   minify: false,
   run: cliopts.run && ['node', '-r', 'source-map-support/register', '--inspect', 'build/server.js'],
