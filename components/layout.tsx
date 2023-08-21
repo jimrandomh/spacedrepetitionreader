@@ -281,9 +281,9 @@ export function SidebarListItemWithCount({title, href, unreadCount}: {
       <div className={classes.title}>
         {title}
       </div>
-      <div className={classes.unreadCount}>
+      {unreadCount>0 && <div className={classes.unreadCount}>
         {unreadCount}
-      </div>
+      </div>}
     </Link>
   </div>
 }
