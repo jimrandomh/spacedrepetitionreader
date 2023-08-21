@@ -80,7 +80,7 @@ export const routes: Endpoint[] = [
   },
   {
     path: new Route("/email/confirm/:token"),
-    access: "LoggedIn",
+    access: "LoggedOut",
     component: Pages.ConfirmEmailPage,
   },
 ];

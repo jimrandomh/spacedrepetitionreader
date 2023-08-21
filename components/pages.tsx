@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import {LoggedOutAccessiblePage, PageWrapper} from './layout';
 import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm} from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
@@ -365,7 +365,21 @@ export function ResetPasswordPage({token}: {token: string}) {
 }
 
 export function ConfirmEmailPage({token}: {token: string}) {
-  // TODO
+  async function doConfirm() {
+    await doPost({
+      endpoint: "/api/email/confirmEmail",
+      query: {}, body: {token}
+    });
+  }
+
+  useEffect(() => {
+    doConfirm();
+    redirect("/dashboard");
+  }, []);
+  
+  return <div>
+    <Loading/>
+  </div>
 }
 
 
