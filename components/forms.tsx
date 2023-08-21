@@ -9,7 +9,7 @@ import {useModal,ModalDialog} from '../lib/useModal';
 export function LoginForm() {
   const classes = useJssStyles("LoginForm", () => ({
     root: {
-      width: 510,
+      width: 600,
       margin: "0 auto",
     },
     form: {

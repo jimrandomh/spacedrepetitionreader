@@ -236,7 +236,7 @@ async function sendConfirmationEmail(ctx: ServerApiContext, user: User) {
   
   await ctx.db.emailToken.create({
     data: {
-      type: "cofirmEmail",
+      type: "confirmEmail",
       tokenHash,
       userId: user.id,
     },

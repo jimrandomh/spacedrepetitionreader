@@ -8,7 +8,7 @@ import { convert } from 'html-to-text';
 import { getConfig } from './getConfig';
 import Mailgun from 'mailgun.js';
 import formData from 'form-data';
-import { IMailgunClient } from 'mailgun.js/Interfaces';
+import type { IMailgunClient } from 'mailgun.js/Interfaces';
 
 export async function sendEmail({to, subject, body, user}: {
   to: string,
