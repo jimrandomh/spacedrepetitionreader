@@ -1,7 +1,15 @@
 #!/usr/bin/env node
 const {build,cliopts} = require("estrella");
-const serverConfig = require("./config");
+const fs = require("fs");
+const process = require("process");
 
+console.log("Checking for config.js");
+if (!fs.existsSync("./config.js")) {
+  console.log("Can't build, no config.js found");
+  process.exit(0);
+}
+
+const serverConfig = require("./config");
 const connectionString = serverConfig.psqlConnectionString;
 process.env.DATABASE_URL = connectionString;
 
