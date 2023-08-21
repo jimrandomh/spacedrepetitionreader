@@ -295,7 +295,7 @@ export function ViewFeedPage({id}: {id: DbKey}) {
   const [error,setError] = useState<string|null>(null);
   
   async function forceRefresh() {
-    const {result:_, error} = await doPost({
+    const {result:_, error} = await doPost<ApiTypes.ApiRefreshFeed>({
       endpoint: "/api/feed/refresh",
       query: {}, body: {id}
     });
@@ -307,7 +307,7 @@ export function ViewFeedPage({id}: {id: DbKey}) {
   }
   
   async function markAllAsRead() {
-    await doPost({
+    await doPost<ApiTypes.ApiMarkAllAsRead>({
       endpoint: "/api/feed/markAsRead",
       query: {}, body: {feedId: id}
     });
@@ -366,8 +366,8 @@ export function ResetPasswordPage({token}: {token: string}) {
 
 export function ConfirmEmailPage({token}: {token: string}) {
   async function doConfirm() {
-    await doPost({
-      endpoint: "/api/email/confirmEmail",
+    await doPost<ApiTypes.ApiConfirmEmail>({
+      endpoint: "/api/users/confirmEmail",
       query: {}, body: {token}
     });
   }
