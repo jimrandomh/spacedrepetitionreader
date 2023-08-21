@@ -43,8 +43,18 @@ function serverRoutes(app: Express) {
   app.use('/client.js.map', express.static(path.join(projectRoot, 'build/client.js.map')));
   app.get('/jssStyles.css', (req, res) => {
     const {css,hash} = getStaticStylesheet();
-    // TODO: Set cache-control headers. Make the cache-control headers different if the hash is wrong.
-    res.end(css);
+    
+    const requestedHash = req.query?.hash;
+    if (requestedHash === hash) {
+      res.writeHead(200, {
+        "Cache-Control": "public, max-age=604800, immutable",
+        "Content-Type": "text/css; charset=utf-8"
+      });
+      res.end(css);
+    } else {
+      res.writeHead(404);
+      res.end("");
+    }
   });
   app.get('*', async (req, res) => {
     const {status, html} = await renderSSR(req, res, req.url)
