@@ -293,7 +293,7 @@ async function refreshFeed(feed: RssFeed, db: PrismaClient) {
   const existingItemsByRemoteId = keyBy(existingItems, item=>item.remoteId);
   
   const itemsToCreate: Prisma.RssItemUncheckedCreateInput[] = [];
-  for (let item of feedResponse.items) {
+  for (const item of feedResponse.items) {
     const translated = rssParserToFeedItem(item, feed.id);
     const matchingItem = existingItemsByRemoteId[translated.remoteId];
     if (translated.remoteId && matchingItem) {

@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  name          String   @unique
-  email         String   @unique
-  passwordHash  String
-  createdAt     DateTime @default(now())
-  isAdmin       Boolean  @default(false)
-  emailVerified Boolean  @default(false)
-  config        Json
+  id             String   @id @default(cuid())
+  name           String   @unique
+  email          String   @unique
+  passwordHash   String
+  createdAt      DateTime @default(now())
+  isAdmin        Boolean  @default(false)
+  emailVerified  Boolean  @default(false)
+  lastRemindedAt DateTime?
+  config         Json
 
   decks           Deck[]
   loginTokens     LoginToken[]
@@ -166,4 +167,23 @@ model RssImpression {
   rssItem   RssItem @relation(fields: [rssItemId], references: [id])
 
   @@index([userId, rssItemId])
+}
+
+model CronHistory {
+  // key is {name}-{intendedAt}. intendedAt is when this job ran, according to
+  // the schedule, in milliseconds-since-1970. This is an idealized time, not
+  // including any small delay before start, and is used as a key to prevent
+  // multiple servers connected to the same DB from running the same job.
+  key String  @id
+
+  intendedAt  BigInt
+
+  // When this actually started (possibly including a small delay)
+  startedAt   DateTime
+  
+  // If this finished, when it did so
+  finishedAt  DateTime?
+  
+  // If an exception was thrown while running this, the exception, stringified
+  error       String?
 }

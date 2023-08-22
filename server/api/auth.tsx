@@ -247,13 +247,13 @@ async function sendConfirmationEmail(ctx: ServerApiContext, user: User) {
   const confirmLink = `${config.siteUrl}/email/confirm/${token}`;
 
   await sendEmail({
-    to: user.email,
+    user,
     subject: "Confirm your email address",
+    allowUnverified: true,
     body: <div>
       <p>Click this link to confirm your email address:</p>
       <p><a href={confirmLink}>Confirm</a></p>
     </div>,
-    user,
   });
 }
 
@@ -273,12 +273,12 @@ async function sendPasswordResetEmail(ctx: ServerApiContext, user: User) {
   const resetPasswordLink = `${config.siteUrl}/email/resetPassword/${token}`;
 
   await sendEmail({
-    to: user.email,
+    user,
     subject: "Reset your password",
+    allowUnverified: true,
     body: <div>
       <p>Click this link to reset your password:</p>
       <p><a href={resetPasswordLink}>Reset password</a></p>
     </div>,
-    user,
   });
 }

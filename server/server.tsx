@@ -14,6 +14,7 @@ import {initJss} from '../lib/useJssStyles';
 import process from 'process';
 import { getConfig } from './getConfig';
 import { PrismaClient, User } from '@prisma/client';
+import { addCardsDueCronjob } from './cardsDueNotification';
 
 const projectRoot = path.join(__dirname, '..');
 const staticFilesPath = path.join(projectRoot, 'static');
@@ -29,6 +30,7 @@ function serverStartup() {
   
   initJss();
   addApiEndpoints(app);
+  addCardsDueCronjob();
   serverRoutes(app);
   
   app.listen(port, () => {

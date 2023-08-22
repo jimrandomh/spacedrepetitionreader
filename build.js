@@ -16,7 +16,7 @@ process.env.DATABASE_URL = connectionString;
 const externalLibs = [
   "express","path","fs","rss-parser","body-parser","bcrypt","@prisma",
   "@prisma/client","crypto","rel-to-abs","process","html-to-text","mailgun",
-  "mailgun.js","mailgun.js/Interfaces","form-data","juice",
+  "mailgun.js","mailgun.js/Interfaces","form-data","juice","events",
 ];
 
 build({
@@ -44,6 +44,7 @@ build({
   outfile: 'build/server.js',
   minify: false,
   run: cliopts.run && ['node', '-r', 'source-map-support/register', '--inspect', 'build/server.js'],
+  platform: "node",
   define: {
     isClient: false,
     isServer: true,

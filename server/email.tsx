@@ -10,14 +10,19 @@ import Mailgun from 'mailgun.js';
 import formData from 'form-data';
 import type { IMailgunClient } from 'mailgun.js/Interfaces';
 
-export async function sendEmail({to, subject, body, user}: {
-  to: string,
+export async function sendEmail({subject, body, user, allowUnverified=false}: {
   subject: string,
   body: React.ReactElement,
-  user: User|null
+  user: User,
+  allowUnverified?: boolean,
 }) {
   const db = getPrisma();
   const config = getConfig();
+  const to = user.email;
+  
+  if (!allowUnverified && !user.emailVerified) {
+    console.log(`Not sending to ${user.name} (${user.email}) because their email is not verified`);
+  }
 
   const {apiProvider} = getApiProviderFromUser(user, db);
   const renderedBody = await repeatRenderingUntilSettled(body, apiProvider);

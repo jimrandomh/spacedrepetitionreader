@@ -1,5 +1,5 @@
 import type {Express} from 'express';
-import type {Card,Deck} from '@prisma/client'
+import type {Card,Deck, PrismaClient, User} from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsNumber,assertIsString,ServerApiContext,ApiErrorNotFound,ApiErrorAccessDenied} from '../serverApiUtil';
 import {maybeRefreshFeed,getUnreadItems,apiFilterRssItem} from './feeds';
 import {getDueDate} from '../cardScheduler';
@@ -149,67 +149,9 @@ export function addDeckEndpoints(app: Express) {
   
   defineGetApi<ApiTypes.ApiCardsDue>(app, "/api/cards/due", async (ctx) => {
     const currentUser = assertLoggedIn(ctx);
-    
-    // Get decks owned by this user, cards in those decks, and impressions by this user on those cards.
-    const decks = await ctx.db.deck.findMany({
-      where: {
-        deleted: false,
-        authorId: currentUser.id,
-      },
-      include: {
-        cards: {
-          where: {
-            deleted: false
-          },
-          include: {
-            impressions: {
-              where: {
-                userId: currentUser.id
-              }
-            }
-          }
-        }
-      }
-    });
-    
-    // Compute a due date for each card
-    const cards = flatten(decks.map(deck=>deck.cards));
     const dateStr = ctx.searchParams.get('date');
     const now = dateStr ? new Date(dateStr) : new Date();
-    const cardsDue = filter(cards, card => {
-      const dueDate = getDueDate(card, card.impressions, ctx);
-      return dueDate<=now;
-    });
-    
-    // Get the user's RSS subscriptions
-    const subscriptions = await ctx.db.rssSubscription.findMany({
-      where: {
-        userId: currentUser.id,
-        deleted: false,
-      },
-      include: {feed: true}
-    });
-    
-    // Refresh any RSS feeds that are stale
-    await awaitAll(subscriptions.map(subscription => async () => {
-      await maybeRefreshFeed(subscription.feed, ctx.db)
-    }), maxParallelism);
-    
-    // Get unread items in the user's RSS feeds
-    const unreadItems = flatten(
-      await awaitAll(
-        subscriptions.map(subscription => async () => {
-          return await getUnreadItems(currentUser, subscription.feed, ctx.db);
-        }),
-        maxParallelism
-      )
-    );
-    
-    // Return cards that are due
-    return {
-      cards: cardsDue.map(card => apiFilterCard(card, ctx)),
-      feedItems: unreadItems.map(item => apiFilterRssItem(item, ctx)),
-    };
+    return await getItemsDue(currentUser, ctx, now);
   });
   
   definePostApi<ApiTypes.ApiRecordCardImpression>(app, "/api/cards/impression", async (ctx) => {
@@ -258,6 +200,67 @@ export function addDeckEndpoints(app: Express) {
       card: apiFilterCard(card, ctx)
     }
   });
+}
+
+export async function getItemsDue(currentUser: User, ctx: ServerApiContext, now: Date) {
+  // Get decks owned by this user, cards in those decks, and impressions by this user on those cards.
+  const decks = await ctx.db.deck.findMany({
+    where: {
+      deleted: false,
+      authorId: currentUser.id,
+    },
+    include: {
+      cards: {
+        where: {
+          deleted: false
+        },
+        include: {
+          impressions: {
+            where: {
+              userId: currentUser.id
+            }
+          }
+        }
+      }
+    }
+  });
+  
+  // Compute a due date for each card
+  const cards = flatten(decks.map(deck=>deck.cards));
+  const cardsDue = filter(cards, card => {
+    const dueDate = getDueDate(card, card.impressions, ctx);
+    return dueDate<=now;
+  });
+  
+  // Get the user's RSS subscriptions
+  const subscriptions = await ctx.db.rssSubscription.findMany({
+    where: {
+      userId: currentUser.id,
+      deleted: false,
+    },
+    include: {feed: true}
+  });
+  
+  // Refresh any RSS feeds that are stale
+  await awaitAll(subscriptions.map(subscription => async () => {
+    await maybeRefreshFeed(subscription.feed, ctx.db)
+  }), maxParallelism);
+  
+  // Get unread items in the user's RSS feeds
+  const unreadItems = flatten(
+    await awaitAll(
+      subscriptions.map(subscription => async () => {
+        return await getUnreadItems(currentUser, subscription.feed, ctx.db);
+      }),
+      maxParallelism
+    )
+  );
+  
+  // Return cards that are due
+  return {
+    cards: cardsDue.map(card => apiFilterCard(card, ctx)),
+    feedItems: unreadItems.map(item => apiFilterRssItem(item, ctx)),
+  };
 }
 
 function apiFilterDeck(deck: Deck, _ctx: ServerApiContext): ApiTypes.ApiObjDeck {
