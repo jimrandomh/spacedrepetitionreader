@@ -11,7 +11,7 @@ import { registerCronjob } from "./util/cronUtil";
 export function addCardsDueCronjob() {
   registerCronjob({
     name: "cardsDueNotification",
-    schedule: "0 0 4 * *", // Daily, 4am server time
+    schedule: "0 0 4 * * *", // Daily, 4am server time
     fn: async () => {
       await sendCardsDueNotifications();
     }
