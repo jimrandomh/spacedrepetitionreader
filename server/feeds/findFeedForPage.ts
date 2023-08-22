@@ -1,4 +1,5 @@
 import cheerio from 'cheerio';
+import nodeFetch, { Response as FetchResponse } from 'node-fetch';
 
 /// Given a URL that might be an RSS feed URL but might also be a bare domain,
 /// try to figure out a corresponding RSS URL. Fetches URLs to try to find a
@@ -41,7 +42,7 @@ export async function siteUrlToFeedUrl(urlString: string): Promise<
   //     <link rel="alternative" type="application/rss+xml" href="...">
   // then use the `href` attribute from that tag. Otherwise continue to fallback
   // cases.
-  const fetchResult = await fetch(urlString);
+  const fetchResult = await nodeFetch(urlString);
   if (fetchResult.ok) {
     const body = await fetchResult.text();
     if (await resultIsFeed(fetchResult, body)) {
@@ -62,7 +63,7 @@ export async function siteUrlToFeedUrl(urlString: string): Promise<
     for (const path of commonFeedPaths) {
       const combinedUrl = new URL(path, parsedUrl)
       console.log(`Checking whether ${combinedUrl.toString()} is a feed`);
-      const commonPathFetchResult = await fetch(combinedUrl.toString());
+      const commonPathFetchResult = await nodeFetch(combinedUrl.toString());
       if (commonPathFetchResult.ok) {
         const body = await commonPathFetchResult.text();
         if (await resultIsFeed(fetchResult, body)) {
@@ -80,7 +81,7 @@ export async function siteUrlToFeedUrl(urlString: string): Promise<
 /// Given the result of a fetch() call which might or might not have succeeded
 /// and might or might not be XML for an RSS/Atom feed, return whether it was
 /// successful and was the XML for an RSS/Atom feed.
-async function resultIsFeed(fetchResult: Response, body: string): Promise<boolean> {
+async function resultIsFeed(fetchResult: FetchResponse, body: string): Promise<boolean> {
   if (!fetchResult.ok) {
     console.log(`Fetch of ${fetchResult.url} failed: ${fetchResult.status}`);
     return false;
@@ -99,7 +100,7 @@ export function pageBodyIsFeed(body: string): boolean {
 ///
 /// Looks for tags that look like:
 ///   <link rel="alternative" type="application/rss+xml" href="...">
-async function getFeedUrlFromFetchResult(fetchResult: Response, body: string): Promise<string|null> {
+async function getFeedUrlFromFetchResult(fetchResult: FetchResponse, body: string): Promise<string|null> {
   if (!fetchResult.ok) {
     console.log(`Fetch of ${fetchResult.url} failed: ${fetchResult.status}`);
     return null;
