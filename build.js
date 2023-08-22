@@ -16,7 +16,7 @@ process.env.DATABASE_URL = connectionString;
 const externalLibs = [
   "express","path","fs","rss-parser","body-parser","bcrypt","@prisma",
   "@prisma/client","crypto","rel-to-abs","process","html-to-text","mailgun",
-  "mailgun.js","mailgun.js/Interfaces","form-data","juice","events",
+  "mailgun.js","mailgun.js/Interfaces","form-data","juice","events","node-fetch"
 ];
 
 build({
