@@ -1,14 +1,16 @@
 import RssParser, {Item as RssParserItem} from 'rss-parser';
 import {sanitizeHtml} from '../htmlUtil';
 import type {Express} from 'express';
-import type {PrismaClient,User,RssFeed,RssItem} from '@prisma/client'
+import type {PrismaClient,User,RssFeed,RssItem, Prisma} from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound, ApiErrorAccessDenied} from '../serverApiUtil';
 import { siteUrlToFeedUrl } from '../feeds/findFeedForPage';
 import keyBy from 'lodash/keyBy';
 import relToAbs from 'rel-to-abs';
 import { userCanViewFeed } from '../permissions';
+import { awaitAll } from '../../lib/asyncUtil';
 
 const feedRefreshIntervalMs = 1000*60*60; //1hr
+const maxParallelism = 10;
 
 export function addFeedEndpoints(app: Express) {
   defineGetApi<ApiTypes.ApiPollFeed>(app, "/api/feed/poll/:feedUrl", async (ctx) => {
@@ -41,7 +43,7 @@ export function addFeedEndpoints(app: Express) {
     const items = await ctx.db.rssItem.findMany({
       where: {feedId: feedId}
     });
-    await Promise.all(items.map(async item => markAsRead(currentUser, item, ctx)));
+    await awaitAll(items.map(item => async () => markAsRead(currentUser, item, ctx)), maxParallelism);
     return {};
   });
   
@@ -74,9 +76,9 @@ export function addFeedEndpoints(app: Express) {
     });
     
     const unreadCountsByFeedId: Record<DbKey,number> = {};
-    await Promise.all(subscriptions.map(async (subscription) => {
+    await awaitAll(subscriptions.map(subscription => async () => {
       unreadCountsByFeedId[subscription.feed.id] = await getUnreadCount(currentUser, subscription.feed, ctx)
-    }));
+    }), 10);
     
     return {
       feeds: subscriptions.map(subscription => ({
@@ -290,7 +292,8 @@ async function refreshFeed(feed: RssFeed, db: PrismaClient) {
   });
   const existingItemsByRemoteId = keyBy(existingItems, item=>item.remoteId);
   
-  await Promise.all(feedResponse.items.map(async (item) => {
+  const itemsToCreate: Prisma.RssItemUncheckedCreateInput[] = [];
+  for (let item of feedResponse.items) {
     const translated = rssParserToFeedItem(item, feed.id);
     const matchingItem = existingItemsByRemoteId[translated.remoteId];
     if (translated.remoteId && matchingItem) {
@@ -299,12 +302,13 @@ async function refreshFeed(feed: RssFeed, db: PrismaClient) {
     } else {
       //console.log(`Creating item in feed ${feed.id}`);
       //console.log(item);
-      
-      await db.rssItem.create({
-        data: translated
-      });
+      itemsToCreate.push(translated);
     }
-  }));
+  }
+  
+  await db.rssItem.createMany({
+    data: itemsToCreate,
+  });
   
   await db.rssFeed.update({
     where: {id: feed.id},

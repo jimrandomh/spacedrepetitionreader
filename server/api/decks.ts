@@ -6,6 +6,9 @@ import {getDueDate} from '../cardScheduler';
 import flatten from 'lodash/flatten';
 import filter from 'lodash/filter';
 import { userCanEditDeck, userCanViewDeck } from '../permissions';
+import { awaitAll } from '../../lib/asyncUtil';
+
+const maxParallelism = 10;
 
 export function addDeckEndpoints(app: Express) {
   defineGetApi<ApiTypes.ApiListDecks>(app, "/api/decks/list", async (ctx) => {
@@ -188,14 +191,19 @@ export function addDeckEndpoints(app: Express) {
     });
     
     // Refresh any RSS feeds that are stale
-    await Promise.all(subscriptions.map(async subscription => {
+    await awaitAll(subscriptions.map(subscription => async () => {
       await maybeRefreshFeed(subscription.feed, ctx.db)
-    }));
+    }), maxParallelism);
     
     // Get unread items in the user's RSS feeds
-    const unreadItems = flatten(await Promise.all(subscriptions.map(async subscription => {
-      return await getUnreadItems(currentUser, subscription.feed, ctx.db);
-    })));
+    const unreadItems = flatten(
+      await awaitAll(
+        subscriptions.map(subscription => async () => {
+          return await getUnreadItems(currentUser, subscription.feed, ctx.db);
+        }),
+        maxParallelism
+      )
+    );
     
     // Return cards that are due
     return {

@@ -330,7 +330,7 @@ export function SubscribeToFeedForm() {
   
   return <div>
     <form onSubmit={(ev) => {ev.preventDefault(); previewFeed()}}>
-      <TextInput label="RSS or Atom URI" value={feedUrl} setValue={setFeedUrl}/>
+      <TextInput label="Page, RSS or Atom URI" value={feedUrl} setValue={setFeedUrl}/>
       <input type="submit" value="Preview"/>
       {error && <div><ErrorMessage message={error}/></div>}
     </form>
