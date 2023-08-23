@@ -6,7 +6,7 @@ module.exports = {
 
   enableEmail: false,
   emailSubjectPrefix: "[SRR] ",
-  emailFromAddress: "noreply@spacedrepetitionreader.com",
+  emailFromAddress: "Spaced Repetition Reader <noreply@spacedrepetitionreader.com>",
   mailgunApiKey: null,
 };
 
