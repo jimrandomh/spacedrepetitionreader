@@ -123,7 +123,12 @@ export function TextInput({label, value, setValue, inputType, className}: {
 }
 
 export function BulletSeparator() {
-  return <span>{" • "}</span>
+  const classes = useJssStyles("BulletSeparator", () => ({
+    bullet: {
+      cursor: "default",
+    },
+  }));
+  return <span className={classes.bullet}>{" • "}</span>
 }
 
 export function FeedScrollList({items}: {

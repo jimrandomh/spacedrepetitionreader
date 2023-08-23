@@ -401,6 +401,14 @@ export function FeedPreview({feedUrl,onError,onClose}: {
 }
 
 export function UserConfiguration() {
+  const classes = useJssStyles("UserConfiguration", () => ({
+    checkboxSetting: {
+      fontFamily: "sans-serif",
+      fontSize: 14,
+    },
+    label: {
+    },
+  }));
   const user = useCurrentUser()!;
   const [currentOptions,setCurrentOptions] = useState(getUserOptions(user));
   
@@ -416,7 +424,7 @@ export function UserConfiguration() {
   }
   
   return <div>
-    <div>
+    <div className={classes.checkboxSetting}>
       <input
         type="checkbox"
         checked={currentOptions.enableCardsDueEmails}
@@ -424,7 +432,9 @@ export function UserConfiguration() {
           enableCardsDueEmails: ev.target.checked
         })}
       />
-      Email once per day to remind me if I have cards due
+      <span className={classes.label}>
+        Email once per day to remind me if I have cards due
+      </span>
     </div>
   </div>
 }
