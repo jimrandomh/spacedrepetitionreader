@@ -55,7 +55,7 @@ export function ErrorMessage({message}: {
       color: "#ff0000",
     }
   }));
-  return <span className={classes.errorMessage}>{message}</span>
+  return <div className={classes.errorMessage}>{message}</div>
 }
 
 export function Loading() {

@@ -155,9 +155,10 @@ export async function doPost<T extends ApiTypes.RestApiPost>({ endpoint, query, 
   });
   
   if(!fetchResult.ok) {
+    const errorFromBody = (await fetchResult.json()).error;
     return {
       result: null,
-      error: (await fetchResult.json()).error,
+      error: errorFromBody ?? fetchResult.statusText,
     };
   }
   

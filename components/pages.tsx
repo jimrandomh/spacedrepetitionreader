@@ -40,11 +40,6 @@ export function DashboardPage() {
     query: {},
   });
   
-  if (!currentUser) {
-    redirect('/login');
-    return <div/>;
-  }
-  
   return <PageWrapper>
     {loading && <Loading/>}
     {data && <ReviewWrapper
@@ -122,12 +117,20 @@ export function EditDeck({id}: {id: DbKey}) {
         <Link onClick={deleteDeck} color={false}>Delete</Link>
       </div>
     </>}
-    {error && <div><ErrorMessage message={error}/></div>}
+    {error && <ErrorMessage message={error}/>}
   </PageWrapper>
 }
 
 export function Error404Page() {
   return <h1>Page Not Found</h1>
+}
+
+export function RedirectToLoginPage() {
+  useEffect(() => {
+    redirect("/login");
+  });
+
+  return <div>Redirecting to /login</div>
 }
 
 export function LandingPage() {
@@ -274,7 +277,7 @@ export function ViewCardPage({id}: {id: DbKey}) {
       <div>Back: {card.back}</div>
     </div>}
     <button onClick={deleteCard}>Delete</button>
-    {error && <div><ErrorMessage message={error}/></div>}
+    {error && <ErrorMessage message={error}/>}
   </PageWrapper>
 }
 
@@ -335,7 +338,7 @@ export function ViewFeedPage({id}: {id: DbKey}) {
       <Link color={false} onClick={forceRefresh}>Refresh</Link>
       <BulletSeparator/>
       <Link color={false} onClick={unsubscribe}>Unsubscribe</Link>
-      {error && <div><ErrorMessage message={error}/></div>}
+      {error && <ErrorMessage message={error}/>}
     </div>
     
     <div className={classes.feed}>

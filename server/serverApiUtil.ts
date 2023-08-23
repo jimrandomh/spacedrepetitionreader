@@ -6,6 +6,7 @@ import {getUserFromReq} from './api/auth';
 import mapValues from 'lodash/mapValues';
 import Route from 'route-parser';
 import bodyParser from 'body-parser';
+import Cookies from 'universal-cookie';
 
 export interface ServerApiContext {
   req: Request|null
@@ -123,6 +124,16 @@ export function assertIsString(value: any): string {
   if(typeof(value) !== 'string')
     throw new Error("Argument must be a string");
   return (value as string);
+}
+
+
+export function getCookie(req: Request, name: string) {
+  const cookies = new Cookies((req as any).headers.cookie);
+  return cookies.get(name)
+}
+
+export function setCookie(res: Response, name: string, value: string, options: any) {
+  (res as any).cookie(name, value, options);
 }
 
 

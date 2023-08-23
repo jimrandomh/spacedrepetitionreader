@@ -1,10 +1,9 @@
 import React from 'react';
 import type {Express,Request,Response} from 'express';
 import type {PrismaClient, User} from '@prisma/client'
-import {defineGetApi,definePostApi,ServerApiContext,assertIsString, ApiErrorNotFound, ApiErrorAccessDenied} from '../serverApiUtil';
+import {defineGetApi,definePostApi,ServerApiContext,assertIsString, ApiErrorNotFound, ApiErrorAccessDenied, assertLoggedIn, getCookie, setCookie} from '../serverApiUtil';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import Cookies from 'universal-cookie';
 import { sendEmail } from '../email';
 import { getConfig } from '../getConfig';
 import { getUserOptions } from '../../lib/userOptions';
@@ -23,8 +22,7 @@ function hashForTokens(token: string): string {
 
 
 export async function getUserFromReq(req: Request, db: PrismaClient): Promise<User|null> {
-  const cookies = new Cookies((req as any).headers.cookie);
-  const loginCookie = cookies.get('login')
+  const loginCookie = getCookie(req, "login");
   if (!loginCookie || !loginCookie.length) {
     return null;
   }
@@ -54,9 +52,21 @@ async function createAndAssignLoginToken(req: Request, res: Response, user: User
     }
   });
   
-  (res as any).cookie('login', token, {
+  setCookie(res, 'login', token, {
     path: "/"
   });
+}
+
+async function logUserOut(user: User, db: PrismaClient, res: Response|null) {
+  await db.loginToken.updateMany({
+    where: {ownerId: user.id},
+    data: {valid: false}
+  });
+  if (res) {
+    setCookie(res, 'login', '', {
+      path: "/"
+    });
+  }
 }
 
 export function addAuthEndpoints(app: Express) {
@@ -104,8 +114,11 @@ export function addAuthEndpoints(app: Express) {
     
     const user = await ctx.db.user.findUnique({where: {name: username}});
     if (!user || !await bcrypt.compare(password, user.passwordHash)) {
-      if (!user) console.log(`No such user: ${username}`);
-      console.log(`Password ${password} did not match hash ${user?.passwordHash}`);
+      if (user) {
+        console.log(`Incorrect password for user ${user.name}`);
+      } else {
+        console.log(`No such user: ${username}`);
+      }
       throw new Error("Incorrect username or password");
     }
     
@@ -117,21 +130,8 @@ export function addAuthEndpoints(app: Express) {
   });
 
   definePostApi<ApiTypes.ApiLogout>(app, "/api/users/logout", async (ctx) => {
-    const cookies = new Cookies((ctx.req as any).headers.cookie);
-    const loginCookie = cookies.get('login')
-    const tokenHash = hashForTokens(loginCookie);
-
-    if (!loginCookie) {
-      return {};
-    }
-    await ctx.db.loginToken.update({
-      where: {tokenHash: tokenHash},
-      data: {valid: false}
-    });
-    (ctx.res as any).cookie('login', '', {
-      path: "/"
-    });
-    
+    const currentUser = assertLoggedIn(ctx);
+    await logUserOut(currentUser, ctx.db, ctx.res);
     return {};
   });
   
@@ -214,6 +214,25 @@ export function addAuthEndpoints(app: Express) {
       where: { id: dbToken.userId },
       data: { emailVerified: true },
     });
+    
+    return {};
+  });
+  
+  definePostApi<ApiTypes.ApiChangePassword>(app, "/api/users/changePassword", async (ctx) => {
+    const user = assertLoggedIn(ctx);
+    const oldPassword = assertIsString(ctx.body.oldPassword);
+    const newPassword = assertIsString(ctx.body.newPassword);
+    
+    if (!await bcrypt.compare(oldPassword, user.passwordHash)) {
+      throw ApiErrorAccessDenied;
+    }
+    
+    const newPasswordHash = await bcrypt.hash(newPassword, bcryptSaltRounds);
+    await ctx.db.user.update({
+      where: {id: user.id},
+      data: {passwordHash: newPasswordHash},
+    });
+    await logUserOut(user, ctx.db, ctx.res);
     
     return {};
   });

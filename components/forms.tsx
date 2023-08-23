@@ -109,7 +109,7 @@ export function LoginForm() {
       <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword} className={classes.input}/>
       <input type="submit" value="Log In" className={classes.button}/>
       <Link href="/email/forgotPassword">Forgot Password</Link>
-      {loginError && <div><ErrorMessage message={loginError}/></div>}
+      {loginError && <ErrorMessage message={loginError}/>}
     </form>
     <form
       className={classes.form}
@@ -122,7 +122,7 @@ export function LoginForm() {
       <TextInput label="Confirm" inputType="password" value={confirmPassword} setValue={setConfirmPassword} className={classes.input}/>
       <input type="submit" value="Create Account" className={classes.button}/>
       
-      {signupError && <div><ErrorMessage message={signupError}/></div>}
+      {signupError && <ErrorMessage message={signupError}/>}
     </form>
   </div>;
 }
@@ -222,7 +222,7 @@ export function ResetPasswordForm({token}: {
         value={confirmPassword} setValue={setConfirmPassword}
         className={classes.input}
       />
-      {displayedError && <div><ErrorMessage message={displayedError}/></div>}
+      {displayedError && <ErrorMessage message={displayedError}/>}
       <input type="submit" value="Reset Password" className={classes.button}/>
     </form>
   </div>;
@@ -332,7 +332,7 @@ export function SubscribeToFeedForm() {
     <form onSubmit={(ev) => {ev.preventDefault(); previewFeed()}}>
       <TextInput label="Page, RSS or Atom URI" value={feedUrl} setValue={setFeedUrl}/>
       <input type="submit" value="Preview"/>
-      {error && <div><ErrorMessage message={error}/></div>}
+      {error && <ErrorMessage message={error}/>}
     </form>
   </div>
 }
@@ -411,6 +411,7 @@ export function UserConfiguration() {
   }));
   const user = useCurrentUser()!;
   const [currentOptions,setCurrentOptions] = useState(getUserOptions(user));
+  const [showChangePassword,setShowChangePassword] = useState(false);
   
   async function updateOptions(options: Partial<UserOptions>) {
     const mergedOptions = {...currentOptions, ...options};
@@ -422,7 +423,6 @@ export function UserConfiguration() {
       body: { config: options },
     });
   }
-  
   return <div>
     <div className={classes.checkboxSetting}>
       <input
@@ -436,7 +436,64 @@ export function UserConfiguration() {
         Email once per day to remind me if I have cards due
       </span>
     </div>
+    <div>
+      <Link onClick={() => setShowChangePassword(true)}>Change Password</Link>
+      {showChangePassword && <ChangePasswordForm/>}
+    </div>
   </div>
 }
 
-export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview,UserConfiguration};
+export function ChangePasswordForm() {
+  const classes = useJssStyles("ChangePasswordForm", () => ({
+    button: {
+    },
+  }));
+  const [oldPassword,setOldPassword] = useState("");
+  const [newPassword,setNewPassword] = useState("");
+  const [confirmPassword,setConfirmPassword] = useState("");
+  const [displayedError,setDisplayedError] = useState<string|null>(null);
+  
+  async function changePassword() {
+    setDisplayedError(null);
+    
+    if (newPassword !== confirmPassword) {
+      setDisplayedError("Passwords do not match");
+      return;
+    }
+    
+    const response = await doPost<ApiTypes.ApiChangePassword>({
+      endpoint: "/api/users/changePassword",
+      query: {},
+      body: { oldPassword, newPassword },
+    });
+    
+    if (response.error) {
+      setDisplayedError(response.error)
+    } else {
+      redirect("/login");
+    }
+  }
+
+  return <form
+    className={classes.form}
+    onSubmit={(ev) => {ev.preventDefault(); changePassword()}}
+  >
+    <TextInput
+      label="Current Password" inputType="password"
+      value={oldPassword} setValue={setOldPassword}
+    />
+    <TextInput
+      label="New Password" inputType="password"
+      value={newPassword} setValue={setNewPassword}
+    />
+    <TextInput
+      label="Confirm  Password" inputType="password"
+      value={confirmPassword} setValue={setConfirmPassword}
+    />
+    <input type="submit" value="Submit" className={classes.button}/>
+
+    {displayedError && <ErrorMessage message={displayedError}/>}
+  </form>
+}
+
+export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview,UserConfiguration,ChangePasswordForm};

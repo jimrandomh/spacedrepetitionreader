@@ -7,7 +7,10 @@ export const defaultUserOptions: UserOptions = {
   enableCardsDueEmails: true
 };
 
-export function getUserOptions(user: User|ApiTypes.ApiObjCurrentUser): UserOptions {
+export function getUserOptions(user: User|ApiTypes.ApiObjCurrentUser|null): UserOptions {
+  if (!user) {
+    return defaultUserOptions;
+  }
   return {
     ...defaultUserOptions,
     ...(user.config as Partial<UserOptions>)

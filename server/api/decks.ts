@@ -1,5 +1,5 @@
 import type {Express} from 'express';
-import type {Card,Deck, PrismaClient, User} from '@prisma/client'
+import type {Card,Deck,User} from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsNumber,assertIsString,ServerApiContext,ApiErrorNotFound,ApiErrorAccessDenied} from '../serverApiUtil';
 import {maybeRefreshFeed,getUnreadItems,apiFilterRssItem} from './feeds';
 import {getDueDate} from '../cardScheduler';

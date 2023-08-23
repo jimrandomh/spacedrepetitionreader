@@ -133,6 +133,16 @@ export interface ApiConfirmEmail extends RestApiPost { //{{_}}
   responseType: object
 }
 
+export interface ApiChangePassword extends RestApiPost { //{{_}}
+  path: "/api/users/changePassword"
+  queryArgs: object
+  bodyArgs: {
+    oldPassword: string
+    newPassword: string
+  }
+  responseType: object
+}
+
 
 export interface ApiChangeUserConfig extends RestApiPost { //{{_}}
   path: "/api/users/changeConfig",

@@ -4,11 +4,11 @@ import {BulletSeparator, Link, Loading} from './widgets';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
-import {UserContextProvider} from '../lib/useCurrentUser';
+import {UserContext} from '../lib/useCurrentUser';
 import {LocationContextProvider} from '../lib/useLocation';
 import {ModalContextProvider, ModalDialog, useModal} from '../lib/useModal';
 import type {Endpoint} from '../lib/routes';
-import {Error404Page} from '../components/pages';
+import {Error404Page, RedirectToLoginPage} from '../components/pages';
 import {DebugPanel, useDebugOptions} from './debug';
 import classNames from 'classnames';
 import {breakpoints} from '../lib/breakpoints';
@@ -19,18 +19,32 @@ export function App({route, routeProps, url}: {
   routeProps: object
   url: string 
 }) {
+  const {loading: currentUserLoading, data} = useGetApi<ApiTypes.ApiWhoami>({
+    endpoint: "/api/users/whoami",
+    query: {}
+  });
+  
+  const currentUser = data?.currentUser ?? null;
+
   if (!route) {
     return <Error404Page/>
   }
 
   const CurrentRouteComponent = route.component;
+  if (currentUserLoading) {
+    return <Loading/>;
+  }
+  if (route.access === 'LoggedIn' && !currentUser) {
+    return <RedirectToLoginPage/>
+  }
+
   return <div className="root">
     <LocationContextProvider value={url}>
-    <UserContextProvider>
+    <UserContext.Provider value={currentUser}>
     <ModalContextProvider>
       <CurrentRouteComponent {...routeProps}/>
     </ModalContextProvider>
-    </UserContextProvider>
+    </UserContext.Provider>
     </LocationContextProvider>
   </div>
 }
@@ -227,7 +241,7 @@ export function OpenSidebarButton({open, setOpen}: {
   </span>
 }
 
-export function LeftSidebar({open, setOpen}: {
+export function LeftSidebar({open, setOpen:_}: {
   open?: boolean
   setOpen: (open: boolean)=>void
 }) {
