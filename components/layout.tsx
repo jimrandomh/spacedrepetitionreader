@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {useCurrentUser} from '../lib/useCurrentUser';
 import {BulletSeparator, Link, Loading} from './widgets';
 import {useGetApi,doPost} from '../lib/apiUtil';
@@ -9,7 +9,9 @@ import {LocationContextProvider} from '../lib/useLocation';
 import {ModalContextProvider, ModalDialog, useModal} from '../lib/useModal';
 import type {Endpoint} from '../lib/routes';
 import {Error404Page} from '../components/pages';
-import { DebugPanel, useDebugOptions } from './debug';
+import {DebugPanel, useDebugOptions} from './debug';
+import classNames from 'classnames';
+import {breakpoints} from '../lib/breakpoints';
 
 
 export function App({route, routeProps, url}: {
@@ -52,9 +54,13 @@ export function PageWrapper({children}: {
       width: "100%",
       textAlign: "right",
       paddingRight: 16,
+      color: "rgba(0,0,0,.8)",
+      fontFamily: "sans-serif",
+      fontSize: 12,
     },
   }));
 
+  const [sidebarOpen,setSidebarOpen] = useState<boolean|undefined>(undefined);
   const {openModal} = useModal();
   const canDebug = true; //TODO
 
@@ -69,20 +75,20 @@ export function PageWrapper({children}: {
   }
   
   return <div>
-    <TopBar/>
-    <LeftSidebar/>
+    <TopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
+    <LeftSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
     <div className={classes.mainColumn}>
       <div className={classes.body}>
         {children}
       </div>
       <div className={classes.footer}>
         {canDebug && <>
-          <Link onClick={openDebugPanel}>Debug</Link>
+          <Link onClick={openDebugPanel} color={false}>Debug</Link>
           <BulletSeparator/>
         </>}
-        <Link href="/about">About</Link>
+        <Link href="/about" color={false}>About</Link>
         <BulletSeparator/>
-        <Link href="/privacy-policy">Privacy Policy</Link>
+        <Link href="/privacy-policy" color={false}>Privacy Policy</Link>
       </div>
     </div>
   </div>
@@ -105,23 +111,39 @@ export function LoggedOutAccessiblePage({children}: {
   }
 }
 
-export function TopBar() {
+export function TopBar({sidebarOpen, setSidebarOpen}: {
+  sidebarOpen: boolean|undefined
+  setSidebarOpen: (open: boolean)=>void
+}) {
   const classes = useJssStyles("TopBar", () => ({
     root: {
       position: "absolute",
       background: "#88f",
       display: "flex",
-      padding: 12,
-      boxSizing: "border-box",
       
       top: 0, height: 48,
       left: 0, right: 0,
     },
+    mainSection: {
+      display: "flex",
+      flexGrow: 1,
+      padding: 12,
+    },
     siteName: {
       flexGrow: 1,
+      fontFamily: "sans-serif",
+      fontSize: 17,
+      color: "rgba(0,0,0,.8)",
     },
     simulatedDate: {
       marginRight: 8,
+    },
+    topBarButtons: {
+      fontFamily: "sans-serif",
+      fontWeight: 300,
+      fontSize: 12,
+      marginTop: 8,
+      color: "rgba(0,0,0,.8)",
     },
     userNameButton: {
       marginRight: 12,
@@ -142,38 +164,113 @@ export function TopBar() {
   }
   
   return <div className={classes.root}>
-    <div className={classes.siteName}>
-      <Link href="/" color={false}>
-        Spaced Repetition Reader
-      </Link>
-    </div>
-    
-    {debugOptions.overrideDate && <>
-      <div className={classes.simulatedDate}>
-        Simulated date: {debugOptions.overrideDate.toISOString()}
+    <OpenSidebarButton open={sidebarOpen} setOpen={setSidebarOpen} />
+
+    <div className={classes.mainSection}>
+      <div className={classes.siteName}>
+        <Link href="/" color={false}>
+          Spaced Repetition Reader
+        </Link>
       </div>
-    </>}
-    {currentUser && <>
-      <Link href="/profile" className={classes.userNameButton}>{currentUser.name}</Link>
-      <Link onClick={logOut} className={classes.logOutButton}>Log Out</Link>
-    </>}
-    {!currentUser && <>
-      <Link href="/login" className="logInButton">Log In</Link>
-    </>}
+      
+      {debugOptions.overrideDate && <>
+        <div className={classes.simulatedDate}>
+          Simulated date: {debugOptions.overrideDate.toISOString()}
+        </div>
+      </>}
+      {currentUser && <div className={classes.topBarButtons}>
+        <Link href="/profile" className={classes.userNameButton} color={false}>
+          {currentUser.name}
+        </Link>
+        <Link onClick={logOut} className={classes.logOutButton} color={false}>
+          Log Out
+        </Link>
+      </div>}
+      {!currentUser && <>
+        <Link href="/login" className="logInButton">Log In</Link>
+      </>}
+    </div>
   </div>;
 }
 
-export function LeftSidebar() {
+export function OpenSidebarButton({open, setOpen}: {
+  open: boolean|undefined
+  setOpen: (open: boolean)=>void
+}) {
+  const classes = useJssStyles("OpenSidebarButton", () => ({
+    button: {
+      cursor: "pointer",
+      fontSize: 26,
+      paddingLeft: 8,
+      paddingRight: 8,
+      paddingBottom: 16,
+      paddingTop: 6,
+      color: "rgba(0,0,0,.7)",
+      
+      "&:hover": {
+        color: "rgba(0,0,0,1)",
+      },
+    },
+  }));
+
+  function onClick() {
+    const isDefaultOpen = window.matchMedia("(min-width: 600px)")?.matches;
+    if (open === undefined) {
+      setOpen(!isDefaultOpen);
+    } else {
+      setOpen(!open);
+    }
+  }
+
+  return <span className={classes.button} onClick={onClick}>
+    ☰
+  </span>
+}
+
+export function LeftSidebar({open, setOpen}: {
+  open?: boolean
+  setOpen: (open: boolean)=>void
+}) {
   const classes = useJssStyles("LeftSidebar", () => ({
     root: {
       position: "absolute",
       top: 48, bottom: 0,
-      left: 0, width: 200,
+      width: 200,
       boxSizing: "border-box",
       
       background: "#eef",
       padding: 16,
-      
+
+      transition: "left 0.5s ease",
+    },
+    initial: {
+      [breakpoints.xs]: {
+        left: -200,
+      },
+      [breakpoints.smUp]: {
+        left: 0,
+      },
+    },
+    closed: {
+      left: -200,
+    },
+    open: {
+      left: 0,
+    },
+  }));
+
+  return <div className={classNames(classes.root, {
+    [classes.initial]: open===undefined,
+    [classes.open]: open,
+    [classes.closed]: open===false,
+  })}>
+    <LeftSidebarContents/>
+  </div>
+}
+
+export function LeftSidebarContents() {
+  const classes = useJssStyles("LeftSidebarContents", () => ({
+    root: {
       "& ul": {
         paddingLeft: 16,
         marginBlockStart: 8,
@@ -288,4 +385,4 @@ export function SidebarListItemWithCount({title, href, unreadCount}: {
   </div>
 }
 
-export const components = {App,PageWrapper,LoggedOutAccessiblePage,TopBar,LeftSidebar,DeckListItem,FeedsListItem,SidebarListItemWithCount};
+export const components = {App,PageWrapper,LoggedOutAccessiblePage,TopBar,OpenSidebarButton,LeftSidebar,LeftSidebarContents,DeckListItem,FeedsListItem,SidebarListItemWithCount};
