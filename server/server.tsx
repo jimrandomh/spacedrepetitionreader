@@ -78,6 +78,7 @@ const pageTemplate = ({bodyHtml, ssrCache, stylesheet}: {
   <link rel="stylesheet" type="text/css" href="/static/styles.css"></link>
   <link rel="stylesheet" type="text/css" href="/static/react-datepicker.css"></link>
   <link rel="stylesheet" type="text/css" href="/jssStyles.css?hash=${stylesheet.hash}"></link>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta charset="utf-8"/>
 </head>
 <body><div id="react-root">${bodyHtml}</div></body>
