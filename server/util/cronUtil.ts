@@ -62,12 +62,12 @@ async function checkCronjob(name: string, intendedAt: Date) {
     try {
       await cronjob.fn();
     
-      db.cronHistory.update({
+      await db.cronHistory.update({
         where: { key: executionKey },
         data: { finishedAt: new Date() },
       });
     } catch(e) {
-      db.cronHistory.update({
+      await db.cronHistory.update({
         where: { key: executionKey },
         data: {
           finishedAt: new Date(),

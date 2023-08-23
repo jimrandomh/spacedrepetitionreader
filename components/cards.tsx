@@ -45,7 +45,7 @@ export function CardChallenge({card, onFinish, simulatedDate}: {
     const timeSpentMS = flipTime.getTime() - startTime.getTime();
     
     void (async function() {
-      doPost<ApiTypes.ApiRecordCardImpression>({
+      await doPost<ApiTypes.ApiRecordCardImpression>({
         endpoint: "/api/cards/impression",
         query: {},
         body: {
@@ -157,7 +157,7 @@ export function RSSCard({card, onFinish}: {
   
   function clickNext() {
     void (async function() {
-      doPost<ApiTypes.ApiMarkFeedItemRead>({
+      await doPost<ApiTypes.ApiMarkFeedItemRead>({
         endpoint: "/api/feedItems/markAsRead",
         query: {},
         body: {

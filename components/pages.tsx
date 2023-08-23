@@ -376,8 +376,10 @@ export function ConfirmEmailPage({token}: {token: string}) {
   }, [token]);
 
   useEffect(() => {
-    doConfirm();
-    redirect("/dashboard");
+    void (async () => {
+      await doConfirm();
+      redirect("/dashboard");
+    })();
   }, [doConfirm]);
   
   return <div>

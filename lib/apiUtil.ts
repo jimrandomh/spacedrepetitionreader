@@ -58,7 +58,7 @@ export class GetApiProvider {
   }
   
   refetch(_uri: string) {
-    this.fetch(_uri);
+    return this.fetch(_uri);
   }
   
   _createRequest(uri: string) {
@@ -108,7 +108,7 @@ export function useGetApi<
 }): {
   loading: boolean
   data: T["responseType"]|null
-  refetch: ()=>void
+  refetch: ()=>Promise<void>
 } {
   const apiProvider = useContext(GetApiContext);
   if (!apiProvider) throw new Error("No API provider");
@@ -129,7 +129,7 @@ export function useGetApi<
   );
   
   const refetch = useCallback(() => {
-    apiProvider.refetch(withSearchParams);
+    return apiProvider.refetch(withSearchParams);
   }, [apiProvider,withSearchParams]);
   
   return {loading, data:result, refetch};

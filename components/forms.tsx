@@ -102,7 +102,7 @@ export function LoginForm() {
   return <div className={classes.root}>
     <form
       className={classes.form}
-      onSubmit={(ev) => {ev.preventDefault(); logIn()}}
+      onSubmit={(ev) => {ev.preventDefault(); void logIn()}}
     >
       <div className={classes.formTitle}>Log In</div>
       <TextInput label="Username" value={loginUsername} setValue={setLoginUsername} className={classes.input}/>
@@ -113,7 +113,7 @@ export function LoginForm() {
     </form>
     <form
       className={classes.form}
-      onSubmit={(ev) => {ev.preventDefault(); createAccount()}}
+      onSubmit={(ev) => {ev.preventDefault(); void createAccount()}}
     >
       <div className={classes.formTitle}>Sign Up</div>
       <TextInput label="Username" value={createAccountUsername} setValue={setCreateAccountUsername} className={classes.input}/>
@@ -159,7 +159,7 @@ export function RequestPasswordResetForm() {
   }
   return <div className={classes.root}>
     {!finished && <form
-      onSubmit={(ev) => {ev.preventDefault(); requestPasswordReset()}}
+      onSubmit={(ev) => {ev.preventDefault(); void requestPasswordReset()}}
     >
       <TextInput label="Email" value={email} setValue={setEmail}/>
       <input type="submit" value="Request Password Reset" className={classes.button}/>
@@ -210,7 +210,7 @@ export function ResetPasswordForm({token}: {
   return <div className={classes.root}>
     <form
       className={classes.form}
-      onSubmit={(ev) => {ev.preventDefault(); resetPassword()}}
+      onSubmit={(ev) => {ev.preventDefault(); void resetPassword()}}
     >
       <TextInput
         label="Password" inputType="password"
@@ -264,7 +264,7 @@ export function CreateCardForm({deck}: {
   return <div>
     <form
       className={classes.form}
-      onSubmit={(ev) => {ev.preventDefault(); createCard()}}
+      onSubmit={(ev) => {ev.preventDefault(); void createCard()}}
     >
       <TextAreaInput label="Front" value={cardFront} setValue={setCardFront}/>
       <TextAreaInput label="Back" value={cardBack} setValue={setCardBack}/>
@@ -299,7 +299,7 @@ export function CreateDeckForm() {
   }
   
   return <div>
-    <form onSubmit={(ev) => {ev.preventDefault(); createDeck()}}>
+    <form onSubmit={(ev) => {ev.preventDefault(); void createDeck()}}>
       <TextInput label="Name" value={deckName} setValue={setDeckName}/>
       <input type="submit" value="Create Deck"/>
       {error && <ErrorMessage message={error}/>}
@@ -476,7 +476,7 @@ export function ChangePasswordForm() {
 
   return <form
     className={classes.form}
-    onSubmit={(ev) => {ev.preventDefault(); changePassword()}}
+    onSubmit={(ev) => {ev.preventDefault(); void changePassword()}}
   >
     <TextInput
       label="Current Password" inputType="password"

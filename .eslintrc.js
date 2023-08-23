@@ -36,6 +36,9 @@ module.exports = {
     "no-constant-condition": 0,
     "@typescript-eslint/no-non-null-assertion": 0,
     "@typescript-eslint/ban-ts-comment": 0,
+    "no-tabs": 1,
+    "no-template-curly-in-string": 1,
+    "@typescript-eslint/no-floating-promises": [1, {ignoreVoid: true}],
   },
   "ignorePatterns": [
   ],
