@@ -1,12 +1,13 @@
 import type {Express} from 'express';
 import type {Card,Deck,User} from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsNumber,assertIsString,ServerApiContext,ApiErrorNotFound,ApiErrorAccessDenied} from '../serverApiUtil';
-import {maybeRefreshFeed,getUnreadItems,apiFilterRssItem} from './feeds';
+import {getUnreadItems,apiFilterRssItem} from './feeds';
 import {getDueDate} from '../cardScheduler';
 import flatten from 'lodash/flatten';
 import filter from 'lodash/filter';
 import { userCanEditDeck, userCanViewDeck } from '../permissions';
 import { awaitAll } from '../../lib/asyncUtil';
+import { maybeRefreshFeed } from '../feeds/feedSync';
 
 const maxParallelism = 10;
 
