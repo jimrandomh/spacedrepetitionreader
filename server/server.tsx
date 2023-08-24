@@ -4,7 +4,6 @@ import express, {Express,Request,Response} from 'express';
 import path from 'path';
 import {addApiEndpoints} from './apiEndpoints';
 import {App} from '../components/layout';
-import {pathToRoute} from '../lib/routes';
 import {GetApiProvider,GetApiContext} from '../lib/apiUtil';
 import {ServerApiGetContext, getApiRoutes} from './serverApiUtil';
 import {getUserFromReq} from './api/auth';
@@ -154,10 +153,8 @@ function AppServer({url, apiProvider}: {
   url: string,
   apiProvider: GetApiProvider,
 }) {
-  const {route,routeProps} = pathToRoute(url);
-  
   return <GetApiContext.Provider value={apiProvider}>
-    <App route={route} routeProps={routeProps} url={url}/>
+    <App url={url}/>
   </GetApiContext.Provider>
 }
 

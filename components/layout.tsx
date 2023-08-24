@@ -1,23 +1,21 @@
-import React, {useState} from 'react'
+import React, { useMemo, useState } from 'react'
 import {useCurrentUser} from '../lib/useCurrentUser';
 import {BulletSeparator, Link, Loading} from './widgets';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import {UserContext} from '../lib/useCurrentUser';
-import {LocationContextProvider} from '../lib/useLocation';
+import {LocationContextProvider, ParsedLocation} from '../lib/useLocation';
 import {ModalContextProvider, ModalDialog, useModal} from '../lib/useModal';
-import type {Endpoint} from '../lib/routes';
 import {Error404Page, RedirectToLoginPage} from '../components/pages';
 import {DebugPanel, useDebugOptions} from './debug';
 import classNames from 'classnames';
 import {breakpoints} from '../lib/breakpoints';
+import { pathToRoute } from '../lib/routes';
 
 
-export function App({route, routeProps, url}: {
-  route: Endpoint|null
-  routeProps: object
-  url: string 
+export function App({url}: {
+  url: string
 }) {
   const classes = useJssStyles("App", () => ({
     root: {
@@ -25,30 +23,36 @@ export function App({route, routeProps, url}: {
     },
   }));
 
+  const {route,routeProps} = pathToRoute(url);
+  const location: ParsedLocation = useMemo(() => ({
+    url, route, routeProps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [url, route, JSON.stringify(routeProps)]);
+
   const {loading: currentUserLoading, data} = useGetApi<ApiTypes.ApiWhoami>({
     endpoint: "/api/users/whoami",
     query: {}
   });
-  
+
   const currentUser = data?.currentUser ?? null;
 
-  if (!route) {
+  if (!location || !location.route) {
     return <Error404Page/>
   }
 
-  const CurrentRouteComponent = route.component;
+  const CurrentRouteComponent = location.route.component;
   if (currentUserLoading) {
     return <Loading/>;
   }
-  if (route.access === 'LoggedIn' && !currentUser) {
+  if (location.route.access === 'LoggedIn' && !currentUser) {
     return <RedirectToLoginPage/>
   }
-
+  
   return <div className={classes.root}>
-    <LocationContextProvider value={url}>
+    <LocationContextProvider value={location}>
     <UserContext.Provider value={currentUser}>
     <ModalContextProvider>
-      <CurrentRouteComponent {...routeProps}/>
+      <CurrentRouteComponent {...location.routeProps}/>
     </ModalContextProvider>
     </UserContext.Provider>
     </LocationContextProvider>
@@ -296,6 +300,9 @@ export function LeftSidebarContents() {
       "& li": {
       }
     },
+    currentPageLink: {
+      textDecoration: "underline",
+    },
     spacer: {
       height: 16,
     },
@@ -323,27 +330,59 @@ export function LeftSidebarContents() {
   
   return <div className={classes.root}>
     <div className={classes.sidebarSection}>
-      <Link href="/dashboard" color={false}>Review</Link>
+      <Link
+        href="/dashboard"
+        color={false}
+        highlightIfAlreadyHere={classes.currentPageLink}
+      >
+        Review
+      </Link>
     </div>
     
     <div className={classes.spacer}/>
     
     <div className={classes.sidebarSection}>
-      <Link href="/decks/manage" color={false} className={classes.sectionHeader}>Decks</Link>
+      <Link
+        href="/decks/manage"
+        color={false}
+        className={classes.sectionHeader}
+        highlightIfAlreadyHere={classes.currentPageLink}
+      >
+        Decks
+      </Link>
       <div className={classes.sectionBody}>
         {loadingDecks && <Loading/>}
         {decksResponse?.decks && decksResponse.decks.map(deck => <div key={""+deck.id}>
           <DeckListItem deck={deck}/>
         </div>)}
-        <Link color={true} href="/decks/manage">New Deck</Link>
+        <Link
+          href="/decks/manage"
+          color={true}
+          highlightIfAlreadyHere={classes.currentPageLink}
+        >
+          New Deck
+        </Link>
       </div>
     </div>
     <div className={classes.sidebarSection}>
-      <Link href="/feeds/manage" color={false} className={classes.sectionHeader}>Feeds</Link>
+      <Link
+        href="/feeds/manage"
+        color={false}
+        className={classes.sectionHeader}
+        highlightIfAlreadyHere={classes.currentPageLink}
+      >
+        Feeds
+      </Link>
       <div className={classes.sectionBody}>
         {loadingFeeds && <Loading/>}
         {subscriptionsResponse?.feeds && subscriptionsResponse.feeds.map(feed => <FeedsListItem key={feed.id} feed={feed}/>)}
-        <Link color={true} href="/feeds/add">Add Feed</Link>
+        <Link
+          href="/feeds/add"
+          color={true}
+          highlightIfAlreadyHere={classes.currentPageLink}
+        >
+          Add Feed
+        </Link>
       </div>
     </div>
   </div>;
@@ -384,6 +423,9 @@ export function SidebarListItemWithCount({title, href, unreadCount}: {
     title: {
       flexGrow: 1,
     },
+    currentPageLink: {
+      textDecoration: "underline",
+    },
     unreadCount: {
     },
   }));
@@ -392,6 +434,7 @@ export function SidebarListItemWithCount({title, href, unreadCount}: {
     <Link
       href={href}
       color={false} className={classes.link}
+      highlightIfAlreadyHere={classes.currentPageLink}
     >
       <div className={classes.title}>
         {title}

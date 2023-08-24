@@ -2,12 +2,14 @@ import React, {useEffect} from 'react'
 import {useJssStyles} from '../lib/useJssStyles';
 import {redirect} from '../lib/browserUtil';
 import classNames from 'classnames';
+import { useLocation } from '../lib/useLocation';
 
 
-export function Link({href, onClick, alwaysNewTab=false, className, color=true, children}: {
+export function Link({href, onClick, alwaysNewTab=false, highlightIfAlreadyHere, className, color=true, children}: {
   href?: string
   onClick?: ()=>void
   alwaysNewTab?: boolean,
+  highlightIfAlreadyHere?: boolean|string,
   className?: string
   color?: boolean
   children: React.ReactNode
@@ -20,10 +22,24 @@ export function Link({href, onClick, alwaysNewTab=false, className, color=true, 
         textDecoration: "underline",
       }
     },
+    currentPage: {
+      textDecoration: "underline",
+    },
     noColor: {
       color: "inherit"
     },
   }));
+  
+  const location = useLocation();
+  const isCurrentPage = href && (location.url === href);
+  let alreadyHereHighlight: string|null = null;
+  if (isCurrentPage && highlightIfAlreadyHere) {
+    if (highlightIfAlreadyHere===true) {
+      alreadyHereHighlight = classes.currentPage;
+    } else {
+      alreadyHereHighlight = highlightIfAlreadyHere;
+    }
+  }
   
   return <a
     onClick={onClick
@@ -34,8 +50,10 @@ export function Link({href, onClick, alwaysNewTab=false, className, color=true, 
       : undefined
     }
     className={classNames(
-      classes.link, className,
-      {[classes.noColor]: !color}
+      classes.link, className, alreadyHereHighlight,
+      {
+        [classes.noColor]: !color,
+      }
     )}
     href={href || "#"}
     {...alwaysNewTab  && {

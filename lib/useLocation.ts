@@ -1,14 +1,23 @@
 import {createContext,useContext} from 'react'
+import { Endpoint } from './routes';
 
-const LocationContext = createContext<string|null>(null);
+export interface ParsedLocation {
+  url: string
+  route: Endpoint|null
+  routeProps: object
+}
+
+const LocationContext = createContext<ParsedLocation|null>(null);
 
 export function useLocation(): {url: string, query: URLSearchParams} {
   const context = useContext(LocationContext);
   if(!context) throw new Error("useLocation must be used within a LocationContextProvider");
-  const parsedURL = new URL(context, "http://localhost");
+
+  const url = context.url;
+  const parsedURL = new URL(url, "http://localhost");
   
   return {
-    url: context,
+    url,
     query: new URLSearchParams(parsedURL.search),
   };
 }

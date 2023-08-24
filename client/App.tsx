@@ -1,12 +1,10 @@
 import React from 'react'
-import {pathToRoute} from '../lib/routes';
-import {App} from '../components/layout';
-import {GetApiProvider,GetApiContext} from '../lib/apiUtil';
+import { App } from '../components/layout';
+import { GetApiProvider, GetApiContext } from '../lib/apiUtil';
 
 
 export function AppClient() {
   const location = window.location;
-  const {route: currentRoute, routeProps} = pathToRoute(location.pathname);
   const apiProvider = new GetApiProvider(async (uri: string) => {
     const fetchResult = await fetch(uri, {
       method: "GET",
@@ -19,7 +17,7 @@ export function AppClient() {
   }
   
   return <GetApiContext.Provider value={apiProvider}>
-    <App route={currentRoute} routeProps={routeProps} url={location.href}/>
+    <App url={location.pathname}/>
   </GetApiContext.Provider>
 }
 declare global {
