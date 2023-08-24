@@ -16,7 +16,7 @@ export function getDueDate(card: Card, pastImpressions: CardImpression[], _ctx: 
   // TODO: algorithm below is part of the algorithm from here, not including review mode subtleties: https://docs.ankiweb.net/studying.html
   const steps = [0, 10, 60*24, 60*24*3, 60*24*6, 60*24*12, 60*24*24, 60*24*48];
 
-  let currentStepIndex = 0;
+  let currentStepIndex = 1;
   for(const impression of sortedImpressions) {
     switch(impression.resolution) {
       case "Easy":
