@@ -4,7 +4,7 @@ import { getUserOptions } from "../lib/userOptions";
 import { getItemsDue } from "./api/decks";
 import { getPrisma } from "./db";
 import { sendEmail } from "./email";
-import { getConfig } from "./getConfig";
+import { getConfig } from "./util/getConfig";
 import { ServerApiContext } from "./serverApiUtil";
 import { registerCronjob } from "./util/cronUtil";
 

@@ -1,8 +1,8 @@
 import type {Express} from 'express';
-import {addAuthEndpoints} from './api/auth';
-import {addDeckEndpoints} from './api/decks';
-import {addFeedEndpoints} from './api/feeds';
-import {addUserEndpoints} from './api/user';
+import {addAuthEndpoints} from './auth';
+import {addDeckEndpoints} from './decks';
+import {addFeedEndpoints} from './feeds';
+import {addUserEndpoints} from './user';
 
 export function addApiEndpoints(app: Express) {
   addAuthEndpoints(app);

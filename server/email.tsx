@@ -5,7 +5,7 @@ import { getPrisma } from './db';
 import { getApiProviderFromUser, repeatRenderingUntilSettled } from './server';
 import { getStaticStylesheet } from './staticStylesheet';
 import { convert } from 'html-to-text';
-import { getConfig } from './getConfig';
+import { getConfig } from './util/getConfig';
 import Mailgun from 'mailgun.js';
 import formData from 'form-data';
 import type { IMailgunClient } from 'mailgun.js/Interfaces';

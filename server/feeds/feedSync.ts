@@ -1,6 +1,6 @@
 import { ServerApiContext } from '../serverApiUtil';
 import { apiFilterRssItem } from '../api/feeds';
-import { sanitizeHtml } from '../htmlUtil';
+import { sanitizeHtml } from '../util/htmlUtil';
 import RssParser, {Item as RssParserItem} from 'rss-parser';
 import { Prisma, PrismaClient, RssFeed } from "@prisma/client";
 import relToAbs from 'rel-to-abs';

@@ -2,7 +2,7 @@ import React from 'react';
 import {renderToString} from 'react-dom/server';
 import express, {Express,Request,Response} from 'express';
 import path from 'path';
-import {addApiEndpoints} from './apiEndpoints';
+import {addApiEndpoints} from './api/apiEndpoints';
 import {App} from '../components/layout';
 import {GetApiProvider,GetApiContext} from '../lib/apiUtil';
 import {ServerApiGetContext, getApiRoutes} from './serverApiUtil';
@@ -11,7 +11,7 @@ import {getPrisma} from './db';
 import {getStaticStylesheet, StylesheetWithHash} from './staticStylesheet';
 import {initJss} from '../lib/useJssStyles';
 import process from 'process';
-import { getConfig } from './getConfig';
+import { getConfig } from './util/getConfig';
 import { PrismaClient, User } from '@prisma/client';
 import { addCardsDueCronjob } from './cardsDueNotification';
 

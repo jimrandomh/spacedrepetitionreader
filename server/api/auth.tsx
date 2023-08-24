@@ -5,7 +5,7 @@ import {defineGetApi,definePostApi,ServerApiContext,assertIsString, ApiErrorNotF
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { sendEmail } from '../email';
-import { getConfig } from '../getConfig';
+import { getConfig } from '../util/getConfig';
 import { getUserOptions } from '../../lib/userOptions';
 
 const bcryptSaltRounds = 10;
