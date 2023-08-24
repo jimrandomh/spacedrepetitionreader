@@ -52,10 +52,20 @@ export function DashboardPage() {
 
 export function EditDeck({id}: {id: DbKey}) {
   const classes = useJssStyles("EditDeck", () => ({
-    cardsListLabel: {
-    },
     moreOptions: {
-      marginTop: 128,
+    },
+    cardsListSection: {
+    },
+    cardsList: {
+      paddingInlineStart: 30,
+    },
+    cardsListHeading: {
+    },
+    cardsListItem: {
+      marginBottom: 8,
+    },
+    createCardFormWrapper: {
+      paddingLeft: 20,
     },
   }));
   
@@ -95,26 +105,29 @@ export function EditDeck({id}: {id: DbKey}) {
     {deck && <>
       <h1>{deck.name}</h1>
       
-      {cards && !cards.length && <div>
-        This deck doesn&apos;t have any cards yet.
-      </div>}
-      {cards && cards.length>0 && <div>
-        <div className={classes.cardsListLabel}>
-          Cards ({cards.length})
-        </div>
-        <ul>
-          {cards.map(card => <li key={card.id}>
-            <a href={`/card/${card.id}`}>{card.front}</a>
-          </li>)}
-        </ul>
-      </div>}
-      
-      <CreateCardForm deck={deck}/>
-      
       <div className={classes.moreOptions}>
         <Link onClick={notImplementedMessage} color={false}>Share</Link>
         <BulletSeparator/>
         <Link onClick={deleteDeck} color={false}>Delete</Link>
+      </div>
+      
+      {cards && !cards.length && <div>
+        This deck doesn&apos;t have any cards yet.
+      </div>}
+      {cards && cards.length>0 && <div className={classes.cardsListSection}>
+        <h3 className={classes.cardsListHeading}>
+          Cards ({cards.length})
+        </h3>
+        <ul className={classes.cardsList}>
+          {cards.map(card => <li key={card.id} className={classes.cardsListItem}>
+            <Link href={`/card/${card.id}`} color={false}>{card.front}</Link>
+          </li>)}
+        </ul>
+      </div>}
+      
+      <h3>New Card</h3>
+      <div className={classes.createCardFormWrapper}>
+        <CreateCardForm deck={deck}/>
       </div>
     </>}
     {error && <ErrorMessage message={error}/>}

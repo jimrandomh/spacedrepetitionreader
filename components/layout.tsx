@@ -19,6 +19,12 @@ export function App({route, routeProps, url}: {
   routeProps: object
   url: string 
 }) {
+  const classes = useJssStyles("App", () => ({
+    root: {
+      fontFamily: "sans-serif",
+    },
+  }));
+
   const {loading: currentUserLoading, data} = useGetApi<ApiTypes.ApiWhoami>({
     endpoint: "/api/users/whoami",
     query: {}
@@ -38,7 +44,7 @@ export function App({route, routeProps, url}: {
     return <RedirectToLoginPage/>
   }
 
-  return <div className="root">
+  return <div className={classes.root}>
     <LocationContextProvider value={url}>
     <UserContext.Provider value={currentUser}>
     <ModalContextProvider>
@@ -145,7 +151,6 @@ export function TopBar({sidebarOpen, setSidebarOpen}: {
     },
     siteName: {
       flexGrow: 1,
-      fontFamily: "sans-serif",
       fontSize: 17,
       color: "rgba(0,0,0,.8)",
     },
@@ -153,7 +158,6 @@ export function TopBar({sidebarOpen, setSidebarOpen}: {
       marginRight: 8,
     },
     topBarButtons: {
-      fontFamily: "sans-serif",
       fontWeight: 300,
       fontSize: 12,
       marginTop: 8,

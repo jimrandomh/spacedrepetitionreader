@@ -403,7 +403,6 @@ export function FeedPreview({feedUrl,onError,onClose}: {
 export function UserConfiguration() {
   const classes = useJssStyles("UserConfiguration", () => ({
     checkboxSetting: {
-      fontFamily: "sans-serif",
       fontSize: 14,
     },
     label: {
