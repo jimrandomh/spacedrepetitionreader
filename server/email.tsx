@@ -94,14 +94,30 @@ function getMailgun(): IMailgunClient {
   return mailgun;
 }
 
-function parseEmailAddress(addr: string): {account: string, domain: string} {
-  const re = /\S+@\S+\.\S+/;
-  if (!re.test(addr)) {
-    throw new Error("Invalid email address");
+function parseEmailAddress(addr: string): {realname: string|null, account: string, domain: string} {
+  if (addr.includes("<")) {
+    // Format is: Name <foo@bar.com>
+    const match = addr.match(/([^<]*)<(\S+)@(\S+\.\S+)>/);
+    if (!match) {
+      throw new Error("Invalid email address: "+JSON.stringify(addr));
+    }
+    const [_,realname,account,domain] = match;
+    return {
+      realname: realname.trim(),
+      account: account,
+      domain: domain,
+    };
+  } else {
+    // Format is: foo@bar.com
+    const re = /\S+@\S+\.\S+/;
+    if (!re.test(addr)) {
+      throw new Error("Invalid email address: "+JSON.stringify(addr));
+    }
+    const parts = addr.split("@");
+    return {
+      realname: null,
+      account: parts[0],
+      domain: parts[1]
+    };
   }
-  const parts = addr.split("@");
-  return {
-    account: parts[0],
-    domain: parts[1]
-  };
 }
