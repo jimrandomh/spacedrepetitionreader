@@ -1,9 +1,9 @@
-import React, {useState} from 'react'
-import {useGetApi,doPost} from '../lib/apiUtil';
-import {TextInput,TextAreaInput,ErrorMessage,Loading,FeedScrollList,Button, Link} from './widgets';
-import {redirect} from '../lib/browserUtil';
-import {useJssStyles} from '../lib/useJssStyles';
-import {useModal,ModalDialog} from '../lib/useModal';
+import React, { useState } from 'react'
+import { useGetApi, doPost } from '../lib/apiUtil';
+import { BulletSeparator, TextInput, TextAreaInput, ErrorMessage, Loading, FeedScrollList, Button, Link } from './widgets';
+import { redirect } from '../lib/browserUtil';
+import { useJssStyles } from '../lib/useJssStyles';
+import { useModal, ModalDialog } from '../lib/useModal';
 import { useCurrentUser } from '../lib/useCurrentUser';
 import { getUserOptions, UserOptions } from '../lib/userOptions';
 
@@ -11,8 +11,8 @@ import { getUserOptions, UserOptions } from '../lib/userOptions';
 export function LoginForm() {
   const classes = useJssStyles("LoginForm", () => ({
     root: {
-      width: 600,
-      margin: "0 auto",
+      display: "flex",
+      justifyContent: "center",
     },
     form: {
       border: "1px solid #ccc",
@@ -20,15 +20,17 @@ export function LoginForm() {
       display: "inline-block",
       verticalAlign: "top",
       margin: 16,
-      width: 220,
-      height: 165,
+      width: 270,
+      height: 200,
     },
     input: {
+      marginBottom: 6,
+
       "& label": {
         minWidth: 80,
       },
       "& input": {
-        width: 100,
+        width: 150,
       },
     },
     formTitle: {
@@ -36,11 +38,12 @@ export function LoginForm() {
       textAlign: "center",
     },
     button: {
-      width: 100,
+      width: 150,
       marginLeft: 80,
       marginTop: 8,
     },
-    oauthSection: {
+    loginOptionsSection: {
+      fontSize: 12,
       marginTop: 16,
     },
   }));
@@ -108,7 +111,16 @@ export function LoginForm() {
       <TextInput label="Username" value={loginUsername} setValue={setLoginUsername} className={classes.input}/>
       <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword} className={classes.input}/>
       <input type="submit" value="Log In" className={classes.button}/>
-      <Link href="/email/forgotPassword">Forgot Password</Link>
+      
+      <div className={classes.loginOptionsSection}>
+        <Link href="/email/forgotPassword" color={false} className={classes.forgotPasswordLink}>
+          Forgot Password?
+        </Link>
+        {/*<BulletSeparator/>
+        <Link onClick={() => alert("Sorry, not implemented yet")} color={false}>
+          Log in with Google
+        </Link>*/}
+      </div>
       {loginError && <ErrorMessage message={loginError}/>}
     </form>
     <form
