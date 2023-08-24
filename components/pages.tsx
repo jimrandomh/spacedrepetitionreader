@@ -195,9 +195,8 @@ export function PitchText() {
   return <div className={classes.pitchText}>
     <p>Spaced Repetition Reader makes reviewing flashcards motivating by mixing
     webcomics (or anything with an RSS feed) into your decks. It uses a
-    repetition schedule optimized for maximizing your retention of information
-    and will support sharing decks, integration with Roam and other note-taking
-    tools, and import from Anki.</p>
+    repetition schedule optimized for maximizing your retention of
+    information.</p>
     
     <p>Spaced Repetition Reader is open source (AGPL-v3.0), so you can run your
     own server if you wish to do so. Check it out <a href="https://www.github.com/jimrandomh/spacedrepetitionreader">on GitHub</a>.</p>
