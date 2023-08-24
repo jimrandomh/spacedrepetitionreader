@@ -22,6 +22,7 @@ export async function sendEmail({subject, body, user, allowUnverified=false}: {
   
   if (!allowUnverified && !user.emailVerified) {
     console.log(`Not sending to ${user.name} (${user.email}) because their email is not verified`);
+    return;
   }
 
   const {apiProvider} = getApiProviderFromUser(user, db);
@@ -55,14 +56,19 @@ async function handleRenderedEmail({to, from, subject, bodyText, bodyHtml}: {
     console.log(`To: ${to}\nFrom: ${from}\nSubject: ${subject}\n${bodyText}`);
     console.log(`Sending via Mailgun`);
 
-    const mailgun = getMailgun();
-    const {account:_, domain} = parseEmailAddress(from);
-    await mailgun.messages.create(domain, {
-      to, from,
-      subject,
-      text: bodyText,
-      html: bodyHtml,
-    });
+    try {
+      const mailgun = getMailgun();
+      const {account:_, domain} = parseEmailAddress(from);
+      await mailgun.messages.create(domain, {
+        to, from,
+        subject,
+        text: bodyText,
+        html: bodyHtml,
+      });
+    } catch(e) {
+      console.error("Sending via mailgun failed: "+e);
+      throw e;
+    }
   } else {
     console.log(`To: ${to}\nFrom: ${from}\nSubject: ${subject}\n${bodyText}`);
   }
