@@ -1,4 +1,4 @@
-import jss from 'jss'
+import jss, { Classes, Styles } from 'jss'
 import jssPreset from 'jss-preset-default'
 
 const attachedStylesheets = new Map<string,any>();
@@ -38,7 +38,7 @@ class ThrownStyles {
 ///   }));
 ///   return <div className={classes.foo}/>
 /// }
-export function useJssStyles(name: string, getStyles: ()=>any): any {
+export function useJssStyles<T extends string>(name: string, getStyles: ()=>Styles<T>): Classes<T> {
   if (extractingStyles) {
     throw new ThrownStyles(name, getStyles);
   }
