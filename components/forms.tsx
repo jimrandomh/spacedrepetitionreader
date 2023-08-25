@@ -4,9 +4,8 @@ import { BulletSeparator, TextInput, TextAreaInput, ErrorMessage, Loading, FeedS
 import { redirect } from '../lib/browserUtil';
 import { useJssStyles } from '../lib/useJssStyles';
 import { useModal, ModalDialog } from '../lib/useModal';
-import { useCurrentUser } from '../lib/useCurrentUser';
-import { getUserOptions, UserOptions } from '../lib/userOptions';
 import { getPublicConfig } from '../lib/getPublicConfig';
+import { getBrowserTimezone } from '../lib/util/timeUtil';
 
 
 export function LoginForm() {
@@ -47,6 +46,7 @@ export function LoginForm() {
       fontSize: 12,
       marginTop: 16,
     },
+    forgotPasswordLink: {},
   }));
   
   const [loginUsername,setLoginUsername] = useState("");
@@ -93,7 +93,8 @@ export function LoginForm() {
       body: {
         username: createAccountUsername,
         email: createAccountEmail,
-        password: createAccountPassword
+        password: createAccountPassword,
+        timezone: getBrowserTimezone(),
       }
     });
     if (error) {
@@ -148,6 +149,7 @@ export function RequestPasswordResetForm() {
       width: 510,
       margin: "0 auto",
     },
+    button: {},
   }));
   
   const [email,setEmail] = useState("");
@@ -194,6 +196,9 @@ export function ResetPasswordForm({token}: {
       width: 510,
       margin: "0 auto",
     },
+    form: {},
+    button: {},
+    input: {},
   }));
   const [newPassword,setNewPassword] = useState("");
   const [confirmPassword,setConfirmPassword] = useState("");
@@ -415,99 +420,4 @@ export function FeedPreview({feedUrl,onError,onClose}: {
   </div>
 }
 
-export function UserConfiguration() {
-  const classes = useJssStyles("UserConfiguration", () => ({
-    checkboxSetting: {
-      fontSize: 14,
-    },
-    label: {
-    },
-  }));
-  const user = useCurrentUser()!;
-  const [currentOptions,setCurrentOptions] = useState(getUserOptions(user));
-  const [showChangePassword,setShowChangePassword] = useState(false);
-  
-  async function updateOptions(options: Partial<UserOptions>) {
-    const mergedOptions = {...currentOptions, ...options};
-    setCurrentOptions(mergedOptions);
-    
-    const {result:_r, error:_e} = await doPost<ApiTypes.ApiChangeUserConfig>({
-      endpoint: "/api/users/changeConfig",
-      query: {},
-      body: { config: options },
-    });
-  }
-  return <div>
-    <div className={classes.checkboxSetting}>
-      <input
-        type="checkbox"
-        checked={currentOptions.enableCardsDueEmails}
-        onChange={ev => updateOptions({
-          enableCardsDueEmails: ev.target.checked
-        })}
-      />
-      <span className={classes.label}>
-        Email once per day to remind me if I have cards due
-      </span>
-    </div>
-    <div>
-      <Link onClick={() => setShowChangePassword(true)}>Change Password</Link>
-      {showChangePassword && <ChangePasswordForm/>}
-    </div>
-  </div>
-}
-
-export function ChangePasswordForm() {
-  const classes = useJssStyles("ChangePasswordForm", () => ({
-    button: {
-    },
-  }));
-  const [oldPassword,setOldPassword] = useState("");
-  const [newPassword,setNewPassword] = useState("");
-  const [confirmPassword,setConfirmPassword] = useState("");
-  const [displayedError,setDisplayedError] = useState<string|null>(null);
-  
-  async function changePassword() {
-    setDisplayedError(null);
-    
-    if (newPassword !== confirmPassword) {
-      setDisplayedError("Passwords do not match");
-      return;
-    }
-    
-    const response = await doPost<ApiTypes.ApiChangePassword>({
-      endpoint: "/api/users/changePassword",
-      query: {},
-      body: { oldPassword, newPassword },
-    });
-    
-    if (response.error) {
-      setDisplayedError(response.error)
-    } else {
-      redirect("/login");
-    }
-  }
-
-  return <form
-    className={classes.form}
-    onSubmit={(ev) => {ev.preventDefault(); void changePassword()}}
-  >
-    <TextInput
-      label="Current Password" inputType="password"
-      value={oldPassword} setValue={setOldPassword}
-    />
-    <TextInput
-      label="New Password" inputType="password"
-      value={newPassword} setValue={setNewPassword}
-    />
-    <TextInput
-      label="Confirm  Password" inputType="password"
-      value={confirmPassword} setValue={setConfirmPassword}
-    />
-    <input type="submit" value="Submit" className={classes.button}/>
-
-    {displayedError && <ErrorMessage message={displayedError}/>}
-  </form>
-}
-
-export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview,UserConfiguration,ChangePasswordForm};
+export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview};

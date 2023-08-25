@@ -1,6 +1,6 @@
 import React,{useCallback, useEffect, useState} from 'react'
 import {LoggedOutAccessiblePage, PageWrapper} from './layout';
-import {LoginForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, UserConfiguration} from './forms';
+import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm } from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
@@ -8,6 +8,8 @@ import {useCurrentUser} from '../lib/useCurrentUser';
 import {redirect} from '../lib/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import { useDebugOptions } from './debug';
+import { UserConfiguration } from './settings';
+import { getBrowserTimezone } from '../lib/util/timeUtil';
 
 
 export function AboutPage() {
@@ -363,6 +365,33 @@ export function ViewFeedPage({id}: {id: DbKey}) {
   </PageWrapper>
 }
 
+/**
+ * When you log in with OAuth for the first time, you go to this page
+ * (/first-oauth-login) first. It checks the timezone in your browser, updates
+ * your user settings with that timezone, then redirects you to /dashboard. (We
+ * don't need to do this for password-login signups, because the create-account
+ * form submits the timezone.)
+ */
+export function FirstOAuthLoginPage() {
+  const classes = useJssStyles("FirstOAuthLoginPage", () => ({
+  }));
+
+  useEffect(() => {
+    void (async () => {
+      const {result:_1, error:_2} = await doPost<ApiTypes.ApiChangeUserConfig>({
+        endpoint: "/api/users/changeConfig",
+        query: {},
+        body: { config: {
+          timezone: getBrowserTimezone(),
+        }},
+      });
+      redirect("/dashboard");
+    })();
+  }, []);
+  
+  return <Loading/>
+}
+
 export function UserProfilePage() {
   return <PageWrapper>
     <h1>Settings</h1>
@@ -400,5 +429,4 @@ export function ConfirmEmailPage({token}: {token: string}) {
 }
 
 
-
-export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,AddFeedPage,ViewCardPage,ViewFeedPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage};
+export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,AddFeedPage,ViewCardPage,ViewFeedPage,FirstOAuthLoginPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage};

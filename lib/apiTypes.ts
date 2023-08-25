@@ -75,6 +75,7 @@ export interface ApiSignup extends RestApiPost { //{{_}}
     username: string
     email: string
     password: string
+    timezone: string
   }
   responseType: object
 }
@@ -148,7 +149,7 @@ export interface ApiChangeUserConfig extends RestApiPost { //{{_}}
   path: "/api/users/changeConfig",
   queryArgs: object
   bodyArgs: {
-    config: any
+    config: Partial<UserOptions>
   }
   responseType: object
 }

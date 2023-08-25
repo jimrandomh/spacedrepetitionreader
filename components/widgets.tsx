@@ -140,6 +140,30 @@ export function TextInput({label, value, setValue, inputType, className}: {
   </div>
 }
 
+export function Checkbox({label, className, value, setValue}: {
+  label: string|React.ReactNode,
+  className?: string,
+  value: boolean,
+  setValue: (checked: boolean)=>void,
+}) {
+  const classes = useJssStyles("Checkbox", () => ({
+    checkbox: {
+      margin: 0,
+    },
+    label: {
+      marginLeft: 6,
+    },
+  }));
+
+  return <div className={className}>
+    <input
+      type="checkbox" className={classes.checkbox}
+      checked={value} onChange={ev => setValue(ev.target.checked)}
+    />
+    <span className={classes.label}>{label}</span>
+  </div>
+}
+
 export function BulletSeparator() {
   const classes = useJssStyles("BulletSeparator", () => ({
     bullet: {
@@ -252,4 +276,4 @@ export function Redirect({to}: {to: string}) {
 }
 
 
-export const components = {Link,ErrorMessage,Loading,TextInput,TextAreaInput,BulletSeparator,FeedScrollList, FeedItem,FeedItemFrame,Button,Redirect};
+export const components = {Link,ErrorMessage,Loading,TextAreaInput,TextInput,Checkbox,BulletSeparator,FeedScrollList, FeedItem,FeedItemFrame,Button,Redirect};

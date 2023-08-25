@@ -76,6 +76,7 @@ export function addAuthEndpoints(app: Express) {
     const username = assertIsString(ctx.body.username);
     const email = assertIsString(ctx.body.email);
     const password = assertIsString(ctx.body.password);
+    const timezone = assertIsString(ctx.body.timezone);
     
     if (username === "")
       throw new Error("Please provide a username");
@@ -252,7 +253,6 @@ export function addAuthEndpoints(app: Express) {
     if (!googleOauthConfig) {
       throw new ApiErrorNotFound();
     }
-    const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
     const redirect_url = `${getConfig().siteUrl}/auth/google`;
     const options = {
       redirect_uri: redirect_url,
@@ -322,7 +322,7 @@ export function addAuthEndpoints(app: Express) {
         },
       });
       await createAndAssignLoginToken(req, res, newUser, db);
-      res.redirect("/dashboard");
+      res.redirect("/first-oauth-login");
     } else {
       await createAndAssignLoginToken(req, res, user, db);
       res.redirect("/dashboard");

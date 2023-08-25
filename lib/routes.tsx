@@ -69,6 +69,11 @@ export const routes: Endpoint[] = [
     component: Pages.UserProfilePage,
   },
   {
+    path: new Route("/first-oauth-login"),
+    access: "LoggedIn",
+    component: Pages.FirstOAuthLoginPage,
+  },
+  {
     path: new Route("/email/forgotPassword"),
     access: "LoggedOut",
     component: Pages.ForgotPasswordRequestPage,
