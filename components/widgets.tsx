@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import {useJssStyles} from '../lib/useJssStyles';
-import {redirect} from '../lib/browserUtil';
+import {redirect} from '../lib/util/browserUtil';
 import classNames from 'classnames';
 import { useLocation } from '../lib/useLocation';
 

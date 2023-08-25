@@ -5,7 +5,7 @@ import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from 
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {useCurrentUser} from '../lib/useCurrentUser';
-import {redirect} from '../lib/browserUtil';
+import {redirect} from '../lib/util/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import { useDebugOptions } from './debug';
 import { UserConfiguration } from './settings';

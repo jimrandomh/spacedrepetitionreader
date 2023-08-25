@@ -1,7 +1,7 @@
 import range from 'lodash/range';
 import React, { useState } from 'react';
 import { doPost } from '../lib/apiUtil';
-import { redirect } from '../lib/browserUtil';
+import { redirect } from '../lib/util/browserUtil';
 import { useCurrentUser } from "../lib/useCurrentUser";
 import { useJssStyles } from "../lib/useJssStyles";
 import { formatTimeInHours, getUserOptions, UserOptions } from '../lib/userOptions';

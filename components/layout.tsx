@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import {useCurrentUser} from '../lib/useCurrentUser';
 import {BulletSeparator, Link, Loading} from './widgets';
 import {useGetApi,doPost} from '../lib/apiUtil';
-import {redirect} from '../lib/browserUtil';
+import {redirect} from '../lib/util/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import {UserContext} from '../lib/useCurrentUser';
 import {LocationContextProvider, ParsedLocation} from '../lib/useLocation';

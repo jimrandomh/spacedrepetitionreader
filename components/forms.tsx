@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useGetApi, doPost } from '../lib/apiUtil';
 import { BulletSeparator, TextInput, TextAreaInput, ErrorMessage, Loading, FeedScrollList, Button, Link } from './widgets';
-import { redirect } from '../lib/browserUtil';
+import { redirect } from '../lib/util/browserUtil';
 import { useJssStyles } from '../lib/useJssStyles';
 import { useModal, ModalDialog } from '../lib/useModal';
 import { getPublicConfig } from '../lib/getPublicConfig';

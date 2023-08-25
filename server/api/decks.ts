@@ -6,7 +6,7 @@ import {getDueDate} from '../cardScheduler';
 import flatten from 'lodash/flatten';
 import filter from 'lodash/filter';
 import { userCanEditDeck, userCanViewDeck } from '../permissions';
-import { awaitAll } from '../../lib/asyncUtil';
+import { awaitAll } from '../../lib/util/asyncUtil';
 import { maybeRefreshFeed } from '../feeds/feedSync';
 
 const maxParallelism = 10;

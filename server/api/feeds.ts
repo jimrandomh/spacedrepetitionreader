@@ -3,7 +3,7 @@ import type { PrismaClient, User, RssFeed, RssItem } from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound, ApiErrorAccessDenied} from '../serverApiUtil';
 import { siteUrlToFeedUrl } from '../feeds/findFeedForPage';
 import { userCanViewFeed } from '../permissions';
-import { awaitAll } from '../../lib/asyncUtil';
+import { awaitAll } from '../../lib/util/asyncUtil';
 import { feedURLToFeedTitle, maybeRefreshFeed, pollFeed, refreshFeed } from '../feeds/feedSync';
 
 const maxParallelism = 10;
