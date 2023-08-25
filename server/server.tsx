@@ -138,13 +138,17 @@ export function getApiProviderFromUser(currentUser: User|null, db: PrismaClient)
 export async function repeatRenderingUntilSettled(tree: React.ReactElement, apiProvider: GetApiProvider): Promise<string> {
   let lastHtml = "";
   let bodyHtml = "";
+  let lastCacheSize = 0;
   
   while(true) {
     bodyHtml = renderToString(tree);
-    await sleep(0);
-    if (bodyHtml===lastHtml && !apiProvider.isAnyPending())
+    let apiProviderCacheSize = apiProvider.getCacheSize();
+    if (bodyHtml===lastHtml && !apiProvider.isAnyPending() && apiProviderCacheSize === lastCacheSize)
       break;
+    
+    await sleep(0);
     lastHtml = bodyHtml;
+    lastCacheSize = apiProviderCacheSize;
   }
   
   return bodyHtml;
