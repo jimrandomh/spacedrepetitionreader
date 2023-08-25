@@ -34,7 +34,7 @@ function renderStaticStylesheet(): string {
     }
   }
   
-  for (let path of nonJssStylesheets) {
+  for (const path of nonJssStylesheets) {
     sb.push(fs.readFileSync(path, 'utf-8'));
   }
   

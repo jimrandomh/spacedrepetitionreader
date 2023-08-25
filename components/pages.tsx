@@ -373,7 +373,7 @@ export function ViewFeedPage({id}: {id: DbKey}) {
  * form submits the timezone.)
  */
 export function FirstOAuthLoginPage() {
-  const classes = useJssStyles("FirstOAuthLoginPage", () => ({
+  const _classes = useJssStyles("FirstOAuthLoginPage", () => ({
   }));
 
   useEffect(() => {

@@ -142,7 +142,8 @@ export async function repeatRenderingUntilSettled(tree: React.ReactElement, apiP
   
   while(true) {
     bodyHtml = renderToString(tree);
-    let apiProviderCacheSize = apiProvider.getCacheSize();
+    const apiProviderCacheSize = apiProvider.getCacheSize();
+
     if (bodyHtml===lastHtml && !apiProvider.isAnyPending() && apiProviderCacheSize === lastCacheSize)
       break;
     
