@@ -7,6 +7,8 @@ import crypto from 'crypto';
 import { sendEmail } from '../email';
 import { getConfig } from '../util/getConfig';
 import { getUserOptions } from '../../lib/userOptions';
+import fetch from 'node-fetch';
+import { getPrisma } from '../db';
 
 const bcryptSaltRounds = 10;
 
@@ -113,7 +115,10 @@ export function addAuthEndpoints(app: Express) {
     const password = assertIsString(ctx.body.password);
     
     const user = await ctx.db.user.findUnique({where: {name: username}});
-    if (!user || !await bcrypt.compare(password, user.passwordHash)) {
+    if (user && !user.passwordHash) {
+      throw new Error("Account uses OAuth login");
+    }
+    if (!user || !await bcrypt.compare(password, user.passwordHash!)) {
       if (user) {
         console.log(`Incorrect password for user ${user.name}`);
       } else {
@@ -223,7 +228,7 @@ export function addAuthEndpoints(app: Express) {
     const oldPassword = assertIsString(ctx.body.oldPassword);
     const newPassword = assertIsString(ctx.body.newPassword);
     
-    if (!await bcrypt.compare(oldPassword, user.passwordHash)) {
+    if (user.passwordHash && !await bcrypt.compare(oldPassword, user.passwordHash)) {
       throw ApiErrorAccessDenied;
     }
     
@@ -236,7 +241,105 @@ export function addAuthEndpoints(app: Express) {
     
     return {};
   });
+
+  app.get("/auth/google/login", (req, res) => {
+    // Google OAuth, first step. The "log in with Google" link goes here; it
+    // constructs a more complicated URL on accounts.google.com and redirects
+    // there. Google displays an account-selection, then redirects back to
+    // /auth/google.
+
+    const googleOauthConfig = getConfig()?.oauth?.google;
+    if (!googleOauthConfig) {
+      throw new ApiErrorNotFound();
+    }
+    const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+    const redirect_url = `${getConfig().siteUrl}/auth/google`;
+    const options = {
+      redirect_uri: redirect_url,
+      client_id: googleOauthConfig.clientId,
+      access_type: 'offline',
+      response_type: 'code',
+      prompt: 'consent',
+      scope: [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+      ].join(' '),
+    };
+    
+    const targetUrl = `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams(options).toString()}`
+    res.redirect(targetUrl);
+  });
+  app.get("/auth/google", async (req, res) => {
+    // Google OAuth, second step. Google redirets back to here, with some query
+    // parameters including a code. We use the code to get the user profile
+    // from googleapis.com, match it to an account, and log in.
+
+    const googleOauthConfig = getConfig()?.oauth?.google;
+    if (!googleOauthConfig) {
+      throw new ApiErrorNotFound();
+    }
+
+    const code: string = req.query.code as string;
+    const redirect_uri = getConfig().siteUrl + '/auth/google';
+    
+    const options = {
+      code,
+      client_id: googleOauthConfig.clientId,
+      client_secret: googleOauthConfig.clientSecret,
+      redirect_uri,
+      grant_type: 'authorization_code',
+    };
+    const url = `https://oauth2.googleapis.com/token`;
+    const fetchResult = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(options),
+    });
+    
+    const resultJson = await fetchResult.json() as GoogleOAuthResponse;
+    
+    const googleUser = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${resultJson.access_token}`, {
+      headers: {
+        Authorization: `Bearer ${resultJson.id_token}`
+      }
+    });
+    
+    const googleUserResult: GoogleOAuthProfile = await googleUser.json() as GoogleOAuthProfile;
+
+    const db = getPrisma();
+    const user = await db.user.findUnique({
+      where: {
+        email: googleUserResult.email
+      },
+    });
+    if (!user) {
+      // No corresponding account. Create one, and log in as it.
+      const newUser = await db.user.create({
+        data: {
+          email: googleUserResult.email,
+          name: `${googleUserResult.given_name}_${googleUserResult.family_name}`,
+          config: {},
+          passwordHash: null,
+        },
+      });
+      await createAndAssignLoginToken(req, res, newUser, db);
+      res.redirect("/dashboard");
+    } else {
+      await createAndAssignLoginToken(req, res, user, db);
+      res.redirect("/dashboard");
+    }
+  });
 }
+/*
+Write a postgres snippet to alter column "exampleColumn" on table "examples", making it nullable.
+======
+=> To make a column nullable in PostgreSQL, you can use the ALTER TABLE command with the ALTER COLUMN option. Making a column nullable means that it can contain null values. Here's how you can do this for the "exampleColumn" on the "examples" table:
+
+```sql
+ALTER TABLE examples ALTER COLUMN exampleColumn DROP NOT NULL;
+```
+
+After running this command, the "exampleColumn" column in the "examples" table will be able to contain null values.
+*/
 
 function apiFilterCurrentUser(user: User|null, _ctx: ServerApiContext): ApiTypes.ApiObjCurrentUser|null {
   if (!user)
@@ -300,4 +403,24 @@ async function sendPasswordResetEmail(ctx: ServerApiContext, user: User) {
       <p><a href={resetPasswordLink}>Reset password</a></p>
     </div>,
   });
+}
+
+
+interface GoogleOAuthResponse {
+  access_token: string
+  expires_in: number
+  refresh_token: string
+  scope: string
+  token_type: string
+  id_token: string
+}
+interface GoogleOAuthProfile {
+  id: string
+  email: string
+  verified_email: boolean
+  name: string
+  given_name: string
+  family_name: string
+  picture: string
+  locale: string
 }

@@ -6,6 +6,7 @@ import { useJssStyles } from '../lib/useJssStyles';
 import { useModal, ModalDialog } from '../lib/useModal';
 import { useCurrentUser } from '../lib/useCurrentUser';
 import { getUserOptions, UserOptions } from '../lib/userOptions';
+import { getPublicConfig } from '../lib/getPublicConfig';
 
 
 export function LoginForm() {
@@ -116,10 +117,12 @@ export function LoginForm() {
         <Link href="/email/forgotPassword" color={false} className={classes.forgotPasswordLink}>
           Forgot Password?
         </Link>
-        {/*<BulletSeparator/>
-        <Link onClick={() => alert("Sorry, not implemented yet")} color={false}>
-          Log in with Google
-        </Link>*/}
+        {getPublicConfig().enableGoogleOAuth && <>
+          <BulletSeparator/>
+          <Link href="/auth/google/login" color={false}>
+            Log in with Google
+          </Link>
+        </>}
       </div>
       {loginError && <ErrorMessage message={loginError}/>}
     </form>

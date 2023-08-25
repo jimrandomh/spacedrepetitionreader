@@ -66,10 +66,11 @@ function serverRoutes(app: Express) {
   console.log(`Serving static files from ${staticFilesPath}`);
 }
 
-const pageTemplate = ({bodyHtml, ssrCache, stylesheet}: {
+const pageTemplate = ({bodyHtml, ssrCache, stylesheet, publicConfig}: {
   bodyHtml: string
   ssrCache: any
   stylesheet: StylesheetWithHash
+  publicConfig: any
 }) => (`<!doctype html>
 <head>
   <title>Spaced Repetition Reader</title>
@@ -81,7 +82,10 @@ const pageTemplate = ({bodyHtml, ssrCache, stylesheet}: {
   <meta charset="utf-8"/>
 </head>
 <body><div id="react-root">${bodyHtml}</div></body>
-<script>window.ssrCache = ${escapeJsonForScriptTag(ssrCache)}</script>`);
+<script>
+window.publicConfig = ${escapeJsonForScriptTag(publicConfig)};
+window.ssrCache = ${escapeJsonForScriptTag(ssrCache)}
+</script>`);
 
 async function renderSSR(req: Request, res: Response, url: string): Promise<SsrResult> {
   const db = getPrisma();
@@ -95,7 +99,10 @@ async function renderSSR(req: Request, res: Response, url: string): Promise<SsrR
   const bodyHtml = await repeatRenderingUntilSettled(reactTree, apiProvider);
   const stylesheet = getStaticStylesheet();
   
-  const html = pageTemplate({ bodyHtml, ssrCache, stylesheet });
+  const html = pageTemplate({
+    bodyHtml, ssrCache, stylesheet,
+    publicConfig: getConfig().public
+  });
 
   return {
     status: 200,

@@ -1,5 +1,11 @@
 
+type SpacedRepetitionPublicConfig = {
+  enableGoogleOAuth?: boolean
+}
+
 type SpacedRepetitionServerConfig = {
+  public: SpacedRepetitionPublicConfig
+
   psqlConnectionString: string
   port: number
   siteUrl: string
@@ -8,5 +14,12 @@ type SpacedRepetitionServerConfig = {
   emailSubjectPrefix: string
   emailFromAddress: string
   mailgunApiKey: string|null
+
+  oauth?: {
+    google?: {
+      clientId: string
+      clientSecret: string
+    }
+  }
 };
 

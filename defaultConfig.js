@@ -8,5 +8,15 @@ module.exports = {
   emailSubjectPrefix: "[SRR] ",
   emailFromAddress: "Spaced Repetition Reader <noreply@spacedrepetitionreader.com>",
   mailgunApiKey: null,
+  
+  oauth: {
+    google: {
+      clientId: "",
+      clientSecret: "",
+    }
+  },
+  public: {
+    enableGoogleOAuth: false,
+  }
 };
 
