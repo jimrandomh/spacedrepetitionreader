@@ -98,7 +98,9 @@ export function addAuthEndpoints(app: Express) {
         name: username,
         email, passwordHash,
         isAdmin: false,
-        config: {},
+        config: {
+          timezone
+        },
       }
     });
     
