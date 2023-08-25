@@ -6,6 +6,7 @@ import {components as widgetComponents} from '../components/widgets';
 import {components as debugComponents} from '../components/debug';
 import {getStylesFrom} from '../lib/useJssStyles';
 import crypto from 'crypto';
+import fs from 'fs';
 
 const allComponents = {
   ...cardComponents,
@@ -15,6 +16,11 @@ const allComponents = {
   ...widgetComponents,
   ...debugComponents,
 };
+
+const nonJssStylesheets: string[] = [
+  "static/globalStyles.css",
+  "static/react-datepicker.css",
+];
 
 function renderStaticStylesheet(): string {
   const sb = [];
@@ -26,6 +32,10 @@ function renderStaticStylesheet(): string {
       const {name:_,styles} = extractedStyles;
       sb.push(styles);
     }
+  }
+  
+  for (let path of nonJssStylesheets) {
+    sb.push(fs.readFileSync(path, 'utf-8'));
   }
   
   return sb.join('\n');

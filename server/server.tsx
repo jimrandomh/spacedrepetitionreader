@@ -42,7 +42,7 @@ function serverRoutes(app: Express) {
   //app.use('/', express.static(path.join(projectRoot, 'index.html')));
   app.use('/client.js', express.static(path.join(projectRoot, 'build/client.js')));
   app.use('/client.js.map', express.static(path.join(projectRoot, 'build/client.js.map')));
-  app.get('/jssStyles.css', (req, res) => {
+  app.get('/styles.css', (req, res) => {
     const {css,hash} = getStaticStylesheet();
     
     const requestedHash = req.query?.hash;
@@ -75,9 +75,7 @@ const pageTemplate = ({bodyHtml, ssrCache, stylesheet, publicConfig}: {
 <head>
   <title>Spaced Repetition Reader</title>
   <script defer src="/client.js"></script>
-  <link rel="stylesheet" type="text/css" href="/static/styles.css"></link>
-  <link rel="stylesheet" type="text/css" href="/static/react-datepicker.css"></link>
-  <link rel="stylesheet" type="text/css" href="/jssStyles.css?hash=${stylesheet.hash}"></link>
+  <link rel="stylesheet" type="text/css" href="/styles.css?hash=${stylesheet.hash}"></link>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta charset="utf-8"/>
 </head>
