@@ -24,6 +24,9 @@ echo "$SERVER_CONFIG" >config.js
 echo "Running yarn install"
 yarn --network-timeout 100000 install
 
+echo "Running apt-get install"
+apt-get install build-essential libpq-dev
+
 yarn prisma generate
 
 echo "Starting server"
