@@ -90,7 +90,7 @@ export function PageWrapper({children}: {
 }
 
 export function FooterLinks() {
-  const classes = useJssStyles("PageWrapper", () => ({
+  const classes = useJssStyles("FooterLinks", () => ({
     footer: {
       height: 40,
       width: "100%",
