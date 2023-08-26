@@ -21,8 +21,9 @@
 
 echo "$SERVER_CONFIG" >config.js
 
-echo "Running yarn install"
-yarn install
+echo "Skipping yarn install"
+#echo "Running yarn install"
+#yarn install
 
 echo "Starting server"
 ./build.js --watch --run
