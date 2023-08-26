@@ -132,9 +132,11 @@ export function getApiProviderFromUser(currentUser: User|null, db: PrismaClient)
     return result;
   });
   
-  /*apiProvider.addToCache({
-    "/api/users/whoami": apiFilterCurrentUser(currentUser)
-  });*/
+  apiProvider.addToCache({
+    "/api/users/whoami": {
+      currentUser: apiFilterCurrentUser(currentUser)
+    }
+  });
   
   return {ssrCache, apiProvider};
 }
@@ -152,7 +154,7 @@ export async function repeatRenderingUntilSettled(tree: React.ReactElement, apiP
       break;
     }
     
-    await sleep(10);
+    await sleep(0);
     lastHtml = bodyHtml;
     lastCacheSize = apiProviderCacheSize;
   }
