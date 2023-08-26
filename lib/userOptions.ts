@@ -7,7 +7,7 @@ export interface UserOptions {
 }
 export const defaultUserOptions: UserOptions = {
   enableCardsDueEmails: true,
-  timezone: "GMT",
+  timezone: "America/Los_Angeles",
   cardsBecomeDueAt: 3.5,
 };
 

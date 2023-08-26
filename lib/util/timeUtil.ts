@@ -22,9 +22,6 @@ function timezoneNameToDetails(timeZone: string): TimezoneInfo {
   const shortFormat = new Intl.DateTimeFormat('en', {
     timeZone, timeZoneName: "shortOffset"
   });
-  const longFormat = new Intl.DateTimeFormat('en', {
-    timeZone, timeZoneName: "long"
-  });
 
   const offsetStr = shortFormat
     .formatToParts()
@@ -51,4 +48,8 @@ function gmtOffsetStrToNumHours(offsetStr: string): number {
 
 export function getBrowserTimezone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+export function timezoneNameToUtcOffset(timeZone: string): number {
+  return timezoneNameToDetails(timeZone).offset;
 }

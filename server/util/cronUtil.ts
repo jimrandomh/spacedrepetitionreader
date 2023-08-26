@@ -1,11 +1,16 @@
+import { PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import cronParser from 'cron-parser';
 import { getPrisma } from '../db';
 
+type CronjobContext = {
+  db: PrismaClient
+  intendedAt: Date
+}
 interface Cronjob {
   name: string
   scheduleStr: string
-  fn: ()=>Promise<void>
+  fn: (context: CronjobContext)=>Promise<void>
 }
 
 const cronjobs: Record<string,Cronjob> = {};
@@ -13,7 +18,7 @@ const cronjobs: Record<string,Cronjob> = {};
 export function registerCronjob({name, schedule, fn}: {
   name: string
   schedule: string
-  fn: ()=>Promise<void>
+  fn: (context: CronjobContext)=>Promise<void>
 }) {
   if (name in cronjobs) {
     throw new Error("Cronjob names must be unique");
@@ -60,7 +65,7 @@ async function checkCronjob(name: string, intendedAt: Date) {
     console.log(`Running cronjob ${executionKey}`);
     
     try {
-      await cronjob.fn();
+      await cronjob.fn({db, intendedAt});
     
       await db.cronHistory.update({
         where: { key: executionKey },

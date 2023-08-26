@@ -1,5 +1,5 @@
 import React from 'react';
-import { User } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { getUserOptions } from "../lib/userOptions";
 import { getItemsDue } from "./api/decks";
 import { getPrisma } from "./db";
@@ -7,29 +7,47 @@ import { sendEmail } from "./email";
 import { getConfig } from "./util/getConfig";
 import { ServerApiContext } from "./serverApiUtil";
 import { registerCronjob } from "./util/cronUtil";
+import { timezoneNameToUtcOffset } from '../lib/util/timeUtil';
 
 export function addCardsDueCronjob() {
   registerCronjob({
     name: "cardsDueNotification",
-    schedule: "0 0 4 * * *", // Daily, 4am server time
-    fn: async () => {
-      await sendCardsDueNotifications();
+    schedule: "0 */30 * * * *", // Twice hourly, at :00 and :30
+    fn: async ({db, intendedAt}) => {
+      await sendCardsDueNotifications({db, when: intendedAt});
     }
   });
 }
 
-async function sendCardsDueNotifications() {
-  const db = getPrisma();
-
+async function sendCardsDueNotifications({db,  when}: {
+  db: PrismaClient,
+  when: Date
+}) {
   const users = await db.user.findMany({
     where: {
       emailVerified: true
     },
   });
   
+  const nowUtcHours = when.getUTCHours() + (when.getUTCMinutes()/60.0)
+
   for (const user of users) {
-    await maybeSendCardsDueEmail(user);
+    if (userCardsDueTimeSettingMatches(user, nowUtcHours)) {
+      await maybeSendCardsDueEmail(user);
+    }
   }
+}
+
+function userCardsDueTimeSettingMatches(user: User, nowUtcHours: number): boolean {
+  const userConfig = getUserOptions(user);
+  const {timezone, cardsBecomeDueAt} = userConfig;
+  const userTimezoneUtcOffset = timezoneNameToUtcOffset(timezone);
+
+  let cardsDueAt_inGmt = cardsBecomeDueAt - userTimezoneUtcOffset;
+  while (cardsDueAt_inGmt >= 24) cardsDueAt_inGmt -= 24;
+  while (cardsDueAt_inGmt < 0) cardsDueAt_inGmt += 24;
+  
+  return (cardsDueAt_inGmt === nowUtcHours);
 }
 
 function canReceiveCardsDueEmails(user: User) {

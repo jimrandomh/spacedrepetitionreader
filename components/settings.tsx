@@ -64,7 +64,7 @@ export function UserConfiguration() {
           value={selectedTimezone?.label}
           onChange={ev => {
             const newTimezone = timezones.find(tz=>tz.label===ev.target.value);
-            updateOptions({
+            void updateOptions({
               timezone: newTimezone!.name
             })
           }}
