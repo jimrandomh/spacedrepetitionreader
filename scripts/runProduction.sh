@@ -25,6 +25,8 @@ echo "Skipping yarn install"
 #echo "Running yarn install"
 #yarn install
 
+yarn prisma generate
+
 echo "Starting server"
 ./build.js --watch --run
 
