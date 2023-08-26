@@ -10,10 +10,14 @@ type ApiQueryStatus = {
 export class GetApiProvider {
   fetch: (uri: string)=>Promise<any>
   queries: Record<string,ApiQueryStatus>
+  numPending: number
+  genericWatches: Set<()=>void>
   
   constructor(fetch: (url: string)=>Promise<any>) {
     this.fetch = fetch;
     this.queries = {};
+    this.numPending = 0;
+    this.genericWatches = new Set<()=>void>();
   }
   
   subscribe(uri: string) {
@@ -37,11 +41,7 @@ export class GetApiProvider {
   }
   
   isAnyPending() {
-    for (const uri of Object.keys(this.queries)) {
-      if(this.queries[uri].result.loading)
-        return true;
-    }
-    return false;
+    return this.numPending > 0;
   }
   
   getCacheSize(): number {
@@ -58,6 +58,7 @@ export class GetApiProvider {
   }
   
   refetch(_uri: string) {
+    //FIXME
     return this.fetch(_uri);
   }
   
@@ -70,6 +71,7 @@ export class GetApiProvider {
       this.queries[uri] = queryStatus;
       void (async () => {
         try {
+          this.numPending++;
           const fetchResult = await this.fetch(uri);
           queryStatus.result = {
             loading: false,
@@ -82,6 +84,8 @@ export class GetApiProvider {
             result: null,
             error: e,
           };
+        } finally {
+          this.numPending--;
         }
         this._notifySubscribers(queryStatus);
       })();
@@ -90,8 +94,27 @@ export class GetApiProvider {
   
   _notifySubscribers(queryStatus: ApiQueryStatus) {
     const {result, subscribers} = queryStatus;
-    for(const subscriber of subscribers) {
+    for(const subscriber of [...subscribers.values()]) {
       subscriber(result);
+    }
+    for (const subscriber of [...this.genericWatches]) {
+      subscriber();
+    }
+  }
+  
+  waitUntilProgress(): Promise<void> {
+    return new Promise((resolve) => {
+      const callback = () => {
+        this.genericWatches.delete(callback);
+        resolve();
+      }
+      this.genericWatches.add(callback);
+    });
+  }
+
+  async waitUntilFinished(): Promise<void> {
+    while(this.isAnyPending()) {
+      await this.waitUntilProgress();
     }
   }
 }

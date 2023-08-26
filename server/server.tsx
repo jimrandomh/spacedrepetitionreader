@@ -58,6 +58,12 @@ function serverRoutes(app: Express) {
     }
   });
   app.get('*', async (req, res) => {
+    const url = req.url;
+    if (req.url === '/favicon.ico') {
+      res.status(404);
+      res.end('');
+      return;
+    }
     const {status, html} = await renderSSR(req, res, req.url)
     res.writeHead(status);
     res.end(html);
@@ -86,6 +92,7 @@ window.ssrCache = ${escapeJsonForScriptTag(ssrCache)}
 </script>`);
 
 async function renderSSR(req: Request, res: Response, url: string): Promise<SsrResult> {
+  console.log(`Rendering ${url}`);
   const db = getPrisma();
   const currentUser = await getUserFromReq(req, db);
   const {apiProvider, ssrCache} = getApiProviderFromUser(currentUser, db);
@@ -94,7 +101,7 @@ async function renderSSR(req: Request, res: Response, url: string): Promise<SsrR
     url={url}
     apiProvider={apiProvider}
   />
-  const bodyHtml = await repeatRenderingUntilSettled(reactTree, apiProvider);
+  const bodyHtml = await repeatRenderingUntilSettled(url, reactTree, apiProvider);
   const stylesheet = getStaticStylesheet();
   
   const html = pageTemplate({
@@ -132,34 +139,26 @@ export function getApiProviderFromUser(currentUser: User|null, db: PrismaClient)
     return result;
   });
   
-  apiProvider.addToCache({
-    "/api/users/whoami": {
-      currentUser: apiFilterCurrentUser(currentUser)
-    }
-  });
+  const whoamiResult = {
+    currentUser: apiFilterCurrentUser(currentUser)
+  };
+  ssrCache["/api/users/whoami"] = whoamiResult;
+  apiProvider.addToCache({ "/api/users/whoami": whoamiResult });
   
   return {ssrCache, apiProvider};
 }
 
-export async function repeatRenderingUntilSettled(tree: React.ReactElement, apiProvider: GetApiProvider): Promise<string> {
-  let lastHtml = "";
-  let bodyHtml = "";
-  let lastCacheSize = 0;
+export async function repeatRenderingUntilSettled(uri: string, tree: React.ReactElement, apiProvider: GetApiProvider): Promise<string> {
   
   while(true) {
-    bodyHtml = renderToString(tree);
-    const apiProviderCacheSize = apiProvider.getCacheSize();
-
-    if (bodyHtml===lastHtml && !apiProvider.isAnyPending() && apiProviderCacheSize === lastCacheSize) {
-      break;
-    }
+    const bodyHtml = renderToString(tree);
     
-    await sleep(0);
-    lastHtml = bodyHtml;
-    lastCacheSize = apiProviderCacheSize;
+    if (apiProvider.isAnyPending()) {
+      await apiProvider.waitUntilFinished();
+    } else {
+      return bodyHtml;
+    }
   }
-  
-  return bodyHtml;
 }
 
 function escapeJsonForScriptTag(json: any) {

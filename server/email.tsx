@@ -26,7 +26,7 @@ export async function sendEmail({subject, body, user, allowUnverified=false}: {
   }
 
   const {apiProvider} = getApiProviderFromUser(user, db);
-  const renderedBody = await repeatRenderingUntilSettled(body, apiProvider);
+  const renderedBody = await repeatRenderingUntilSettled("email", body, apiProvider);
   const stylesheet = getStaticStylesheet().css;
   const bodyWithStyles = applyInlineStylesTo(stylesheet, renderedBody);
   const textVersion = convert(renderedBody, {
