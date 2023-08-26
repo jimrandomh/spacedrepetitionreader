@@ -2,9 +2,9 @@ import { orderBy } from "lodash";
 
 interface TimezoneInfo {
   name: string
-  abbrev: string
   offsetStr: string
   offset: number
+  label: string
 }
 
 export function getTimezonesList(): TimezoneInfo[] {
@@ -30,15 +30,11 @@ function timezoneNameToDetails(timeZone: string): TimezoneInfo {
     .formatToParts()
     .find(part => part.type==='timeZoneName')!
     .value;
-  const abbrev = longFormat
-    .formatToParts()
-    .find(part => part.type==='timeZoneName')!
-    .value
   return {
     name: timeZone,
-    abbrev,
     offset: gmtOffsetStrToNumHours(offsetStr),
     offsetStr,
+    label: `${offsetStr} (${timeZone})`,
   }
 }
 

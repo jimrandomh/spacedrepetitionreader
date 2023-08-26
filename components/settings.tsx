@@ -33,6 +33,7 @@ export function UserConfiguration() {
   const [currentOptions,setCurrentOptions] = useState(getUserOptions(user));
   const [showChangePassword,setShowChangePassword] = useState(false);
   const timezones = getTimezonesList();
+  const selectedTimezone = timezones.find(tz=>tz.name===currentOptions.timezone);
   
   async function updateOptions(options: Partial<UserOptions>) {
     const mergedOptions = {...currentOptions, ...options};
@@ -60,16 +61,19 @@ export function UserConfiguration() {
       <div className={classes.optionColumn}>
         <select
           className={classes.select}
-          value={currentOptions.timezone}
-          onChange={ev => updateOptions({
-            timezone: ev.target.value
-          })}
+          value={selectedTimezone?.label}
+          onChange={ev => {
+            const newTimezone = timezones.find(tz=>tz.label===ev.target.value);
+            updateOptions({
+              timezone: newTimezone!.name
+            })
+          }}
         >
           {timezones.map(tz =>
             <option
-              key={tz.abbrev}
+              key={tz.name}
             >
-              {`${tz.offsetStr} (${tz.name})`}
+              {tz.label}
             </option>
           )};
         </select>

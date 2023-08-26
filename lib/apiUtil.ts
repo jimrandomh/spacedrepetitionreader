@@ -145,7 +145,7 @@ export async function doPost<T extends ApiTypes.RestApiPost>({ endpoint, query, 
 > {
   const withArgs = new Route(endpoint).reverse(mapValues(query, (v:any)=>encodeURIComponent(v)));
   if (!withArgs) throw new Error("Route-parsing failed");
-  console.log("POST with body "+JSON.stringify(body));
+  //console.log("POST with body "+JSON.stringify(body));
   const fetchResult = await fetch(withArgs, {
     method: "POST",
     body: JSON.stringify(body),
