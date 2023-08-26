@@ -21,9 +21,8 @@
 
 echo "$SERVER_CONFIG" >config.js
 
-echo "Skipping yarn install"
-#echo "Running yarn install"
-#yarn install
+echo "Running yarn install"
+yarn --network-timeout 100000 install
 
 yarn prisma generate
 
