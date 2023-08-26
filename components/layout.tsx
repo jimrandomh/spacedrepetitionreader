@@ -73,6 +73,24 @@ export function PageWrapper({children}: {
       minHeight: "calc(100% - 40px)",
       padding: 16,
     },
+  }));
+
+  const [sidebarOpen,setSidebarOpen] = useState<boolean|undefined>(undefined);
+  
+  return <div>
+    <TopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
+    <LeftSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+    <div className={classes.mainColumn}>
+      <div className={classes.body}>
+        {children}
+      </div>
+      <FooterLinks/>
+    </div>
+  </div>
+}
+
+export function FooterLinks() {
+  const classes = useJssStyles("PageWrapper", () => ({
     footer: {
       height: 40,
       width: "100%",
@@ -84,9 +102,8 @@ export function PageWrapper({children}: {
     },
   }));
 
-  const [sidebarOpen,setSidebarOpen] = useState<boolean|undefined>(undefined);
-  const {openModal} = useModal();
   const canDebug = true; //TODO
+  const {openModal} = useModal();
 
   const openDebugPanel = () => {
     openModal({
@@ -97,24 +114,17 @@ export function PageWrapper({children}: {
       }
     });
   }
-  
-  return <div>
-    <TopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
-    <LeftSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-    <div className={classes.mainColumn}>
-      <div className={classes.body}>
-        {children}
-      </div>
-      <div className={classes.footer}>
-        {canDebug && <>
-          <Link onClick={openDebugPanel} color={false}>Debug</Link>
-          <BulletSeparator/>
-        </>}
-        <Link href="/about" color={false}>About</Link>
-        <BulletSeparator/>
-        <Link href="/privacy-policy" color={false}>Privacy Policy</Link>
-      </div>
-    </div>
+
+  return <div className={classes.footer}>
+    {canDebug && <>
+      <Link onClick={openDebugPanel} color={false}>Debug</Link>
+      <BulletSeparator/>
+    </>}
+    <Link href="/about" color={false}>About</Link>
+    <BulletSeparator/>
+    <Link href="mailto:jimrandomh@gmail.com" color={false}>Feedback</Link>
+    <BulletSeparator/>
+    <Link href="/privacy-policy" color={false}>Privacy Policy</Link>
   </div>
 }
 
@@ -446,4 +456,4 @@ export function SidebarListItemWithCount({title, href, unreadCount}: {
   </div>
 }
 
-export const components = {App,PageWrapper,LoggedOutAccessiblePage,TopBar,OpenSidebarButton,LeftSidebar,LeftSidebarContents,DeckListItem,FeedsListItem,SidebarListItemWithCount};
+export const components = {App,PageWrapper,FooterLinks,LoggedOutAccessiblePage,TopBar,OpenSidebarButton,LeftSidebar,LeftSidebarContents,DeckListItem,FeedsListItem,SidebarListItemWithCount};
