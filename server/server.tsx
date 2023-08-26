@@ -6,7 +6,7 @@ import {addApiEndpoints} from './api/apiEndpoints';
 import {App} from '../components/layout';
 import {GetApiProvider,GetApiContext} from '../lib/apiUtil';
 import {ServerApiGetContext, getApiRoutes} from './serverApiUtil';
-import {getUserFromReq} from './api/auth';
+import {apiFilterCurrentUser, getUserFromReq} from './api/auth';
 import {getPrisma} from './db';
 import {getStaticStylesheet, StylesheetWithHash} from './staticStylesheet';
 import {initJss} from '../lib/useJssStyles';
@@ -130,6 +130,10 @@ export function getApiProviderFromUser(currentUser: User|null, db: PrismaClient)
     const result = await fn(ctx);
     ssrCache[uri] = result;
     return result;
+  });
+  
+  apiProvider.addToCache({
+    "/api/users/whoami": apiFilterCurrentUser(currentUser)
   });
   
   return {ssrCache, apiProvider};

@@ -145,7 +145,7 @@ export function addAuthEndpoints(app: Express) {
   
   defineGetApi<ApiTypes.ApiWhoami>(app, "/api/users/whoami", async (ctx) => {
     return {
-      currentUser: apiFilterCurrentUser(ctx.currentUser, ctx)
+      currentUser: apiFilterCurrentUser(ctx.currentUser)
     };
   });
   
@@ -343,7 +343,7 @@ ALTER TABLE examples ALTER COLUMN exampleColumn DROP NOT NULL;
 After running this command, the "exampleColumn" column in the "examples" table will be able to contain null values.
 */
 
-function apiFilterCurrentUser(user: User|null, _ctx: ServerApiContext): ApiTypes.ApiObjCurrentUser|null {
+export function apiFilterCurrentUser(user: User|null): ApiTypes.ApiObjCurrentUser|null {
   if (!user)
     return null;
   return {
