@@ -132,9 +132,9 @@ export function getApiProviderFromUser(currentUser: User|null, db: PrismaClient)
     return result;
   });
   
-  apiProvider.addToCache({
+  /*apiProvider.addToCache({
     "/api/users/whoami": apiFilterCurrentUser(currentUser)
-  });
+  });*/
   
   return {ssrCache, apiProvider};
 }
@@ -148,10 +148,11 @@ export async function repeatRenderingUntilSettled(tree: React.ReactElement, apiP
     bodyHtml = renderToString(tree);
     const apiProviderCacheSize = apiProvider.getCacheSize();
 
-    if (bodyHtml===lastHtml && !apiProvider.isAnyPending() && apiProviderCacheSize === lastCacheSize)
+    if (bodyHtml===lastHtml && !apiProvider.isAnyPending() && apiProviderCacheSize === lastCacheSize) {
       break;
+    }
     
-    await sleep(0);
+    await sleep(10);
     lastHtml = bodyHtml;
     lastCacheSize = apiProviderCacheSize;
   }
