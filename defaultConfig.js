@@ -1,7 +1,7 @@
 
 module.exports = {
   psqlConnectionString: "postgres://spacedrepetitionreader:PASSWORD@localhost/spacedrepetitionreader",
-  serverPort: 8000,
+  port: 8000,
   siteUrl: "http://localhost:8000",
 
   enableEmail: false,
