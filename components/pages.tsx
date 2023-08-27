@@ -10,10 +10,13 @@ import {useJssStyles} from '../lib/useJssStyles';
 import { useDebugOptions } from './debug';
 import { UserConfiguration } from './settings';
 import { getBrowserTimezone } from '../lib/util/timeUtil';
+import { PageTitle } from '../lib/renderContext';
+import { simpleTruncateStr } from '../lib/util/truncationUtil';
 
 
 export function AboutPage() {
   return <LoggedOutAccessiblePage>
+    <PageTitle title="About"/>
     <h1>About Spaced Repetition Reader</h1>
     <PitchText/>
   </LoggedOutAccessiblePage>
@@ -21,6 +24,7 @@ export function AboutPage() {
 
 export function PrivacyPolicyPage() {
   return <LoggedOutAccessiblePage>
+    <PageTitle title="Privacy Policy"/>
     <h1>Spaced Repetition Reader: Privacy Policy</h1>
 
     <p>{"Spaced Repetition Reader is a personal side project. It isn't monetized (other than perhaps donations), and there are no plans to monetize it. If this ever changes, the change will be accompanied by an email to all users and at least 30 days notice."}</p>
@@ -41,6 +45,7 @@ export function DashboardPage() {
   });
   
   return <PageWrapper>
+    <PageTitle title="Dashboard"/>
     {loading && <Loading/>}
     {data && <ReviewWrapper
       cards={data.cards}
@@ -102,6 +107,7 @@ export function EditDeck({id}: {id: DbKey}) {
     {loadingDeck && <Loading/>}
     
     {deck && <>
+     <PageTitle title={deck.name}/>
       <h1>{deck.name}</h1>
       
       <div className={classes.moreOptions}>
@@ -134,7 +140,10 @@ export function EditDeck({id}: {id: DbKey}) {
 }
 
 export function Error404Page() {
-  return <h1>Page Not Found</h1>
+  return <LoggedOutAccessiblePage>
+    <PageTitle title="404"/>
+    <h1>Page Not Found</h1>
+  </LoggedOutAccessiblePage>
 }
 
 export function RedirectToLoginPage() {
@@ -203,7 +212,10 @@ export function PitchText() {
 }
 
 export function LoginPage() {
-  return <LoginForm/>
+  return <LoggedOutAccessiblePage>
+    <PageTitle title="Login"/>
+    <LoginForm/>
+  </LoggedOutAccessiblePage>
 }
 
 export function ManageDecks() {
@@ -213,6 +225,7 @@ export function ManageDecks() {
   });
   
   return <PageWrapper>
+    <PageTitle title="Decks"/>
     <h1>Manage Decks</h1>
     
     {loadingDecks && <Loading/>}
@@ -234,6 +247,7 @@ export function ManageFeeds() {
   });
   
   return <PageWrapper>
+    <PageTitle title="Feeds"/>
     <h1>Manage Feeds</h1>
     
     {loadingSubscriptions && <Loading/>}
@@ -251,6 +265,7 @@ export function ManageFeeds() {
 
 export function AddFeedPage() {
   return <PageWrapper>
+    <PageTitle title="Add Feed"/>
     <SubscribeToFeedForm/>
   </PageWrapper>
 }
@@ -263,6 +278,7 @@ export function ViewCardPage({id}: {id: DbKey}) {
   const [error,setError] = useState<string|null>(null);
   
   const card = data?.card;
+  const truncatedCardFront = card?.front ? simpleTruncateStr(card.front, 30) : undefined;
   
   async function deleteCard() {
     if (!card) return;
@@ -281,6 +297,7 @@ export function ViewCardPage({id}: {id: DbKey}) {
     }
   }
   return <PageWrapper>
+    {truncatedCardFront && <PageTitle title={truncatedCardFront}/>}
     {loading && <Loading/>}
   
     {card && <div>
@@ -341,6 +358,7 @@ export function ViewFeedPage({id}: {id: DbKey}) {
   }
   
   return <PageWrapper>
+    {data?.feed?.title && <PageTitle title={data.feed.title}/>}
     {loading && <Loading/>}
     
     <div className={classes.buttons}>
@@ -391,6 +409,7 @@ export function FirstOAuthLoginPage() {
 
 export function UserProfilePage() {
   return <PageWrapper>
+    <PageTitle title="Profile"/>
     <h1>Settings</h1>
     
     <UserConfiguration/>
@@ -398,11 +417,17 @@ export function UserProfilePage() {
 }
 
 export function ForgotPasswordRequestPage() {
-  return <RequestPasswordResetForm/>
+  return <LoggedOutAccessiblePage>
+    <PageTitle title="Forgot Password"/>
+    <RequestPasswordResetForm/>
+  </LoggedOutAccessiblePage>
 }
 
 export function ResetPasswordPage({token}: {token: string}) {
-  return <ResetPasswordForm token={token} />
+  return <LoggedOutAccessiblePage>
+    <PageTitle title="Reset Password"/>
+    <ResetPasswordForm token={token} />
+  </LoggedOutAccessiblePage>
 }
 
 export function ConfirmEmailPage({token}: {token: string}) {
@@ -421,6 +446,7 @@ export function ConfirmEmailPage({token}: {token: string}) {
   }, [doConfirm]);
   
   return <div>
+    <PageTitle title="Confirming Email Address"/>
     <Loading/>
   </div>
 }

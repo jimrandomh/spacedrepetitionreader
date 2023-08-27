@@ -17,10 +17,16 @@ export function AppClient() {
     apiProvider.addToCache(window.ssrCache);
   }
   
-  return <RenderContextProvider apiProvider={apiProvider}>
+  return <RenderContextProvider apiProvider={apiProvider} setPageTitle={setPageTitle}>
     <App url={location.pathname}/>
   </RenderContextProvider>
 }
+
+function setPageTitle(title: string) {
+  window.document.title = title;
+}
+
+
 declare global {
   interface Window {
     ssrCache: Record<string,any>

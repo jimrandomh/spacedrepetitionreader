@@ -1,21 +1,24 @@
 import React, { useContext, useMemo } from 'react';
 import { createContext } from "react";
 import { GetApiProvider } from "./apiUtil";
+import { getPublicConfig } from './getPublicConfig';
 
 interface RenderContextType {
   apiProvider: GetApiProvider
+  setPageTitle: (title: string)=>void
 }
 
 const RenderContext = createContext<RenderContextType|null>(null);
 
-export function RenderContextProvider({apiProvider, children}: {
+export function RenderContextProvider({apiProvider, setPageTitle, children}: {
   apiProvider: GetApiProvider,
+  setPageTitle: (title: string)=>void
   children: React.ReactNode,
 }) {
   const context: RenderContextType = useMemo(() => ({
-    apiProvider
+    apiProvider, setPageTitle
   }), [
-    apiProvider
+    apiProvider, setPageTitle
   ]);
 
   return <RenderContext.Provider value={context}>
@@ -29,4 +32,13 @@ export function useRenderContext(): RenderContextType {
     throw new Error("Tried to render a page without RenderContextProvider");
   }
   return context;
+}
+
+export function PageTitle({title}: {
+  title: string
+}) {
+  const context = useRenderContext();
+  const titleSuffix = getPublicConfig().pageTitle;
+  context.setPageTitle(`${title} - ${titleSuffix}`);
+  return <></>;
 }

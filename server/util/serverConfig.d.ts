@@ -1,5 +1,6 @@
 
 type SpacedRepetitionPublicConfig = {
+  pageTitle: string
   enableGoogleOAuth?: boolean
 }
 

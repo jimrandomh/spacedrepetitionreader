@@ -265,6 +265,7 @@ export interface ApiLoadFeed extends RestApiGet { //{{_}}
     id: DbKey
   }
   responseType: {
+    feed: ApiObjFeed
     feedItems: ApiObjRssItem[]
   }
 }

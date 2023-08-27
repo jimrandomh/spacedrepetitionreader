@@ -57,6 +57,7 @@ export function addFeedEndpoints(app: Express) {
     
     const feedItems = await getUnreadItems(currentUser, feed, ctx.db);
     return {
+      feed: apiFilterRssFeed(feed, ctx),
       feedItems: feedItems.map(item => apiFilterRssItem(item, ctx)),
     };
   });

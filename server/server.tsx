@@ -15,6 +15,7 @@ import { getConfig } from './util/getConfig';
 import { PrismaClient, User } from '@prisma/client';
 import { addCardsDueCronjob } from './cardsDueNotification';
 import { RenderContextProvider } from '../lib/renderContext';
+import { getPublicConfig } from '../lib/getPublicConfig';
 
 const projectRoot = path.join(__dirname, '..');
 const staticFilesPath = path.join(projectRoot, 'static');
@@ -74,12 +75,13 @@ function serverRoutes(app: Express) {
 
 const pageTemplate = ({bodyHtml, ssrCache, stylesheet, publicConfig}: {
   bodyHtml: string
+  title: string
   ssrCache: any
   stylesheet: StylesheetWithHash
   publicConfig: any
 }) => (`<!doctype html>
 <head>
-  <title>Spaced Repetition Reader</title>
+  <title>{title}</title>
   <script defer src="/client.js"></script>
   <link rel="stylesheet" type="text/css" href="/styles.css?hash=${stylesheet.hash}"></link>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -96,16 +98,23 @@ async function renderSSR(req: Request, res: Response, url: string): Promise<SsrR
   const db = getPrisma();
   const currentUser = await getUserFromReq(req, db);
   const {apiProvider, ssrCache} = getApiProviderFromUser(currentUser, db);
+  const titleRef = {title: getPublicConfig().pageTitle};
+  
+  function setPageTitle(title: string) {
+    titleRef.title = title;
+  }
   
   const reactTree = <AppServer
     url={url}
     apiProvider={apiProvider}
+    setPageTitle={setPageTitle}
   />
   const bodyHtml = await repeatRenderingUntilSettled(url, reactTree, apiProvider);
   const stylesheet = getStaticStylesheet();
   
   const html = pageTemplate({
     bodyHtml, ssrCache, stylesheet,
+    title: titleRef.title,
     publicConfig: getConfig().public
   });
 
@@ -164,11 +173,12 @@ function escapeJsonForScriptTag(json: any) {
   return JSON.stringify(json).replace('</script>','<\\/script>');
 }
 
-function AppServer({url, apiProvider}: {
+function AppServer({url, apiProvider, setPageTitle}: {
   url: string,
   apiProvider: GetApiProvider,
+  setPageTitle: (title: string)=>void,
 }) {
-  return <RenderContextProvider apiProvider={apiProvider}>
+  return <RenderContextProvider apiProvider={apiProvider} setPageTitle={setPageTitle}>
     <App url={url}/>
   </RenderContextProvider>
 }
