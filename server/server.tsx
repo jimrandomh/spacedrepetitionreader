@@ -73,7 +73,7 @@ function serverRoutes(app: Express) {
   console.log(`Serving static files from ${staticFilesPath}`);
 }
 
-const pageTemplate = ({bodyHtml, ssrCache, stylesheet, publicConfig}: {
+const pageTemplate = ({bodyHtml, title, ssrCache, stylesheet, publicConfig}: {
   bodyHtml: string
   title: string
   ssrCache: any
@@ -81,7 +81,7 @@ const pageTemplate = ({bodyHtml, ssrCache, stylesheet, publicConfig}: {
   publicConfig: any
 }) => (`<!doctype html>
 <head>
-  <title>{title}</title>
+  <title>${title}</title>
   <script defer src="/client.js"></script>
   <link rel="stylesheet" type="text/css" href="/styles.css?hash=${stylesheet.hash}"></link>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
