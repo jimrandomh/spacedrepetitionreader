@@ -149,7 +149,6 @@ export function getApiProviderFromUser(currentUser: User|null, db: PrismaClient)
 }
 
 export async function repeatRenderingUntilSettled(uri: string, tree: React.ReactElement, apiProvider: GetApiProvider): Promise<string> {
-  
   while(true) {
     const bodyHtml = renderToString(tree);
     

@@ -4,10 +4,10 @@ import { getUserOptions } from "../lib/userOptions";
 import { getItemsDue } from "./api/decks";
 import { getPrisma } from "./db";
 import { sendEmail } from "./email";
-import { getConfig } from "./util/getConfig";
 import { ServerApiContext } from "./serverApiUtil";
 import { registerCronjob } from "./util/cronUtil";
 import { timezoneNameToUtcOffset } from '../lib/util/timeUtil';
+import { CardsDueEmail } from '../components/emails';
 
 export function addCardsDueCronjob() {
   registerCronjob({
@@ -74,16 +74,10 @@ async function maybeSendCardsDueEmail(user: User) {
     // TODO: Enforce minimum time between emails
   }
   
-  //TODO: This is actually a dashboard link; there should be a URL that starts the review immediately
-  const reviewUrl = `${getConfig().siteUrl}/dashboard`;
-  
   // TODO: Add logged-out-accessible unsubscribe link
   await sendEmail({
     user,
     subject: `You have ${cards.length} cards to review and ${feedItems.length} feed items`,
-    body: <div>
-      <p>{`You have ${cards.length} cards to review and ${feedItems.length} feed items ready to review on Spaced Repetition Reader.`}</p>
-      <p><a href={reviewUrl}>Start review</a></p>
-    </div>
+    body: <CardsDueEmail numCards={cards.length} numFeedItems={feedItems.length}/>
   });
 }

@@ -9,6 +9,7 @@ import { getConfig } from '../util/getConfig';
 import { getUserOptions } from '../../lib/userOptions';
 import fetch from 'node-fetch';
 import { getPrisma } from '../db';
+import { ConfirmYourAddressEmail, PasswordResetEmail } from '../../components/emails';
 
 const bcryptSaltRounds = 10;
 
@@ -374,10 +375,7 @@ async function sendConfirmationEmail(ctx: ServerApiContext, user: User) {
     user,
     subject: "Confirm your email address",
     allowUnverified: true,
-    body: <div>
-      <p>Click this link to confirm your email address:</p>
-      <p><a href={confirmLink}>Confirm</a></p>
-    </div>,
+    body: <ConfirmYourAddressEmail confirmLink={confirmLink}/>,
   });
 }
 
@@ -400,10 +398,7 @@ async function sendPasswordResetEmail(ctx: ServerApiContext, user: User) {
     user,
     subject: "Reset your password",
     allowUnverified: true,
-    body: <div>
-      <p>Click this link to reset your password:</p>
-      <p><a href={resetPasswordLink}>Reset password</a></p>
-    </div>,
+    body: <PasswordResetEmail resetPasswordLink={resetPasswordLink} />,
   });
 }
 
