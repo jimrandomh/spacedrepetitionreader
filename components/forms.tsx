@@ -46,6 +46,9 @@ export function LoginForm() {
         width: 150,
       },
     },
+    inputBox: {
+      padding: "2px !important",
+    },
     formTitle: {
       marginBottom: 8,
       textAlign: "center",
@@ -134,8 +137,16 @@ export function LoginForm() {
           </div>
           <div className={classes.or}>-OR-</div>
         </div>}
-        <TextInput label="Username" value={loginUsername} setValue={setLoginUsername} className={classes.input}/>
-        <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword} className={classes.input}/>
+        <TextInput
+          label="Username"
+          value={loginUsername} setValue={setLoginUsername}
+          className={classes.input} inputClassName={classes.inputBox}
+        />
+        <TextInput
+          label="Password" inputType="password"
+          value={loginPassword} setValue={setLoginPassword}
+          className={classes.input} inputClassName={classes.inputBox}
+        />
         <input type="submit" value="Log In" className={classes.button}/>
         
         {loginError && <ErrorMessage message={loginError}/>}
@@ -145,10 +156,10 @@ export function LoginForm() {
         onSubmit={(ev) => {ev.preventDefault(); void createAccount()}}
       >
         <div className={classes.formTitle}>Sign Up</div>
-        <TextInput label="Username" value={createAccountUsername} setValue={setCreateAccountUsername} className={classes.input}/>
-        <TextInput label="Email" value={createAccountEmail} setValue={setCreateAccountEmail} className={classes.input}/>
-        <TextInput label="Password" inputType="password" value={createAccountPassword} setValue={setCreateAccountPassword} className={classes.input}/>
-        <TextInput label="Confirm" inputType="password" value={confirmPassword} setValue={setConfirmPassword} className={classes.input}/>
+        <TextInput label="Username" value={createAccountUsername} setValue={setCreateAccountUsername} className={classes.input} inputClassName={classes.inputBox}/>
+        <TextInput label="Email" value={createAccountEmail} setValue={setCreateAccountEmail} className={classes.input} inputClassName={classes.inputBox}/>
+        <TextInput label="Password" inputType="password" value={createAccountPassword} setValue={setCreateAccountPassword} className={classes.input} inputClassName={classes.inputBox}/>
+        <TextInput label="Confirm" inputType="password" value={confirmPassword} setValue={setConfirmPassword} className={classes.input} inputClassName={classes.inputBox}/>
         <input type="submit" value="Create Account" className={classes.button}/>
         
         {signupError && <ErrorMessage message={signupError}/>}

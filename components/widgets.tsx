@@ -111,13 +111,14 @@ export function TextAreaInput({label, value, setValue}: {
   </div>
 }
 
-export function TextInput({label, placeholder, value, setValue, inputType, className}: {
+export function TextInput({label, placeholder, value, setValue, inputType, className, inputClassName}: {
   label?: string,
   placeholder?: string,
   value: string,
   setValue: (newValue: string)=>void,
   inputType?: string,
   className?: string,
+  inputClassName?: string,
 }) {
   const classes = useJssStyles("TextInput", () => ({
     root: {
@@ -139,7 +140,7 @@ export function TextInput({label, placeholder, value, setValue, inputType, class
       onChange={ev=>setValue(ev.target.value)}
       placeholder={placeholder}
       type={inputType||"text"}
-      className={classes.input}
+      className={classNames(classes.input, inputClassName)}
     />
   </div>
 }
