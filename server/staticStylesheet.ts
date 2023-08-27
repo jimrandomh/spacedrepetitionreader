@@ -22,7 +22,7 @@ const nonJssStylesheets: string[] = [
   "static/react-datepicker.css",
 ];
 
-function renderStaticStylesheet(): string {
+function renderStaticStylesheet(isForEmail: boolean): string {
   const sb = [];
   
   for(const componentName of Object.keys(allComponents)) {
@@ -34,8 +34,11 @@ function renderStaticStylesheet(): string {
     }
   }
   
-  for (const path of nonJssStylesheets) {
-    sb.push(fs.readFileSync(path, 'utf-8'));
+  if (!isForEmail) {
+    // The stylesheet used for email excludes non-JSS stylesheets, and in particular excludes react-datepicker.css, which would trigger an infinite-loop bug in `juice` if it was included. See https://github.com/Automattic/juice/issues/471
+    for (const path of nonJssStylesheets) {
+      sb.push(fs.readFileSync(path, 'utf-8'));
+    }
   }
   
   return sb.join('\n');
@@ -48,7 +51,17 @@ export interface StylesheetWithHash {
 let staticStylesheet: StylesheetWithHash|null = null;
 export function getStaticStylesheet(): StylesheetWithHash {
   if(staticStylesheet===null) {
-    const css = renderStaticStylesheet();
+    const css = renderStaticStylesheet(false);
+    const hash = crypto.createHash('sha256').update(css).digest('hex');
+    staticStylesheet = {css, hash};
+  }
+  return staticStylesheet;
+}
+
+let emailStylesheet: StylesheetWithHash|null = null;
+export function getEmailStylesheet(): StylesheetWithHash {
+  if(staticStylesheet===null) {
+    const css = renderStaticStylesheet(true);
     const hash = crypto.createHash('sha256').update(css).digest('hex');
     staticStylesheet = {css, hash};
   }
