@@ -60,10 +60,10 @@ export function getStaticStylesheet(): StylesheetWithHash {
 
 let emailStylesheet: StylesheetWithHash|null = null;
 export function getEmailStylesheet(): StylesheetWithHash {
-  if(staticStylesheet===null) {
+  if(emailStylesheet===null) {
     const css = renderStaticStylesheet(true);
     const hash = crypto.createHash('sha256').update(css).digest('hex');
-    staticStylesheet = {css, hash};
+    emailStylesheet = {css, hash};
   }
-  return staticStylesheet;
+  return emailStylesheet;
 }
