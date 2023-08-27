@@ -101,7 +101,9 @@ async function renderSSR(req: Request, res: Response, url: string): Promise<SsrR
   const titleRef = {title: getPublicConfig().pageTitle};
   
   function setPageTitle(title: string) {
-    titleRef.title = title;
+    if (title) {
+      titleRef.title = title;
+    }
   }
   
   const reactTree = <AppServer

@@ -35,10 +35,12 @@ export function useRenderContext(): RenderContextType {
 }
 
 export function PageTitle({title}: {
-  title: string
+  title?: string
 }) {
   const context = useRenderContext();
-  const titleSuffix = getPublicConfig().pageTitle;
-  context.setPageTitle(`${title} - ${titleSuffix}`);
+  if (title) {
+    const titleSuffix = getPublicConfig().pageTitle;
+    context.setPageTitle(`${title} - ${titleSuffix}`);
+  }
   return <></>;
 }
