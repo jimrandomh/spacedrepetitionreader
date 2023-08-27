@@ -165,10 +165,29 @@ export function LoginForm() {
 export function RequestPasswordResetForm() {
   const classes = useJssStyles("RequestPasswordResetForm", () => ({
     root: {
-      width: 510,
       margin: "0 auto",
+      textAlign: "center",
     },
-    button: {},
+    title: {
+      marginBottom: 40,
+    },
+    label: {
+      marginRight: 8,
+    },
+    textInput: {
+      display: "inline-block",
+      padding: 8,
+    },
+    button: {
+      marginTop: 25,
+      paddingTop: 6,
+      paddingBottom: 6,
+      paddingLeft: 12,
+      paddingRight: 12,
+    },
+    error: {
+      marginTop: 16,
+    },
   }));
   
   const [email,setEmail] = useState("");
@@ -194,12 +213,23 @@ export function RequestPasswordResetForm() {
     }
   }
   return <div className={classes.root}>
+    <h1 className={classes.title}>Forgot Password</h1>
     {!finished && <form
       onSubmit={(ev) => {ev.preventDefault(); void requestPasswordReset()}}
     >
-      <TextInput label="Email" value={email} setValue={setEmail}/>
-      <input type="submit" value="Request Password Reset" className={classes.button}/>
-      {displayedError && <div><ErrorMessage message={displayedError}/></div>}
+      <div>
+        <span className={classes.label}>Email</span>
+        <TextInput
+          value={email} setValue={setEmail}
+          className={classes.textInput}
+        />
+      </div>
+      <div>
+        <input type="submit" value="Request Password Reset" className={classes.button}/>
+      </div>
+      {displayedError && <div className={classes.error}>
+        <ErrorMessage message={displayedError}/>
+      </div>}
     </form>}
     {finished && <div>
       An email was sent to {email}. Click the link in the email to reset your password.

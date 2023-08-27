@@ -66,8 +66,18 @@ export function PageWrapper({children}: {
     mainColumn: {
       position: "absolute",
       top: 48, bottom: 0,
-      left: 200, right: 0,
+      right: 0,
       overflowY: "scroll",
+      left: 0,
+      transition: "left 0.5s ease",
+    },
+    sidebarIsAuto: {
+      [breakpoints.smUp]: {
+        left: 200,
+      }
+    },
+    sidebarIsOpen: {
+      left: 200,
     },
     body: {
       minHeight: "calc(100% - 40px)",
@@ -80,7 +90,10 @@ export function PageWrapper({children}: {
   return <div>
     <TopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
     <LeftSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-    <div className={classes.mainColumn}>
+    <div className={classNames(classes.mainColumn, {
+      [classes.sidebarIsAuto]: sidebarOpen===undefined,
+      [classes.sidebarIsOpen]: sidebarOpen,
+    })}>
       <div className={classes.body}>
         {children}
       </div>
@@ -131,6 +144,11 @@ export function FooterLinks() {
 export function LoggedOutAccessiblePage({children}: {
   children: React.ReactNode,
 }) {
+  const classes = useJssStyles("LoggedOutAccessiblePage", () => ({
+    loggedOutPage: {
+      marginTop: 32,
+    }
+  }));
   const currentUser = useCurrentUser();
   
   // Show the side and top bars iff logged in
@@ -139,7 +157,7 @@ export function LoggedOutAccessiblePage({children}: {
       {children}
     </PageWrapper>
   } else {
-    return <div>
+    return <div className={classes.loggedOutPage}>
       {children}
     </div>
   }
@@ -168,6 +186,18 @@ export function TopBar({sidebarOpen, setSidebarOpen}: {
       fontSize: 17,
       color: "rgba(0,0,0,.8)",
     },
+    siteNameShort: {
+      display: "none",
+      [breakpoints.xs]: {
+        display: "inline-block",
+      },
+    },
+    siteNameLong: {
+      display: "none",
+      [breakpoints.smUp]: {
+        display: "inline-block",
+      },
+    },
     simulatedDate: {
       marginRight: 8,
     },
@@ -176,6 +206,7 @@ export function TopBar({sidebarOpen, setSidebarOpen}: {
       fontSize: 12,
       marginTop: 8,
       color: "rgba(0,0,0,.8)",
+      display: "flex",
     },
     userNameButton: {
       marginRight: 12,
@@ -201,7 +232,8 @@ export function TopBar({sidebarOpen, setSidebarOpen}: {
     <div className={classes.mainSection}>
       <div className={classes.siteName}>
         <Link href="/" color={false}>
-          Spaced Repetition Reader
+          <span className={classes.siteNameShort}>S.R.R.</span>
+          <span className={classes.siteNameLong}>Spaced Repetition Reader</span>
         </Link>
       </div>
       

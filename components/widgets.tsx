@@ -111,8 +111,9 @@ export function TextAreaInput({label, value, setValue}: {
   </div>
 }
 
-export function TextInput({label, value, setValue, inputType, className}: {
-  label: string,
+export function TextInput({label, placeholder, value, setValue, inputType, className}: {
+  label?: string,
+  placeholder?: string,
   value: string,
   setValue: (newValue: string)=>void,
   inputType?: string,
@@ -126,14 +127,17 @@ export function TextInput({label, value, setValue, inputType, className}: {
       minWidth: 130,
     },
     input: {
+      width: 280,
+      padding: 6,
     },
   }));
   
   return <div className={classNames(className,classes.root)}>
-    <label className={classes.label}>{label}</label>
+    {label && <label className={classes.label}>{label}</label>}
     <input
       value={value}
       onChange={ev=>setValue(ev.target.value)}
+      placeholder={placeholder}
       type={inputType||"text"}
       className={classes.input}
     />
