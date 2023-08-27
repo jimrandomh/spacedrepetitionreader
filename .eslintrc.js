@@ -40,6 +40,11 @@ module.exports = {
     "no-template-curly-in-string": 1,
     "@typescript-eslint/no-floating-promises": [1, {ignoreVoid: true}],
   },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "ignorePatterns": [
   ],
 }
