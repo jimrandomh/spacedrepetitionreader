@@ -4,7 +4,7 @@ import express, {Express,Request,Response} from 'express';
 import path from 'path';
 import {addApiEndpoints} from './api/apiEndpoints';
 import {App} from '../components/layout';
-import {GetApiProvider,GetApiContext} from '../lib/apiUtil';
+import { GetApiProvider } from '../lib/apiUtil';
 import {ServerApiGetContext, getApiRoutes} from './serverApiUtil';
 import {apiFilterCurrentUser, getUserFromReq} from './api/auth';
 import {getPrisma} from './db';
@@ -14,6 +14,7 @@ import process from 'process';
 import { getConfig } from './util/getConfig';
 import { PrismaClient, User } from '@prisma/client';
 import { addCardsDueCronjob } from './cardsDueNotification';
+import { RenderContextProvider } from '../lib/renderContext';
 
 const projectRoot = path.join(__dirname, '..');
 const staticFilesPath = path.join(projectRoot, 'static');
@@ -58,7 +59,6 @@ function serverRoutes(app: Express) {
     }
   });
   app.get('*', async (req, res) => {
-    const url = req.url;
     if (req.url === '/favicon.ico') {
       res.status(404);
       res.end('');
@@ -168,9 +168,9 @@ function AppServer({url, apiProvider}: {
   url: string,
   apiProvider: GetApiProvider,
 }) {
-  return <GetApiContext.Provider value={apiProvider}>
+  return <RenderContextProvider apiProvider={apiProvider}>
     <App url={url}/>
-  </GetApiContext.Provider>
+  </RenderContextProvider>
 }
 
 function pathToApiRoute(pathname: string): {
@@ -187,11 +187,6 @@ function pathToApiRoute(pathname: string): {
   return null;
 }
 
-function sleep(delayMs: number): Promise<void> {
-  return new Promise<void>(accept => {
-    setTimeout(accept, delayMs);
-  });
-}
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);

@@ -12,3 +12,9 @@ export async function awaitAll<T>(asyncFns: (() => Promise<T>)[], maxConcurrent:
   }
   return results;
 }
+
+export function sleep(delayMs: number): Promise<void> {
+  return new Promise<void>(accept => {
+    setTimeout(accept, delayMs);
+  });
+}

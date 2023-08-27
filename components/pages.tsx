@@ -30,11 +30,9 @@ export function PrivacyPolicyPage() {
 }
 
 export function DashboardPage() {
-  const currentUser = useCurrentUser();
   const debugOptions = useDebugOptions();
   
   const {data, loading} = useGetApi<ApiTypes.ApiCardsDue>({
-    skip: !currentUser,
     endpoint: "/api/cards/due",
     searchParams:  debugOptions.overrideDate ? new URLSearchParams({
       date: debugOptions.overrideDate?.toISOString(),
@@ -72,7 +70,6 @@ export function EditDeck({id}: {id: DbKey}) {
   }));
   
   const {loading: loadingDeck, data: deckResult} = useGetApi<ApiTypes.ApiGetDeck>({
-    skip: !id,
     endpoint: `/api/decks/:id`,
     query: {id}
   });

@@ -1,7 +1,8 @@
 import {useCallback} from 'react';
-import {createContext,useContext,useSyncExternalStore} from 'react';
+import {useSyncExternalStore} from 'react';
 import Route from 'route-parser';
 import mapValues from 'lodash/mapValues';
+import { useRenderContext } from './renderContext';
 
 type ApiQueryStatus = {
   result: {loading: boolean, result: any, error: any}
@@ -118,24 +119,22 @@ export class GetApiProvider {
     }
   }
 }
-export const GetApiContext = createContext<GetApiProvider|null>(null);
-
 
 export function useGetApi<
   T extends ApiTypes.RestApiGet,
->({ endpoint, query, skip, searchParams }: {
+>({ endpoint, query, searchParams }: {
   endpoint: T["path"],
   query: T["queryArgs"],
-  skip?: boolean,
   searchParams?: URLSearchParams,
 }): {
   loading: boolean
   data: T["responseType"]|null
   refetch: ()=>Promise<void>
 } {
-  const apiProvider = useContext(GetApiContext);
+  const { apiProvider } = useRenderContext();
   if (!apiProvider) throw new Error("No API provider");
   
+  // TODO: Add a skip option
   /*if (skip) {
     return {loading: false, data: null, refetch: noOpFunction};
   }*/

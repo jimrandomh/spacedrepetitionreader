@@ -1,6 +1,7 @@
 import React from 'react'
 import { App } from '../components/layout';
-import { GetApiProvider, GetApiContext } from '../lib/apiUtil';
+import { GetApiProvider } from '../lib/apiUtil';
+import { RenderContextProvider } from '../lib/renderContext';
 
 
 export function AppClient() {
@@ -16,9 +17,9 @@ export function AppClient() {
     apiProvider.addToCache(window.ssrCache);
   }
   
-  return <GetApiContext.Provider value={apiProvider}>
+  return <RenderContextProvider apiProvider={apiProvider}>
     <App url={location.pathname}/>
-  </GetApiContext.Provider>
+  </RenderContextProvider>
 }
 declare global {
   interface Window {
