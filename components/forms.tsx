@@ -10,9 +10,22 @@ import { getBrowserTimezone } from '../lib/util/timeUtil';
 
 export function LoginForm() {
   const classes = useJssStyles("LoginForm", () => ({
-    root: {
+    root: {},
+    logInOrSignUp: {
       display: "flex",
+      flexWrap: "wrap",
       justifyContent: "center",
+    },
+    oauthSection: {
+      textAlign: "center",
+      margin: 8,
+    },
+    oauthLink: {
+      margin: 8,
+    },
+    or: {
+      color: "rgba(0,0,0,.6)",
+      fontSize: 12,
     },
     form: {
       border: "1px solid #ccc",
@@ -42,7 +55,8 @@ export function LoginForm() {
       marginLeft: 80,
       marginTop: 8,
     },
-    loginOptionsSection: {
+    moreOptionsSection: {
+      textAlign: "center",
       fontSize: 12,
       marginTop: 16,
     },
@@ -57,6 +71,7 @@ export function LoginForm() {
   const [confirmPassword,setConfirmPassword] = useState("");
   const [loginError,setLoginError] = useState<string|null>(null);
   const [signupError,setSignupError] = useState<string|null>(null);
+  const hasOAuth = getPublicConfig().enableGoogleOAuth;
   
   async function logIn() {
     const {result:_,error} = await doPost<ApiTypes.ApiLogin>({
@@ -105,41 +120,45 @@ export function LoginForm() {
   }
   
   return <div className={classes.root}>
-    <form
-      className={classes.form}
-      onSubmit={(ev) => {ev.preventDefault(); void logIn()}}
-    >
-      <div className={classes.formTitle}>Log In</div>
-      <TextInput label="Username" value={loginUsername} setValue={setLoginUsername} className={classes.input}/>
-      <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword} className={classes.input}/>
-      <input type="submit" value="Log In" className={classes.button}/>
-      
-      <div className={classes.loginOptionsSection}>
-        <Link href="/email/forgotPassword" color={false} className={classes.forgotPasswordLink}>
-          Forgot Password?
-        </Link>
-        {getPublicConfig().enableGoogleOAuth && <>
-          <BulletSeparator/>
-          <Link href="/auth/google/login" color={false}>
-            Log in with Google
-          </Link>
-        </>}
-      </div>
-      {loginError && <ErrorMessage message={loginError}/>}
-    </form>
-    <form
-      className={classes.form}
-      onSubmit={(ev) => {ev.preventDefault(); void createAccount()}}
-    >
-      <div className={classes.formTitle}>Sign Up</div>
-      <TextInput label="Username" value={createAccountUsername} setValue={setCreateAccountUsername} className={classes.input}/>
-      <TextInput label="Email" value={createAccountEmail} setValue={setCreateAccountEmail} className={classes.input}/>
-      <TextInput label="Password" inputType="password" value={createAccountPassword} setValue={setCreateAccountPassword} className={classes.input}/>
-      <TextInput label="Confirm" inputType="password" value={confirmPassword} setValue={setConfirmPassword} className={classes.input}/>
-      <input type="submit" value="Create Account" className={classes.button}/>
-      
-      {signupError && <ErrorMessage message={signupError}/>}
-    </form>
+    <div className={classes.logInOrSignUp}>
+      <form
+        className={classes.form}
+        onSubmit={(ev) => {ev.preventDefault(); void logIn()}}
+      >
+        {!hasOAuth && <div className={classes.formTitle}>Log In</div>}
+        {hasOAuth && <div className={classes.oauthSection}>
+          <div className={classes.oauthLink}>
+            <Link href="/auth/google/login" color={true}>
+              Log in with Google
+            </Link>
+          </div>
+          <div className={classes.or}>-OR-</div>
+        </div>}
+        <TextInput label="Username" value={loginUsername} setValue={setLoginUsername} className={classes.input}/>
+        <TextInput label="Password" inputType="password" value={loginPassword} setValue={setLoginPassword} className={classes.input}/>
+        <input type="submit" value="Log In" className={classes.button}/>
+        
+        {loginError && <ErrorMessage message={loginError}/>}
+      </form>
+      <form
+        className={classes.form}
+        onSubmit={(ev) => {ev.preventDefault(); void createAccount()}}
+      >
+        <div className={classes.formTitle}>Sign Up</div>
+        <TextInput label="Username" value={createAccountUsername} setValue={setCreateAccountUsername} className={classes.input}/>
+        <TextInput label="Email" value={createAccountEmail} setValue={setCreateAccountEmail} className={classes.input}/>
+        <TextInput label="Password" inputType="password" value={createAccountPassword} setValue={setCreateAccountPassword} className={classes.input}/>
+        <TextInput label="Confirm" inputType="password" value={confirmPassword} setValue={setConfirmPassword} className={classes.input}/>
+        <input type="submit" value="Create Account" className={classes.button}/>
+        
+        {signupError && <ErrorMessage message={signupError}/>}
+      </form>
+    </div>
+    <div className={classes.moreOptionsSection}>
+      <Link href="/email/forgotPassword" color={false} className={classes.forgotPasswordLink}>
+        Forgot Password?
+      </Link>
+    </div>
   </div>;
 }
 
