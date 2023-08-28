@@ -8,7 +8,7 @@ import filter from 'lodash/filter';
 import { userCanEditDeck, userCanViewDeck } from '../permissions';
 import { awaitAll } from '../../lib/util/asyncUtil';
 import { maybeRefreshFeed } from '../feeds/feedSync';
-import { DeckOptions, getDeckOptions, validateDeckOptions } from '../../lib/deckOoptions';
+import { DeckOptions, getDeckOptions, validateDeckOptions } from '../../lib/deckOptions';
 
 const maxParallelism = 10;
 

@@ -6,7 +6,7 @@ import { useJssStyles } from '../lib/useJssStyles';
 import { useModal, ModalDialog } from '../lib/useModal';
 import { getPublicConfig } from '../lib/getPublicConfig';
 import { getBrowserTimezone } from '../lib/util/timeUtil';
-import { DeckOptions, getDeckOptions, reviewStatusLabels, ReviewStatusType } from '../lib/deckOoptions';
+import { DeckOptions, getDeckOptions, reviewStatusLabels, ReviewStatusType } from '../lib/deckOptions';
 
 
 export function LoginForm() {

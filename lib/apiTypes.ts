@@ -1,4 +1,4 @@
-import { DeckOptions } from "./deckOoptions";
+import { DeckOptions } from "./deckOptions";
 import { UserOptions } from "./userOptions";
 
 export const dummy=0;
