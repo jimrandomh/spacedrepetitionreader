@@ -60,6 +60,7 @@ model Deck {
   id        String   @id @default(cuid())
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
+  config    Json @default("{}")
 
   name        String
   description String @default("")

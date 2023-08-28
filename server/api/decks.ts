@@ -8,6 +8,7 @@ import filter from 'lodash/filter';
 import { userCanEditDeck, userCanViewDeck } from '../permissions';
 import { awaitAll } from '../../lib/util/asyncUtil';
 import { maybeRefreshFeed } from '../feeds/feedSync';
+import { DeckOptions, getDeckOptions, validateDeckOptions } from '../../lib/deckOoptions';
 
 const maxParallelism = 10;
 
@@ -44,6 +45,7 @@ export function addDeckEndpoints(app: Express) {
         description: "",
         authorId: currentUser.id,
         deleted: false,
+        config: {},
       }
     });
     
@@ -68,6 +70,31 @@ export function addDeckEndpoints(app: Express) {
     await ctx.db.deck.update({
       where: {id: deckId},
       data: {deleted: true}
+    });
+    
+    return {};
+  });
+  
+  definePostApi<ApiTypes.ApiEditDeckOptions>(app, "/api/decks/editOptions", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const deckId = assertIsKey(ctx.body.id);
+    const config = validateDeckOptions(ctx.body.config);
+
+    const deck = await ctx.db.deck.findUnique({
+      where: {id: deckId}
+    });
+    if (!deck) {
+      throw new ApiErrorNotFound;
+    }
+    if (!userCanEditDeck(currentUser, deck)) {
+      throw new ApiErrorAccessDenied();
+    }
+    
+    await ctx.db.deck.update({
+      where: {id: deckId},
+      data: {
+        config: {...deck.config as Partial<DeckOptions>, ...config},
+      },
     });
     
     return {};
@@ -204,11 +231,20 @@ export function addDeckEndpoints(app: Express) {
 }
 
 export async function getItemsDue(currentUser: User, ctx: ServerApiContext, now: Date) {
-  // Get decks owned by this user, cards in those decks, and impressions by this user on those cards.
-  const decks = await ctx.db.deck.findMany({
+  // Get decks owned by this user, and filter by active review status
+  const allDecks = await ctx.db.deck.findMany({
     where: {
       deleted: false,
       authorId: currentUser.id,
+    },
+  });
+  
+  const activeDecks = allDecks.filter(deck => getDeckOptions(deck).reviewStatus==="active");
+  
+  // Get decks owned by this user, cards in those decks, and impressions by this user on those cards.
+  const decksWithCards = await ctx.db.deck.findMany({
+    where: {
+      id: {in: activeDecks.map(d=>d.id)},
     },
     include: {
       cards: {
@@ -227,7 +263,7 @@ export async function getItemsDue(currentUser: User, ctx: ServerApiContext, now:
   });
   
   // Compute a due date for each card
-  const cards = flatten(decks.map(deck=>deck.cards));
+  const cards = flatten(decksWithCards.map(deck=>deck.cards));
   const cardsDue = filter(cards, card => {
     const dueDate = getDueDate(card, card.impressions, ctx);
     return dueDate<=now;
@@ -268,7 +304,8 @@ function apiFilterDeck(deck: Deck, _ctx: ServerApiContext): ApiTypes.ApiObjDeck 
   return {
     id: deck.id,
     name: deck.name,
-    authorId: deck.authorId
+    authorId: deck.authorId,
+    config: getDeckOptions(deck),
   }
 }
 

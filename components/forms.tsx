@@ -6,6 +6,7 @@ import { useJssStyles } from '../lib/useJssStyles';
 import { useModal, ModalDialog } from '../lib/useModal';
 import { getPublicConfig } from '../lib/getPublicConfig';
 import { getBrowserTimezone } from '../lib/util/timeUtil';
+import { DeckOptions, getDeckOptions, reviewStatusLabels, ReviewStatusType } from '../lib/deckOoptions';
 
 
 export function LoginForm() {
@@ -387,6 +388,66 @@ export function CreateDeckForm() {
   </div>;
 }
 
+export function DeckSettingsForm({deck}: {
+  deck: ApiTypes.ApiObjDeck
+}) {
+  const classes = useJssStyles("DeckSettingsForm", () => ({
+    root: {
+      marginTop: 16,
+    },
+    twoColumnSetting: {
+    },
+    label: {
+      display: "inline-block",
+      width: 200,
+    },
+    optionColumn: {
+      display: "inline-block",
+    },
+  }));
+
+  const [currentOptions,setCurrentOptions] = useState(getDeckOptions(deck));
+
+  async function updateOptions(options: Partial<DeckOptions>) {
+    const mergedOptions = {...currentOptions, ...options};
+    setCurrentOptions(mergedOptions);
+
+    const {result:_r, error:_e} = await doPost<ApiTypes.ApiEditDeckOptions>({
+      endpoint: "/api/decks/editOptions",
+      query: {},
+      body: {
+        id: deck.id,
+        config: options
+       },
+    });
+  }
+
+  return <div className={classes.root}>
+    <div className={classes.twoColumnSetting}>
+      <div className={classes.label}>
+        Review status
+      </div>
+      <div className={classes.optionColumn}>
+        <select
+          value={reviewStatusLabels[currentOptions.reviewStatus]}
+          onChange={ev => {
+            const label = ev.currentTarget.value as ReviewStatusType
+            const [reviewStatus,_] = Object.entries(reviewStatusLabels)
+              .find(([_,v]) => (v===label))!
+            
+            updateOptions({
+              reviewStatus: reviewStatus as ReviewStatusType
+            })
+          }}
+        >
+          <option>Active</option>
+          <option>Paused</option>
+        </select>
+      </div>
+    </div>
+  </div>;
+}
+
 export function SubscribeToFeedForm() {
   const [feedUrl,setFeedUrl] = useState("");
   const [error,setError] = useState<string|null>(null);
@@ -480,4 +541,4 @@ export function FeedPreview({feedUrl,onError,onClose}: {
   </div>
 }
 
-export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,SubscribeToFeedForm,FeedPreview};
+export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,DeckSettingsForm,SubscribeToFeedForm,FeedPreview};

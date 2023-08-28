@@ -1,3 +1,4 @@
+import { DeckOptions } from "./deckOoptions";
 import { UserOptions } from "./userOptions";
 
 export const dummy=0;
@@ -11,6 +12,7 @@ export interface ApiObjDeck { //{{_}}
   id: DbKey
   name: string
   authorId: DbKey
+  config: DeckOptions
 }
 
 export interface ApiObjCard { //{{_}}
@@ -190,6 +192,15 @@ export interface ApiDeleteDeck extends RestApiPost { //{{_}}
   responseType: object,
 }
 
+export interface ApiEditDeckOptions extends RestApiPost { //{{_}}
+  path: "/api/decks/editOptions",
+  queryArgs: object,
+  bodyArgs: {
+    id: DbKey,
+    config: Partial<DeckOptions>,
+  },
+  responseType: object,
+}
 
 export interface ApiCreateCard extends RestApiPost { //{{_}}
   path: "/api/cards/create",

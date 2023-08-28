@@ -1,6 +1,6 @@
 import React,{useCallback, useEffect, useState} from 'react'
 import {LoggedOutAccessiblePage, PageWrapper} from './layout';
-import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm } from './forms';
+import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, DeckSettingsForm } from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
@@ -116,18 +116,22 @@ export function EditDeck({id}: {id: DbKey}) {
         <Link onClick={deleteDeck} color={false}>Delete</Link>
       </div>
       
-      {cards && !cards.length && <div>
-        This deck doesn&apos;t have any cards yet.
-      </div>}
+      
+      {deck && <DeckSettingsForm deck={deck}/>}
+
       {cards && cards.length>0 && <div className={classes.cardsListSection}>
         <h3 className={classes.cardsListHeading}>
-          Cards ({cards.length})
+          {cards.length>0 && <>Cards ({cards.length})</>}
+          {cards.length===0 && <>Cards</>}
         </h3>
-        <ul className={classes.cardsList}>
+        {!cards.length && <div>
+          This deck doesn&apos;t have any cards yet.
+        </div>}
+        {cards.length && <ul className={classes.cardsList}>
           {cards.map(card => <li key={card.id} className={classes.cardsListItem}>
             <Link href={`/card/${card.id}`} color={false}>{card.front}</Link>
           </li>)}
-        </ul>
+        </ul>}
       </div>}
       
       <h3>New Card</h3>
