@@ -6,7 +6,8 @@ import { useCurrentUser } from "../lib/useCurrentUser";
 import { useJssStyles } from "../lib/useJssStyles";
 import { formatTimeInHours, getUserOptions, UserOptions } from '../lib/userOptions';
 import { getTimezonesList } from '../lib/util/timeUtil';
-import { Checkbox, ErrorMessage, Link, TextInput } from "./widgets";
+import { Checkbox, Dropdown, ErrorMessage, Link, TextInput } from "./widgets";
+import { feedPresentationOrderLabels, getSubscriptionOptions, SubscriptionOptions } from '../lib/subscriptionOptions';
 
 
 export function UserConfiguration() {
@@ -159,4 +160,65 @@ export function ChangePasswordForm() {
   </form>
 }
 
-export const components = {UserConfiguration,ChangePasswordForm};
+export function SubscriptionSettingsForm({subscription, disabled}: {
+  subscription: ApiTypes.ApiObjSubscription
+  disabled: boolean
+}) {
+  const classes = useJssStyles("SubscriptionSettingsForm", () => ({
+    twoColumnSetting: {
+      marginBottom: 6,
+    },
+    label: {
+      display: "inline-block",
+      width: 200,
+    },
+    optionColumn: {
+      display: "inline-block",
+    },
+  }));
+  const [currentOptions,setCurrentOptions] = useState(getSubscriptionOptions(subscription));
+  
+  async function updateOptions(options: Partial<SubscriptionOptions>) {
+    const mergedOptions = {...currentOptions, ...options};
+    setCurrentOptions(mergedOptions);
+    
+    const {result:_r, error:_e} = await doPost<ApiTypes.ApiEditSubscriptionOptions>({
+      endpoint: "/api/feeds/edit",
+      query: {},
+      body: {
+        subscriptionId: subscription.id,
+        config: options
+      },
+    });
+  }
+
+  return <div>
+    <div className={classes.twoColumnSetting}>
+      <div className={classes.label}>Reading order</div>
+      <div className={classes.optionColumn}>
+        <Dropdown
+          optionsAndLabels={feedPresentationOrderLabels}
+          value={currentOptions.presentationOrder}
+          setValue={order => updateOptions({
+            presentationOrder: order
+          })}
+        />
+      </div>
+    </div>
+    <Checkbox
+      label="Include feed items in reviews"
+      value={currentOptions.shuffleIntoReviews}
+      setValue={checked => updateOptions({ shuffleIntoReviews: checked })}
+    />
+    
+    <Checkbox
+      label="Block access if I have unreviewed cards"
+      value={currentOptions.blockDirectAccess}
+      setValue={checked => updateOptions({ blockDirectAccess: checked })}
+      disabled={disabled}
+    />
+  </div>;
+  // TODO
+}
+
+export const components = {UserConfiguration,ChangePasswordForm,SubscriptionSettingsForm};

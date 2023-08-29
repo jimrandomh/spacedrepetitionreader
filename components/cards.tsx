@@ -1,10 +1,16 @@
-import React,{useState} from 'react'
-import {doPost} from '../lib/apiUtil';
-import {useJssStyles} from '../lib/useJssStyles';
-import {Button,FeedItem} from './widgets';
+import React, { useState } from 'react'
+import { doPost } from '../lib/apiUtil';
+import { useJssStyles } from '../lib/useJssStyles';
+import { Button, FeedItem } from './widgets';
 import classNames from 'classnames';
 import shuffle from 'lodash/shuffle';
 import take from 'lodash/take';
+import groupBy from 'lodash/groupBy';
+import mapValues from 'lodash/mapValues';
+import keyBy from 'lodash/keyBy';
+import orderBy from 'lodash/orderBy';
+import reverse from 'lodash/reverse';
+import { randomInterleaveMany } from '../lib/util/rngUtil';
 
 
 export function CardChallenge({card, onFinish, simulatedDate}: {
@@ -180,8 +186,9 @@ export function RSSCard({card, onFinish}: {
 
 type CardOrFeedItem = {type:"card",card:ApiTypes.ApiObjCard}|{type:"feedItem",feedItem:ApiTypes.ApiObjRssItem};
 
-export function ReviewWrapper({cards, feedItems, simulatedDate}: {
+export function ReviewWrapper({cards, subscriptions, feedItems, simulatedDate}: {
   cards: ApiTypes.ApiObjCard[]
+  subscriptions: ApiTypes.ApiObjSubscription[]
   feedItems: ApiTypes.ApiObjRssItem[]
   simulatedDate?: Date
 }) {
@@ -189,15 +196,16 @@ export function ReviewWrapper({cards, feedItems, simulatedDate}: {
   const [shuffledDeck,setShuffledDeck] = useState<CardOrFeedItem[]|null>(null);
   
   function begin() {
-    // TODO: Account for config option for presentation order (oldest first, newest first, etc)
-    const selectedFeedItems = take(feedItems, 2);
+    const maxFeedItems = 3; //TODO: Make this a user setting
+    const selectedFeedItems = selectFeedItemsFromAllSubscriptions(maxFeedItems, feedItems, subscriptions);
+    
+    const taggedCards: CardOrFeedItem[] = shuffle(cards)
+      .map(card => ({type: "card", card}));
+    const taggedFeedItems: CardOrFeedItem[] = selectedFeedItems
+      .map(feedItem => ({type: "feedItem", feedItem}));
+    const allItems = randomInterleaveMany([taggedCards, taggedFeedItems]);
 
-    const allItems: CardOrFeedItem[] = [
-      ...cards.map((card): CardOrFeedItem => ({type:"card", card})),
-      ...selectedFeedItems.map((feedItem): CardOrFeedItem => ({type:"feedItem", feedItem})),
-    ];
-    const shuffled = shuffle(allItems);
-    setShuffledDeck(shuffled);
+    setShuffledDeck(allItems);
     setStarted(true);
   }
   
@@ -248,4 +256,80 @@ function ReviewInProgress({items, simulatedDate}: {
   </>
 }
 
+function selectFeedItemsFromAllSubscriptions(
+  maxItemsToSelect: number,
+  availableFeedItems: ApiTypes.ApiObjRssItem[],
+  subscriptions: ApiTypes.ApiObjSubscription[]
+): ApiTypes.ApiObjRssItem[] {
+  const subscriptionsByFeedId = keyBy(subscriptions, s=>s.feedId);
+
+  // First decide how many items to take from each feed. We do this by sampling
+  // from the set of all available feed-items, then counting up the number of
+  // samples that were from each subscription, so this is weighted by the number
+  // of unread items.
+  const numItemsByFeed = mapValues(groupBy(take(availableFeedItems, maxItemsToSelect), item=>item.feedId), items=>items.length);
+  
+  // Select items, based on subscription-specific rules (oldest first, newest first, or random).
+  const itemsByFeed: {[k: string]: ApiTypes.ApiObjRssItem[]} = Object.fromEntries(
+    Object.entries(numItemsByFeed)
+      .map(
+        ([feedId, numItems]) => ([
+          feedId,
+          selectFeedItemsFromSingleSubscription(
+            numItems,
+            subscriptionsByFeedId[feedId],
+            availableFeedItems.filter(item=>item.feedId===feedId)
+          )
+        ])
+      )
+  )
+  
+  console.log(itemsByFeed);
+  
+  // Take a round-robin interleaving of the feeds (preserving order within each feed)
+  const roundRobinTurnOrder = shuffle(Object.keys(itemsByFeed));
+  const result: ApiTypes.ApiObjRssItem[] = [];
+
+  let i = 0;
+  let done = false;
+  while (!done) {
+    done = true;
+    for (const feedId of roundRobinTurnOrder) {
+      if (i < itemsByFeed[feedId].length) {
+        done = false;
+        result.push(itemsByFeed[feedId][i]);
+      }
+    }
+    i++;
+  }
+  
+  return result;
+}
+
+function selectFeedItemsFromSingleSubscription(
+  numItemsToSelect: number,
+  subscription: ApiTypes.ApiObjSubscription,
+  availableItems: ApiTypes.ApiObjRssItem[]
+): ApiTypes.ApiObjRssItem[] {
+  console.log(`Sorting by ${subscription.config.presentationOrder}`);
+  switch(subscription.config.presentationOrder) {
+    case "oldestFirst":
+      return take(
+        orderBy(availableItems, item=>item.pubDate),
+        numItemsToSelect
+      );
+    case "newestFirst":
+      return take(
+        reverse(orderBy(availableItems, item=>item.pubDate)),
+        numItemsToSelect
+      );
+    case "random":
+      return take(
+        shuffle(availableItems),
+        numItemsToSelect
+      );
+  }
+}
+
 export const components = {CardChallenge,CardFrame,CardButton,RSSCard,ReviewWrapper,ReviewInProgress};
+

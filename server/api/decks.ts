@@ -1,7 +1,7 @@
 import type {Express} from 'express';
 import type {Card,Deck,User} from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsNumber,assertIsString,ServerApiContext,ApiErrorNotFound,ApiErrorAccessDenied} from '../serverApiUtil';
-import {getUnreadItems,apiFilterRssItem} from './feeds';
+import {getUnreadItems,apiFilterRssItem, apiFilterSubscription} from './feeds';
 import {getDueDate} from '../cardScheduler';
 import flatten from 'lodash/flatten';
 import filter from 'lodash/filter';
@@ -9,6 +9,8 @@ import { userCanEditDeck, userCanViewDeck } from '../permissions';
 import { awaitAll } from '../../lib/util/asyncUtil';
 import { maybeRefreshFeed } from '../feeds/feedSync';
 import { DeckOptions, getDeckOptions, validateDeckOptions } from '../../lib/deckOptions';
+import { getSubscriptionOptions } from '../../lib/subscriptionOptions';
+import some from 'lodash/some';
 
 const maxParallelism = 10;
 
@@ -278,24 +280,30 @@ export async function getItemsDue(currentUser: User, ctx: ServerApiContext, now:
     include: {feed: true}
   });
   
+  // Filter RSS subscriptions based on the include-in-reviews config setting
+  const subscriptionsToCheck = subscriptions.filter(sub => getSubscriptionOptions(sub).shuffleIntoReviews);
+  
   // Refresh any RSS feeds that are stale
-  await awaitAll(subscriptions.map(subscription => async () => {
+  await awaitAll(subscriptionsToCheck.map(subscription => async () => {
     await maybeRefreshFeed(subscription.feed, ctx.db)
   }), maxParallelism);
   
   // Get unread items in the user's RSS feeds
   const unreadItems = flatten(
     await awaitAll(
-      subscriptions.map(subscription => async () => {
+      subscriptionsToCheck.map(subscription => async () => {
         return await getUnreadItems(currentUser, subscription.feed, ctx.db);
       }),
       maxParallelism
     )
   );
   
-  // Return cards that are due
+  const subscriptionsToInclude = subscriptionsToCheck.filter(sub => some(unreadItems, item=>item.feedId===sub.feedId));
+  
+  // Return cards that are due ad unread feed items
   return {
     cards: cardsDue.map(card => apiFilterCard(card, ctx)),
+    subscriptions: subscriptionsToInclude.map(sub => apiFilterSubscription(sub, ctx)),
     feedItems: unreadItems.map(item => apiFilterRssItem(item, ctx)),
   };
 }

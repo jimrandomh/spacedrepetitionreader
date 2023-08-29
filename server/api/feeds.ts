@@ -1,10 +1,12 @@
 import type {Express} from 'express';
-import type { PrismaClient, User, RssFeed, RssItem } from '@prisma/client'
+import type { PrismaClient, User, RssFeed, RssItem, RssSubscription } from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound, ApiErrorAccessDenied} from '../serverApiUtil';
 import { siteUrlToFeedUrl } from '../feeds/findFeedForPage';
-import { userCanViewFeed } from '../permissions';
+import { userCanEditSubscription, userCanViewFeed } from '../permissions';
 import { awaitAll } from '../../lib/util/asyncUtil';
 import { feedURLToFeedTitle, maybeRefreshFeed, pollFeed, refreshFeed } from '../feeds/feedSync';
+import { validateSubscriptionOptions } from '../../lib/subscriptionOptions';
+import { getSubscriptionOptions } from "../../lib/subscriptionOptions";
 
 const maxParallelism = 10;
 
@@ -18,8 +20,8 @@ export function addFeedEndpoints(app: Express) {
   
   definePostApi<ApiTypes.ApiRefreshFeed>(app, "/api/feed/refresh", async (ctx) => {
     const currentUser = assertLoggedIn(ctx);
-    const id = assertIsKey(ctx.body.id);
-    const feed = await ctx.db.rssFeed.findUnique({where:{id}});
+    const feedId = assertIsKey(ctx.body.feedId);
+    const feed = await ctx.db.rssFeed.findUnique({where:{id: feedId}});
 
     if (!feed) {
       throw new ApiErrorNotFound;
@@ -43,13 +45,23 @@ export function addFeedEndpoints(app: Express) {
     return {};
   });
   
-  defineGetApi<ApiTypes.ApiLoadFeed>(app, "/api/feed/load/:id", async (ctx) => {
+  defineGetApi<ApiTypes.ApiLoadFeed>(app, "/api/feed/load/:feedId", async (ctx) => {
     const currentUser = assertLoggedIn(ctx);
-    const id = assertIsKey(ctx.query.id);
-    const feed = await ctx.db.rssFeed.findUnique({where:{id}});
+    const feedId = assertIsKey(ctx.query.feedId);
+
+    const feed = await ctx.db.rssFeed.findUnique({
+      where: {id: feedId}
+    });
     if (!feed) {
       throw new ApiErrorNotFound;
     }
+    const subscriptions = await ctx.db.rssSubscription.findMany({
+      where: {
+        feedId: feed.id,
+        userId: currentUser.id,
+      },
+    });
+
     if (!userCanViewFeed(currentUser, feed)) {
       throw new ApiErrorAccessDenied;
     }
@@ -59,6 +71,7 @@ export function addFeedEndpoints(app: Express) {
     return {
       feed: apiFilterRssFeed(feed, ctx),
       feedItems: feedItems.map(item => apiFilterRssItem(item, ctx)),
+      subscription: apiFilterSubscription(subscriptions?.[0], ctx),
     };
   });
 
@@ -145,10 +158,10 @@ export function addFeedEndpoints(app: Express) {
     
     return {};
   });
-  defineGetApi<ApiTypes.ApiGetRecentFeedItems>(app, "/api/feeds/:id/recent", async (ctx) => {
+  defineGetApi<ApiTypes.ApiGetRecentFeedItems>(app, "/api/feeds/:feedId/recent", async (ctx) => {
     const currentUser = assertLoggedIn(ctx);
-    const id = assertIsKey(ctx.query.id);
-    const feed = await ctx.db.rssFeed.findUnique({ where: {id} });
+    const feedId = assertIsKey(ctx.query.feedId);
+    const feed = await ctx.db.rssFeed.findUnique({ where: {id: feedId} });
     if (!feed) {
       throw new ApiErrorNotFound;
     }
@@ -156,17 +169,17 @@ export function addFeedEndpoints(app: Express) {
       throw new ApiErrorAccessDenied;
     }
     const items = await ctx.db.rssItem.findMany({
-      where: { feedId: id },
+      where: { feedId },
       orderBy: { pubDate: 'desc' },
     });
     return {
       items: items.map(item => apiFilterRssItem(item, ctx))
     };
   });
-  defineGetApi<ApiTypes.ApiGetUnreadFeedItems>(app, "/api/feeds/:id/unread", async (ctx) => {
+  defineGetApi<ApiTypes.ApiGetUnreadFeedItems>(app, "/api/feeds/:feedId/unread", async (ctx) => {
     const currentUser = assertLoggedIn(ctx);
-    const id = assertIsKey(ctx.query.id);
-    const feed = await ctx.db.rssFeed.findUnique({where: {id}});
+    const feedId = assertIsKey(ctx.query.feedId);
+    const feed = await ctx.db.rssFeed.findUnique({where: {id: feedId}});
     if (!feed) {
       throw new ApiErrorNotFound();
     }
@@ -216,6 +229,30 @@ export function addFeedEndpoints(app: Express) {
     await markAsRead(currentUser, rssItem, ctx);
     return {};
   });
+  
+  definePostApi<ApiTypes.ApiEditSubscriptionOptions>(app, "/api/feeds/edit", async (ctx) => {
+    const subscriptionId = assertIsKey(ctx.body.subscriptionId);
+    const config = validateSubscriptionOptions(ctx.body.config);
+    const currentUser = assertLoggedIn(ctx);
+    
+    const subscription = await ctx.db.rssSubscription.findUnique({
+      where: {id: subscriptionId}
+    });
+    
+    if (!subscription) {
+      throw new ApiErrorNotFound();
+    }
+    if (!userCanEditSubscription(currentUser, subscription)) {
+      throw new ApiErrorAccessDenied();
+    }
+    
+    await ctx.db.rssSubscription.update({
+      where: { id: subscriptionId },
+      data: { config },
+    });
+
+    return {};
+  });
 }
 
 function apiFilterRssFeed(feed: RssFeed, _ctx: ServerApiContext): ApiTypes.ApiObjFeed {
@@ -229,11 +266,21 @@ function apiFilterRssFeed(feed: RssFeed, _ctx: ServerApiContext): ApiTypes.ApiOb
 export function apiFilterRssItem(item: RssItem, _ctx: ServerApiContext): ApiTypes.ApiObjRssItem {
   return {
     id: item.id,
+    feedId: item.feedId,
     title: item.title,
     link: item.link,
     pubDate: item.pubDate.toISOString(),
     summary: item.content,
   }
+}
+
+export function apiFilterSubscription(subscription: RssSubscription, _ctx: ServerApiContext): ApiTypes.ApiObjSubscription {
+  return {
+    id: subscription.id,
+    feedId: subscription.feedId,
+    userId: subscription.userId,
+    config: getSubscriptionOptions(subscription),
+  };
 }
 
 

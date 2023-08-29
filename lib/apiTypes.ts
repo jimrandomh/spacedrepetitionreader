@@ -1,4 +1,5 @@
 import { DeckOptions } from "./deckOptions";
+import { SubscriptionOptions } from "./subscriptionOptions";
 import { UserOptions } from "./userOptions";
 
 export const dummy=0;
@@ -35,8 +36,16 @@ export interface ApiObjFeed { //{{_}}
   title: string
 }
 
+export interface ApiObjSubscription { //{{_}}
+  id: DbKey
+  feedId: DbKey
+  userId: DbKey
+  config: SubscriptionOptions
+}
+
 export interface ApiObjRssItem { //{{_}}
   id: DbKey
+  feedId: DbKey
   title: string
   link: string
   pubDate: string
@@ -242,6 +251,7 @@ export interface ApiCardsDue extends RestApiGet { //{{_}}
   }
   responseType: {
     cards: ApiObjCard[]
+    subscriptions: ApiObjSubscription[]
     feedItems: ApiObjRssItem[]
   }
 }
@@ -259,7 +269,7 @@ export interface ApiPollFeed extends RestApiGet { //{{_}}
 export interface ApiRefreshFeed extends RestApiPost { //{{_}}
   path: "/api/feed/refresh"
   queryArgs: object
-  bodyArgs: {id: DbKey}
+  bodyArgs: {feedId: DbKey}
   responseType: object
 }
 
@@ -271,12 +281,13 @@ export interface ApiMarkAllAsRead extends RestApiPost { //{{_}}
 }
 
 export interface ApiLoadFeed extends RestApiGet { //{{_}}
-  path: "/api/feed/load/:id"
+  path: "/api/feed/load/:feedId"
   queryArgs: {
-    id: DbKey
+    feedId: DbKey
   }
   responseType: {
     feed: ApiObjFeed
+    subscription: ApiObjSubscription|null,
     feedItems: ApiObjRssItem[]
   }
 }
@@ -321,16 +332,16 @@ export interface ApiUnsubscribeFromFeed extends RestApiPost { //{{_}}
 }
 
 export interface ApiGetRecentFeedItems extends RestApiGet { //{{_}}
-  path: "/api/feeds/:id/recent"
-  queryArgs: {id: DbKey}
+  path: "/api/feeds/:feedId/recent"
+  queryArgs: {feedId: DbKey}
   responseType: {
     items: ApiObjRssItem[]
   }
 }
 
 export interface ApiGetUnreadFeedItems extends RestApiGet { //{{_}}
-  path: "/api/feeds/:id/unread"
-  queryArgs: {id: DbKey}
+  path: "/api/feeds/:feedId/unread"
+  queryArgs: {feedId: DbKey}
   responseType: {
     items: ApiObjRssItem[]
   }
@@ -351,6 +362,16 @@ export interface ApiMarkFeedItemRead extends RestApiPost { //{{_}}
   path: "/api/feedItems/markAsRead"
   queryArgs: object
   bodyArgs: {itemId: DbKey}
+  responseType: object
+}
+
+export interface ApiEditSubscriptionOptions extends RestApiPost { //{{_}}
+  path: "/api/feeds/edit",
+  queryArgs: object
+  bodyArgs: {
+    subscriptionId: DbKey
+    config: Partial<SubscriptionOptions>
+  },
   responseType: object
 }
 

@@ -8,7 +8,7 @@ import {useCurrentUser} from '../lib/useCurrentUser';
 import {redirect} from '../lib/util/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
 import { useDebugOptions } from './debug';
-import { UserConfiguration } from './settings';
+import { SubscriptionSettingsForm, UserConfiguration } from './settings';
 import { getBrowserTimezone } from '../lib/util/timeUtil';
 import { PageTitle } from '../lib/renderContext';
 import { simpleTruncateStr } from '../lib/util/truncationUtil';
@@ -49,6 +49,7 @@ export function DashboardPage() {
     {loading && <Loading/>}
     {data && <ReviewWrapper
       cards={data.cards}
+      subscriptions={data.subscriptions}
       feedItems={data.feedItems}
       simulatedDate={debugOptions.overrideDate ?? undefined}
     />}
@@ -316,7 +317,13 @@ export function ViewCardPage({id}: {id: DbKey}) {
 export function ViewFeedPage({id}: {id: DbKey}) {
   const classes = useJssStyles("ViewFeedPage", () => ({
     buttons: {},
+    settings: {
+      marginTop: 32,
+    },
     feed: {
+      marginTop: 32,
+    },
+    blocked: {
       marginTop: 32,
     },
     caughtUp: {
@@ -324,15 +331,19 @@ export function ViewFeedPage({id}: {id: DbKey}) {
     },
   }));
   const {data, loading} = useGetApi<ApiTypes.ApiLoadFeed>({
-    endpoint: "/api/feed/load/:id",
-    query: {id}
+    endpoint: "/api/feed/load/:feedId",
+    query: {feedId: id}
+  });
+  const {data: cardsDue, loading: _loadingCardsDue} = useGetApi<ApiTypes.ApiCardsDue>({
+    endpoint: "/api/cards/due",
+    query: {},
   });
   const [error,setError] = useState<string|null>(null);
   
   async function forceRefresh() {
     const {result:_, error} = await doPost<ApiTypes.ApiRefreshFeed>({
       endpoint: "/api/feed/refresh",
-      query: {}, body: {id}
+      query: {}, body: {feedId: id}
     });
     if (error !== null) {
       setError(error);
@@ -361,6 +372,9 @@ export function ViewFeedPage({id}: {id: DbKey}) {
     }
   }
   
+  const hasUnreviewedCards = cardsDue && cardsDue.cards.length > 0;
+  const isBlocked = (data?.subscription?.config.blockDirectAccess && hasUnreviewedCards) ?? false;
+  
   return <PageWrapper>
     {data?.feed?.title && <PageTitle title={data.feed.title}/>}
     {loading && <Loading/>}
@@ -374,12 +388,22 @@ export function ViewFeedPage({id}: {id: DbKey}) {
       {error && <ErrorMessage message={error}/>}
     </div>
     
-    <div className={classes.feed}>
+    {data?.subscription && <div className={classes.settings}>
+      <SubscriptionSettingsForm
+        subscription={data.subscription}
+        disabled={isBlocked}
+      />
+    </div>}
+    
+    {isBlocked && <div className={classes.blocked}>
+      Finish your cards first to access this feed.
+    </div>}
+    {!isBlocked && <div className={classes.feed}>
       {data?.feedItems && data.feedItems.length===0 && <div className={classes.caughtUp}>
         You&apos;re all caught up
       </div>}
       {data?.feedItems && <FeedScrollList items={data.feedItems}/>}
-    </div>
+    </div>}
     
   </PageWrapper>
 }

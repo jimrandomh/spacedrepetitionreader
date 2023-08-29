@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { useGetApi, doPost } from '../lib/apiUtil';
-import { TextInput, TextAreaInput, ErrorMessage, Loading, FeedScrollList, Button, Link } from './widgets';
+import { TextInput, TextAreaInput, ErrorMessage, Loading, FeedScrollList, Button, Link, Dropdown } from './widgets';
 import { redirect } from '../lib/util/browserUtil';
 import { useJssStyles } from '../lib/useJssStyles';
 import { useModal, ModalDialog } from '../lib/useModal';
 import { getPublicConfig } from '../lib/getPublicConfig';
 import { getBrowserTimezone } from '../lib/util/timeUtil';
-import { DeckOptions, getDeckOptions, reviewStatusLabels, ReviewStatusType } from '../lib/deckOptions';
+import { DeckOptions, getDeckOptions, reviewStatusLabels } from '../lib/deckOptions';
 
 
 export function LoginForm() {
@@ -428,21 +428,11 @@ export function DeckSettingsForm({deck}: {
         Review status
       </div>
       <div className={classes.optionColumn}>
-        <select
-          value={reviewStatusLabels[currentOptions.reviewStatus]}
-          onChange={ev => {
-            const label = ev.currentTarget.value as ReviewStatusType
-            const [reviewStatus,_] = Object.entries(reviewStatusLabels)
-              .find(([_,v]) => (v===label))!
-            
-            updateOptions({
-              reviewStatus: reviewStatus as ReviewStatusType
-            })
-          }}
-        >
-          <option>Active</option>
-          <option>Paused</option>
-        </select>
+        <Dropdown
+          optionsAndLabels={reviewStatusLabels}
+          value={currentOptions.reviewStatus}
+          setValue={reviewStatus => updateOptions({ reviewStatus })}
+        />
       </div>
     </div>
   </div>;

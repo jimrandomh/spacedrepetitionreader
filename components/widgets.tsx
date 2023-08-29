@@ -145,11 +145,12 @@ export function TextInput({label, placeholder, value, setValue, inputType, class
   </div>
 }
 
-export function Checkbox({label, className, value, setValue}: {
+export function Checkbox({label, className, value, setValue, disabled}: {
   label: string|React.ReactNode,
   className?: string,
   value: boolean,
   setValue: (checked: boolean)=>void,
+  disabled?: boolean
 }) {
   const classes = useJssStyles("Checkbox", () => ({
     checkbox: {
@@ -164,9 +165,35 @@ export function Checkbox({label, className, value, setValue}: {
     <input
       type="checkbox" className={classes.checkbox}
       checked={value} onChange={ev => setValue(ev.target.checked)}
+      disabled={disabled}
     />
     <span className={classes.label}>{label}</span>
   </div>
+}
+
+export function Dropdown<T extends string>({optionsAndLabels, value, setValue, className}: {
+  optionsAndLabels: Record<T,string>
+  value: T
+  setValue: (value: T)=>void
+  className?: string
+}) {
+  return <select
+    value={optionsAndLabels[value]}
+    onChange={ev => {
+      const label = ev.currentTarget.value as T
+      const [value,_] = Object.entries(optionsAndLabels)
+        .find(([_,v]) => (v===label))!
+      
+      setValue(value as T)
+    }}
+    className={className}
+  >
+    {Object.keys(optionsAndLabels).map((v: T) =>
+      <option key={v}>
+        {optionsAndLabels[v]}
+      </option>
+    )}
+  </select>
 }
 
 export function BulletSeparator() {
