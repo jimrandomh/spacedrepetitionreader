@@ -4,6 +4,7 @@ import {components as layoutComponents} from '../components/layout';
 import {components as pageComponents} from '../components/pages';
 import {components as widgetComponents} from '../components/widgets';
 import {components as debugComponents} from '../components/debug';
+import {components as settingsComponents} from '../components/settings';
 import {components as emailComponents} from '../components/emails';
 import {getStylesFrom} from '../lib/useJssStyles';
 import crypto from 'crypto';
@@ -16,6 +17,7 @@ const allComponents = {
   ...pageComponents,
   ...widgetComponents,
   ...debugComponents,
+  ...settingsComponents,
   ...emailComponents,
 };
 
