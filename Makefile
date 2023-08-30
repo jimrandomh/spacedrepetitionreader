@@ -2,7 +2,7 @@
 all: lint tsc
 
 tsc:
-	@yarn tsc
+	@yarn --silent tsc
 lint:
-	@yarn lint
+	@yarn --silent lint
 
