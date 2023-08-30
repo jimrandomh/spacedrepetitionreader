@@ -14,14 +14,14 @@ export function randomInterleaveMany<T>(items: T[][]): T[] {
  * order relative to each other.
  */
 export function randomInterleaveTwo<T>(a: T[], b: T[]): T[] {
-  let result: T[] = [];
+  const result: T[] = [];
   let a_index = 0;
   let b_index = 0;
   
   while(a_index < a.length || b_index < b.length) {
-    let a_remaining = a.length - a_index;
-    let b_remaining = b.length - b_index;
-    let pr_a = a_remaining / (a_remaining + b_remaining);
+    const a_remaining = a.length - a_index;
+    const b_remaining = b.length - b_index;
+    const pr_a = a_remaining / (a_remaining + b_remaining);
     if (a_index<a.length && Math.random()<pr_a) {
       result.push(a[a_index++]);
     } else {
