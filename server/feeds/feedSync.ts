@@ -5,8 +5,9 @@ import RssParser, {Item as RssParserItem} from 'rss-parser';
 import { Prisma, PrismaClient, RssFeed } from "@prisma/client";
 import relToAbs from 'rel-to-abs';
 import keyBy from 'lodash/keyBy';
+import { registerCronjob } from '../util/cronUtil';
 
-const feedRefreshIntervalMs = 1000*60*60; //1hr
+const feedRefreshIntervalMs = 1000*60*58; //58min
 
 export async function maybeRefreshFeed(feed: RssFeed, db: PrismaClient) {
   const ageMs = new Date().getTime() - feed.lastSync.getTime();
@@ -88,3 +89,26 @@ export function feedURLToFeedTitle(feedUrl: string): string {
   const url = new URL(feedUrl);
   return url.hostname;
 }
+
+registerCronjob({
+  name: "refreshFeeds",
+  schedule: "0 18 * * * *", // Hourly, at :18
+  fn: async ({db, intendedAt:_}) => {
+    const feeds = await db.rssFeed.findMany({
+      where: {},
+      include: {
+        _count: true,
+        RssSubscription: {
+          where: {
+            deleted: false,
+          },
+        },
+      },
+    });
+    
+    const feedsToSync = feeds.filter(feed => feed.RssSubscription.length>0);
+    for (const feed of feedsToSync) {
+      await maybeRefreshFeed(feed, db);
+    }
+  }
+});
