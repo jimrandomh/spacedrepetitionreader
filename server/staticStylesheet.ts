@@ -31,7 +31,7 @@ function renderStaticStylesheet(isForEmail: boolean): string {
   
   for(const componentName of Object.keys(allComponents)) {
     const componentFn = (allComponents as any)[componentName];
-    const extractedStyles = getStylesFrom(componentFn);
+    const extractedStyles = getStylesFrom(componentName, componentFn);
     if (extractedStyles) {
       const {name:_,styles} = extractedStyles;
       sb.push(styles);

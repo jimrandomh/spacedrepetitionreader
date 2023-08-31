@@ -67,8 +67,9 @@ export function useJssStyles<T extends string>(name: string, getStyles: ()=>Styl
 /// Assumes that the call to useJssStyles is *first* (before any other hooks)
 /// so that the function won't have a chance to notice that it has received
 /// entirely the wrong props, or to do side effects.
-export function getStylesFrom(component: any): {name:string, styles:string}|null {
+export function getStylesFrom(componentName: string, component: any): {name:string, styles:string}|null {
   extractingStyles = true;
+  //console.log(`Extracting styles from ${componentName}`);
   
   try {
     const body = component.toString();
@@ -80,6 +81,9 @@ export function getStylesFrom(component: any): {name:string, styles:string}|null
   } catch(e) {
     if (e instanceof ThrownStyles) {
       const {name,getStyles} = e;
+      if (name !== componentName) {
+        console.warn(`Component-name mismatch between function and styles for ${componentName}`);
+      }
       const stylesheet = jss.createStyleSheet(getStyles(), {
         generateId: (rule: any) => {
           return `${name}-${rule.key}`;
