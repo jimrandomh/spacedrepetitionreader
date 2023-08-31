@@ -218,7 +218,6 @@ export function SubscriptionSettingsForm({subscription, disabled}: {
       disabled={disabled}
     />
   </div>;
-  // TODO
 }
 
 export const components = {UserConfiguration,ChangePasswordForm,SubscriptionSettingsForm};

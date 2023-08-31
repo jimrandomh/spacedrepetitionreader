@@ -1,6 +1,6 @@
 import React,{useCallback, useEffect, useState} from 'react'
 import {LoggedOutAccessiblePage, PageWrapper} from './layout';
-import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, DeckSettingsForm } from './forms';
+import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, DeckSettingsForm, ImportDeckForm } from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
@@ -242,6 +242,9 @@ export function ManageDecks() {
     
     <h2>Create Deck</h2>
     <CreateDeckForm/>
+    
+    {/*<h2>Import Deck</h2>
+    <ImportDeckForm/>*/}
   </PageWrapper>
 }
 

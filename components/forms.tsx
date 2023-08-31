@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useGetApi, doPost } from '../lib/apiUtil';
 import { TextInput, TextAreaInput, ErrorMessage, Loading, FeedScrollList, Button, Link, Dropdown } from './widgets';
 import { redirect } from '../lib/util/browserUtil';
@@ -7,6 +7,7 @@ import { useModal, ModalDialog } from '../lib/useModal';
 import { getPublicConfig } from '../lib/getPublicConfig';
 import { getBrowserTimezone } from '../lib/util/timeUtil';
 import { DeckOptions, getDeckOptions, reviewStatusLabels } from '../lib/deckOptions';
+import { arrayBufferToBase64 } from '../lib/util/encodingUtil';
 
 
 export function LoginForm() {
@@ -388,6 +389,56 @@ export function CreateDeckForm() {
   </div>;
 }
 
+export function ImportDeckForm() {
+  const classes = useJssStyles("ImportDeckForm", () => ({
+    uploadFileLabel: {
+      marginRight: 8,
+    },
+    button: {
+    },
+  }));
+
+  const [error,setError] = useState<string|null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function importDeck() {
+    const file = fileInputRef.current?.files?.[0];
+    if (!file) {
+      setError("Select a file to upload");
+      return;
+    }
+    
+    const fileContents = arrayBufferToBase64(await file.arrayBuffer());
+    
+    const {result,error} = await doPost<ApiTypes.ApiImport>({
+      endpoint: "/api/import",
+      query: {},
+      body: {
+        fileName: file.name,
+        fileContents,
+      }
+    });
+    
+    if (result) {
+      const deckId = result.deckId;
+      redirect(`/decks/edit/${deckId}`);
+    } else if (error) {
+      setError(error);
+    }
+  }
+
+  return <div>
+    <form onSubmit={(ev) => {ev.preventDefault(); void importDeck()}}>
+      <input ref={fileInputRef} type="file" />
+      
+      <div>
+        <input type="submit" value="Upload" className={classes.button}/>
+      </div>
+      {error && <ErrorMessage message={error}/>}
+    </form>
+  </div>
+}
+
 export function DeckSettingsForm({deck}: {
   deck: ApiTypes.ApiObjDeck
 }) {
@@ -531,4 +582,4 @@ export function FeedPreview({feedUrl,onError,onClose}: {
   </div>
 }
 
-export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,DeckSettingsForm,SubscribeToFeedForm,FeedPreview};
+export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,ImportDeckForm,DeckSettingsForm,SubscribeToFeedForm,FeedPreview};

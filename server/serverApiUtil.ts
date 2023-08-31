@@ -137,19 +137,25 @@ export function setCookie(res: Response, name: string, value: string, options: a
 }
 
 
-export class ApiErrorNotFound extends Error {
+export class ApiError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+export class ApiErrorNotFound extends ApiError {
   constructor() {
     super("Not found");
   }
 }
 
-export class ApiErrorAccessDenied extends Error {
+export class ApiErrorAccessDenied extends ApiError {
   constructor() {
     super("Access denied");
   }
 }
 
-export class ApiErrorNotImplemented extends Error {
+export class ApiErrorNotImplemented extends ApiError {
   constructor() {
     super("Not implemented");
   }

@@ -375,4 +375,18 @@ export interface ApiEditSubscriptionOptions extends RestApiPost { //{{_}}
   responseType: object
 }
 
+
+export interface ApiImport extends RestApiPost { //{{_}}
+  path: "/api/import",
+  queryArgs: object,
+  bodyArgs: {
+    fileName: string
+    fileContents: string, //TODO
+  },
+  responseType: {
+    numCards: number
+    deckId: string
+  }
+}
+
 }}
