@@ -256,6 +256,14 @@ export interface ApiCardsDue extends RestApiGet { //{{_}}
   }
 }
 
+export interface ApiOneDueCard extends RestApiGet { //{{_}}
+  path: "/api/cards/oneDueCard"
+  queryArgs: object
+  responseType: {
+    card: ApiObjCard
+  }
+}
+
 export interface ApiPollFeed extends RestApiGet { //{{_}}
   path: "/api/feed/poll/:feedUrl"
   queryArgs: {

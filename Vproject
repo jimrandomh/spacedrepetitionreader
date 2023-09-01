@@ -8,6 +8,7 @@
 		"^build$"
 	],
 	"settings": {
+		"buildcommand": "scripts/lint_and_checktypes.sh",
 		"tabsize": 2,
 		"expandtab": true,
 		"hideDotfiles": true

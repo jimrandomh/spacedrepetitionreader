@@ -64,7 +64,11 @@ async function maybeSendCardsDueEmail(user: User) {
     db: getPrisma(),
     currentUser: user
   };
-  const {cards,feedItems} = await getItemsDue(user, ctx, now);
+  const {cards,feedItems} = await getItemsDue({
+    currentUser: user,
+    ctx,
+    now
+  });
   
   if (cards.length==0 && feedItems.length==0) {
     // No cards due, no feed items, so don't email

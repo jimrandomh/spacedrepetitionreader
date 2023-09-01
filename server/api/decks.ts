@@ -1,5 +1,5 @@
 import type {Express} from 'express';
-import type {Card,Deck,User} from '@prisma/client'
+import type {Card,Deck,RssFeed,RssItem,RssSubscription,User} from '@prisma/client'
 import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsNumber,assertIsString,ServerApiContext,ApiErrorNotFound,ApiErrorAccessDenied} from '../serverApiUtil';
 import {getUnreadItems,apiFilterRssItem, apiFilterSubscription} from './feeds';
 import {getDueDate} from '../cardScheduler';
@@ -11,6 +11,8 @@ import { maybeRefreshFeed } from '../feeds/feedSync';
 import { DeckOptions, getDeckOptions, validateDeckOptions } from '../../lib/deckOptions';
 import { getSubscriptionOptions } from '../../lib/subscriptionOptions';
 import some from 'lodash/some';
+import shuffle from 'lodash/shuffle';
+import take from 'lodash/take';
 
 const maxParallelism = 10;
 
@@ -181,7 +183,24 @@ export function addDeckEndpoints(app: Express) {
     const currentUser = assertLoggedIn(ctx);
     const dateStr = ctx.searchParams.get('date');
     const now = dateStr ? new Date(dateStr) : new Date();
-    return await getItemsDue(currentUser, ctx, now);
+    return await getItemsDue({
+      currentUser, ctx, now
+    });
+  });
+  
+  defineGetApi<ApiTypes.ApiOneDueCard>(app, "/api/cards/oneDueCard", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const now = new Date();
+
+    const itemsDue = await getItemsDue({
+      currentUser, ctx, now,
+      maxCards: 1,
+      includeRss: false,
+    });
+    
+    return {
+      card: itemsDue.cards[0]
+    };
   });
   
   definePostApi<ApiTypes.ApiRecordCardImpression>(app, "/api/cards/impression", async (ctx) => {
@@ -232,7 +251,13 @@ export function addDeckEndpoints(app: Express) {
   });
 }
 
-export async function getItemsDue(currentUser: User, ctx: ServerApiContext, now: Date) {
+export async function getItemsDue({currentUser, ctx, now, maxCards, includeRss=true}: {
+  currentUser: User,
+  ctx: ServerApiContext,
+  now: Date,
+  maxCards?: number
+  includeRss?: boolean,
+}) {
   // Get decks owned by this user, and filter by active review status
   const allDecks = await ctx.db.deck.findMany({
     where: {
@@ -266,37 +291,45 @@ export async function getItemsDue(currentUser: User, ctx: ServerApiContext, now:
   
   // Compute a due date for each card
   const cards = flatten(decksWithCards.map(deck=>deck.cards));
-  const cardsDue = filter(cards, card => {
+  let cardsDue = filter(cards, card => {
     const dueDate = getDueDate(card, card.impressions, ctx);
     return dueDate<=now;
   });
   
-  // Get the user's RSS subscriptions
-  const subscriptions = await ctx.db.rssSubscription.findMany({
-    where: {
-      userId: currentUser.id,
-      deleted: false,
-    },
-    include: {feed: true}
-  });
+  if (maxCards !== undefined) {
+    cardsDue = take(shuffle(cardsDue), maxCards);
+  }
   
-  // Filter RSS subscriptions based on the include-in-reviews config setting
-  const subscriptionsToCheck = subscriptions.filter(sub => getSubscriptionOptions(sub).shuffleIntoReviews);
+  let subscriptionsToCheck: (RssSubscription & {feed: RssFeed})[] = [];
+  let unreadItems: RssItem[] = [];
+  if (includeRss) {
+    // Get the user's RSS subscriptions
+    const subscriptions = await ctx.db.rssSubscription.findMany({
+      where: {
+        userId: currentUser.id,
+        deleted: false,
+      },
+      include: {feed: true}
+    });
+    
+    // Filter RSS subscriptions based on the include-in-reviews config setting
+    subscriptionsToCheck = subscriptions.filter(sub => getSubscriptionOptions(sub).shuffleIntoReviews);
+    
+    // Refresh any RSS feeds that are stale
+    await awaitAll(subscriptionsToCheck.map(subscription => async () => {
+      await maybeRefreshFeed(subscription.feed, ctx.db)
+    }), maxParallelism);
   
-  // Refresh any RSS feeds that are stale
-  await awaitAll(subscriptionsToCheck.map(subscription => async () => {
-    await maybeRefreshFeed(subscription.feed, ctx.db)
-  }), maxParallelism);
-  
-  // Get unread items in the user's RSS feeds
-  const unreadItems = flatten(
-    await awaitAll(
-      subscriptionsToCheck.map(subscription => async () => {
-        return await getUnreadItems(currentUser, subscription.feed, ctx.db);
-      }),
-      maxParallelism
-    )
-  );
+    // Get unread items in the user's RSS feeds
+    unreadItems = flatten(
+      await awaitAll(
+        subscriptionsToCheck.map(subscription => async () => {
+          return await getUnreadItems(currentUser, subscription.feed, ctx.db);
+        }),
+        maxParallelism
+      )
+    );
+  }
   
   const subscriptionsToInclude = subscriptionsToCheck.filter(sub => some(unreadItems, item=>item.feedId===sub.feedId));
   

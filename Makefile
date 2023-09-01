@@ -1,8 +1,4 @@
 
-all: lint tsc
-
-tsc:
-	@yarn --silent tsc
-lint:
-	@yarn --silent lint
+all:
+	scripts/lint_and_checktypes.sh
 

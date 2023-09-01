@@ -7,7 +7,7 @@ const MAX_IMPORT_FILE_SIZE = 20*1024*1024; //20MB
 export function addImportEndpoints(app: Express)
 {
   definePostApi<ApiTypes.ApiImport>(app, "/api/import", async (ctx) => {
-    const currentUser = assertLoggedIn(ctx);
+    const _currentUser = assertLoggedIn(ctx);
     const fileName = assertIsString(ctx.body.fileName);
     const fileContentsBase64 = assertIsString(ctx.body.fileContents);
     const fileContentsBinary: Uint8Array = new Uint8Array(Buffer.from(fileContentsBase64, 'base64'));
@@ -18,7 +18,7 @@ export function addImportEndpoints(app: Express)
     }
     
     console.log(`Receiving upload of ${fileName} for import`);
-    const importResult: ImportedFile = await importFile(fileName, fileContentsBinary);
+    const _importResult: ImportedFile = await importFile(fileName, fileContentsBinary);
     // TODO
     
     throw new ApiErrorNotImplemented;

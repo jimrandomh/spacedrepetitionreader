@@ -34,7 +34,7 @@ async function importFileAnki(filename: string, fileContents: Uint8Array): Promi
   const zipFileContents = await unpackZip(fileContents);
   const anki21sqliteBin = zipFileContents.files["collection.anki21"];
 
-  const db = loadSqlite3fromBuffer(anki21sqliteBin);
+  const _db = loadSqlite3fromBuffer(anki21sqliteBin);
   //const queryResult = db.prepare('SELECT * FROM notes').get();
   //console.log(queryResult);
   
@@ -50,8 +50,7 @@ interface ZipFileContents {
 async function unpackZip(data: Uint8Array): Promise<ZipFileContents> {
   const jszip = new JSZip();
   const loadedZip = await jszip.loadAsync(data);
-  let totalSize = 0;
-  let result: ZipFileContents = {
+  const result: ZipFileContents = {
     files: {}
   };
 
@@ -67,5 +66,5 @@ function loadSqlite3fromBuffer(buffer: Buffer): Database {
   // The DefinitelyTyped definision of this constructor is wrong, thinks the
   // first arg has to be a filename (but it can be a Buffer)
   // @ts-ignore
-  return sqlite3(anki21sqliteBin, {});
+  return sqlite3(buffer, {});
 }

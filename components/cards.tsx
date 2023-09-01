@@ -22,19 +22,7 @@ export function CardChallenge({card, onFinish, simulatedDate}: {
   simulatedDate?: Date,
   onFinish: ()=>void,
 }) {
-  const classes = useJssStyles("CardChallenge", () => ({
-    flip: {
-      background: "#ccf"
-    },
-    easy: {
-      background: "#cfc",
-    },
-    hard: {
-      background: "#ffc",
-    },
-    again: {
-      background: "#fcc",
-    },
+  const _classes = useJssStyles("CardChallenge", () => ({
   }));
   
   const [flipped,setFlipped] = useState(false);
@@ -72,9 +60,9 @@ export function CardChallenge({card, onFinish, simulatedDate}: {
         {card.back}
       </>}
       buttons={<>
-        <CardButton className={classes.easy} onClick={() => clickResolution("Easy")} label="Easy"/>
-        <CardButton className={classes.hard} onClick={() => clickResolution("Hard")} label="Hard"/>
-        <CardButton className={classes.again} onClick={() => clickResolution("Repeat")} label="Repeat"/>
+        <CardButton type="easy" onClick={() => clickResolution("Easy")} label="Easy"/>
+        <CardButton type="hard" onClick={() => clickResolution("Hard")} label="Hard"/>
+        <CardButton type="again" onClick={() => clickResolution("Repeat")} label="Repeat"/>
       </>}
     />
   } else {
@@ -83,13 +71,13 @@ export function CardChallenge({card, onFinish, simulatedDate}: {
         {card.front}
       </>}
       buttons={<>
-        <CardButton className={classes.flip} onClick={() => clickFlip()} label="Flip"/>
+        <CardButton type="flip" onClick={() => clickFlip()} label="Flip"/>
       </>}
     />
   }
 }
 
-function CardFrame({contents, buttons}: {
+export function CardFrame({contents, buttons}: {
   contents: React.ReactNode
   buttons: React.ReactNode
 }) {
@@ -122,10 +110,12 @@ function CardFrame({contents, buttons}: {
   </div>
 }
 
-function CardButton({label, onClick, className}: {
+export function CardButton({label, onClick, href, className, type}: {
   label: string,
-  onClick: ()=>void,
+  onClick?: ()=>void,
+  href?: string,
   className?: string,
+  type: "flip"|"easy"|"hard"|"again"|"next"
 }) {
   const classes = useJssStyles("CardButton", () => ({
     button: {
@@ -138,14 +128,36 @@ function CardButton({label, onClick, className}: {
       borderRadius: 16,
       textAlign: "center",
     },
+    flip: {
+      background: "#ccf"
+    },
+    easy: {
+      background: "#cfc",
+    },
+    hard: {
+      background: "#ffc",
+    },
+    again: {
+      background: "#fcc",
+    },
+    next: {},
   }));
   
-  return <div
-    onClick={() => onClick()}
-    className={classNames(classes.button,className)}
-  >
-    {label}
-  </div>
+  if (href) {
+    return <a
+      href={href}
+      className={classNames(classes.button,className)}
+    >
+      {label}
+    </a>
+  } else {
+    return <div
+      onClick={onClick}
+      className={classNames(classes.button, className, classes[type])}
+    >
+      {label}
+    </div>
+  }
 }
 
 export function RSSCard({card, onFinish}: {
@@ -158,7 +170,6 @@ export function RSSCard({card, onFinish}: {
     contents: {
       textAlign: "left",
     },
-    next: {},
   }));
   
   function clickNext() {
@@ -179,7 +190,7 @@ export function RSSCard({card, onFinish}: {
       <FeedItem item={card}/>
     </div>}
     buttons={<>
-      <CardButton className={classes.next} onClick={() => clickNext()} label="Next"/>
+      <CardButton type="next" onClick={() => clickNext()} label="Next"/>
     </>}
   />
 }

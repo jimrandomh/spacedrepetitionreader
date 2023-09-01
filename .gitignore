@@ -3,4 +3,5 @@ build/*
 prisma/dev.db*
 config.js
 yarn-error.log
+tmp
 
