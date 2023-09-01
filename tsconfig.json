@@ -14,8 +14,10 @@
     "downlevelIteration": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strictBindCallApply": true
+    "strictBindCallApply": true,
+    "allowJs": true,
+    "noEmit": true
   },
-  "include": ["client","server","lib","components","."],
+  "include": ["client","server","lib","components","test","."],
   "exclude": ["node_modules", "build"]
 }

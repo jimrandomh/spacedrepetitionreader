@@ -1,12 +1,11 @@
 import type {Express} from 'express';
-import type { PrismaClient, User, RssFeed, RssItem, RssSubscription } from '@prisma/client'
-import {defineGetApi,definePostApi,assertLoggedIn,assertIsKey,assertIsString,ServerApiContext,ApiErrorNotFound, ApiErrorAccessDenied} from '../serverApiUtil';
+import type { PrismaClient, User, RssFeed, RssItem } from '@prisma/client'
+import { defineGetApi, definePostApi, assertLoggedIn, assertIsKey, assertIsString, ServerApiContext, ApiErrorNotFound, ApiErrorAccessDenied } from '../serverApiUtil';
 import { siteUrlToFeedUrl } from '../feeds/findFeedForPage';
-import { userCanEditSubscription, userCanViewFeed } from '../permissions';
+import { apiFilterRssFeed, apiFilterRssItem, apiFilterSubscription, userCanEditSubscription, userCanViewFeed } from '../permissions';
 import { awaitAll } from '../../lib/util/asyncUtil';
 import { feedURLToFeedTitle, maybeRefreshFeed, pollFeed, refreshFeed } from '../feeds/feedSync';
-import { validateSubscriptionOptions } from '../../lib/subscriptionOptions';
-import { getSubscriptionOptions } from "../../lib/subscriptionOptions";
+import { validateSubscriptionOptions } from "../../lib/subscriptionOptions";
 
 const maxParallelism = 10;
 
@@ -253,34 +252,6 @@ export function addFeedEndpoints(app: Express) {
 
     return {};
   });
-}
-
-function apiFilterRssFeed(feed: RssFeed, _ctx: ServerApiContext): ApiTypes.ApiObjFeed {
-  return {
-    id: feed.id,
-    url: feed.rssUrl,
-    title: feed.title,
-  };
-}
-
-export function apiFilterRssItem(item: RssItem, _ctx: ServerApiContext): ApiTypes.ApiObjRssItem {
-  return {
-    id: item.id,
-    feedId: item.feedId,
-    title: item.title,
-    link: item.link,
-    pubDate: item.pubDate.toISOString(),
-    summary: item.content,
-  }
-}
-
-export function apiFilterSubscription(subscription: RssSubscription, _ctx: ServerApiContext): ApiTypes.ApiObjSubscription {
-  return {
-    id: subscription.id,
-    feedId: subscription.feedId,
-    userId: subscription.userId,
-    config: getSubscriptionOptions(subscription),
-  };
 }
 
 

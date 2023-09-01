@@ -1,6 +1,6 @@
-import { DeckOptions } from "./deckOptions";
-import { SubscriptionOptions } from "./subscriptionOptions";
-import { UserOptions } from "./userOptions";
+import type { DeckOptions } from "./deckOptions";
+import type { SubscriptionOptions } from "./subscriptionOptions";
+import type { UserOptions } from "./userOptions";
 
 export const dummy=0;
 

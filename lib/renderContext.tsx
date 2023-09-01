@@ -1,6 +1,5 @@
-import React, { useContext, useMemo } from 'react';
-import { createContext } from "react";
-import { GetApiProvider } from "./apiUtil";
+import React, { createContext, useContext, useMemo } from 'react';
+import type { GetApiProvider } from "./apiUtil";
 import { getPublicConfig } from './getPublicConfig';
 
 interface RenderContextType {

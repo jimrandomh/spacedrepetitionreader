@@ -1,5 +1,4 @@
-import {useCallback} from 'react';
-import {useSyncExternalStore} from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 import Route from 'route-parser';
 import mapValues from 'lodash/mapValues';
 import { useRenderContext } from './renderContext';

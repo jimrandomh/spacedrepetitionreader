@@ -1,7 +1,7 @@
-import { ServerApiContext } from '../serverApiUtil';
-import { apiFilterRssItem } from '../api/feeds';
+import type { ServerApiContext } from '../serverApiUtil';
+import { apiFilterRssItem } from '../permissions';
 import { sanitizeHtml } from '../util/htmlUtil';
-import RssParser, {Item as RssParserItem} from 'rss-parser';
+import RssParser, { Item as RssParserItem } from 'rss-parser';
 import { Prisma, PrismaClient, RssFeed } from "@prisma/client";
 import relToAbs from 'rel-to-abs';
 import keyBy from 'lodash/keyBy';

@@ -1,3 +1,4 @@
+import {components as appComponents} from '../components/app';
 import {components as cardComponents} from '../components/cards';
 import {components as formComponents} from '../components/forms';
 import {components as layoutComponents} from '../components/layout';
@@ -11,6 +12,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 
 const allComponents = {
+  ...appComponents,
   ...cardComponents,
   ...formComponents,
   ...layoutComponents,

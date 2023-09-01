@@ -1,5 +1,5 @@
 import React from 'react'
-import { App } from '../components/layout';
+import { App } from '../components/app';
 import { GetApiProvider } from '../lib/apiUtil';
 import { RenderContextProvider } from '../lib/renderContext';
 

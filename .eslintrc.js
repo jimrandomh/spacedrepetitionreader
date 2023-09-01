@@ -8,6 +8,8 @@ module.exports = {
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
   ],
   "overrides": [
   ],
@@ -39,6 +41,10 @@ module.exports = {
     "no-tabs": 1,
     "no-template-curly-in-string": 1,
     "@typescript-eslint/no-floating-promises": [1, {ignoreVoid: true}],
+
+    //"import/no-cycle": 1,
+    "import/no-mutable-exports": 1,
+    "import/no-named-as-default-member": 0,
   },
   "settings": {
     "react": {

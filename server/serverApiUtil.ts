@@ -1,8 +1,7 @@
-import type {Express,Request,Response} from 'express';
-import type {User} from '@prisma/client'
-import type {PrismaClient} from '@prisma/client'
-import {getPrisma} from './db';
-import {getUserFromReq} from './api/auth';
+import type { Express, Request, Response } from 'express';
+import type { User, PrismaClient } from '@prisma/client'
+import { getPrisma } from './db';
+import { getUserFromReq } from './api/auth';
 import mapValues from 'lodash/mapValues';
 import Route from 'route-parser';
 import bodyParser from 'body-parser';

@@ -1,5 +1,5 @@
-import {createContext,useContext} from 'react'
-import { Endpoint } from './routes';
+import { createContext, useContext } from 'react'
+import type { Endpoint } from './routes';
 
 export interface ParsedLocation {
   url: string

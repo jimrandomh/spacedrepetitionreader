@@ -1,63 +1,14 @@
-import React, { useMemo, useState } from 'react'
-import {useCurrentUser} from '../lib/useCurrentUser';
+import React, { useState } from 'react'
+import { useCurrentUser } from '../lib/useCurrentUser';
 import {BulletSeparator, Link, Loading} from './widgets';
 import {useGetApi,doPost} from '../lib/apiUtil';
 import {redirect} from '../lib/util/browserUtil';
 import {useJssStyles} from '../lib/useJssStyles';
-import {UserContext} from '../lib/useCurrentUser';
-import {LocationContextProvider, ParsedLocation} from '../lib/useLocation';
-import {ModalContextProvider, ModalDialog, useModal} from '../lib/useModal';
-import {Error404Page, RedirectToLoginPage} from '../components/pages';
+import { ModalDialog, useModal} from '../lib/useModal';
 import {DebugPanel, useDebugOptions} from './debug';
 import classNames from 'classnames';
 import {breakpoints} from '../lib/breakpoints';
-import { pathToRoute } from '../lib/routes';
 
-
-export function App({url}: {
-  url: string
-}) {
-  const classes = useJssStyles("App", () => ({
-    root: {
-      fontFamily: "sans-serif",
-    },
-  }));
-
-  const {route,routeProps} = pathToRoute(url);
-  const location: ParsedLocation = useMemo(() => ({
-    url, route, routeProps
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [url, route, JSON.stringify(routeProps)]);
-
-  const {loading: currentUserLoading, data} = useGetApi<ApiTypes.ApiWhoami>({
-    endpoint: "/api/users/whoami",
-    query: {}
-  });
-
-  const currentUser = data?.currentUser ?? null;
-
-  if (!location || !location.route) {
-    return <Error404Page/>
-  }
-
-  const CurrentRouteComponent = location.route.component;
-  if (currentUserLoading) {
-    return <Loading/>;
-  }
-  if (location.route.access === 'LoggedIn' && !currentUser) {
-    return <RedirectToLoginPage/>
-  }
-  
-  return <div className={classes.root}>
-    <LocationContextProvider value={location}>
-    <UserContext.Provider value={currentUser}>
-    <ModalContextProvider>
-      <CurrentRouteComponent {...location.routeProps}/>
-    </ModalContextProvider>
-    </UserContext.Provider>
-    </LocationContextProvider>
-  </div>
-}
 
 export function PageWrapper({children}: {
   children: React.ReactNode
@@ -488,4 +439,4 @@ export function SidebarListItemWithCount({title, href, unreadCount}: {
   </div>
 }
 
-export const components = {App,PageWrapper,FooterLinks,LoggedOutAccessiblePage,TopBar,OpenSidebarButton,LeftSidebar,LeftSidebarContents,DeckListItem,FeedsListItem,SidebarListItemWithCount};
+export const components = {PageWrapper,FooterLinks,LoggedOutAccessiblePage,TopBar,OpenSidebarButton,LeftSidebar,LeftSidebarContents,DeckListItem,FeedsListItem,SidebarListItemWithCount};

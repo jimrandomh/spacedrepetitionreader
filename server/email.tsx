@@ -2,7 +2,7 @@ import { User } from '@prisma/client';
 import juice from 'juice';
 import React from 'react';
 import { getPrisma } from './db';
-import { getApiProviderFromUser, repeatRenderingUntilSettled } from './server';
+import { getApiProviderFromUser, repeatRenderingUntilSettled } from './render';
 import { getEmailStylesheet } from './staticStylesheet';
 import { convert } from 'html-to-text';
 import { getConfig } from './util/getConfig';

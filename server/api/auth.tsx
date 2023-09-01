@@ -1,7 +1,7 @@
 import React from 'react';
 import type {Express,Request,Response} from 'express';
 import type {PrismaClient, User} from '@prisma/client'
-import {defineGetApi,definePostApi,ServerApiContext,assertIsString, ApiErrorNotFound, ApiErrorAccessDenied, assertLoggedIn, getCookie, setCookie} from '../serverApiUtil';
+import { defineGetApi, definePostApi, ServerApiContext, assertIsString, ApiErrorNotFound, ApiErrorAccessDenied, assertLoggedIn, getCookie, setCookie } from '../serverApiUtil';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { sendEmail } from '../email';
@@ -332,17 +332,6 @@ export function addAuthEndpoints(app: Express) {
     }
   });
 }
-/*
-Write a postgres snippet to alter column "exampleColumn" on table "examples", making it nullable.
-======
-=> To make a column nullable in PostgreSQL, you can use the ALTER TABLE command with the ALTER COLUMN option. Making a column nullable means that it can contain null values. Here's how you can do this for the "exampleColumn" on the "examples" table:
-
-```sql
-ALTER TABLE examples ALTER COLUMN exampleColumn DROP NOT NULL;
-```
-
-After running this command, the "exampleColumn" column in the "examples" table will be able to contain null values.
-*/
 
 export function apiFilterCurrentUser(user: User|null): ApiTypes.ApiObjCurrentUser|null {
   if (!user)
