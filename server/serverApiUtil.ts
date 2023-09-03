@@ -159,3 +159,9 @@ export class ApiErrorNotImplemented extends ApiError {
     super("Not implemented");
   }
 }
+
+export class ApiErrorImportFailed extends ApiError {
+  constructor(message: string) {
+    super(message);
+  }
+}

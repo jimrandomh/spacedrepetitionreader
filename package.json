@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@prisma/client": "4.7.1",
+    "@rgrove/parse-xml": "^4.1.0",
     "@types/bcrypt": "^5.0.0",
     "@types/better-sqlite3": "^7.6.4",
     "@types/body-parser": "^1.19.2",
