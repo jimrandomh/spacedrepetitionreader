@@ -1,4 +1,4 @@
-import type { ImportedFile } from "./importFile";
+import type { ImportedFile } from "../../lib/importTypes";
 import { unpackZip } from "./importUtil";
 import { parseXml, XmlElement, XmlNode } from '@rgrove/parse-xml';
 import { ApiErrorImportFailed } from "../serverApiUtil";

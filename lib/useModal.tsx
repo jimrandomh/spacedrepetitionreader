@@ -32,7 +32,9 @@ export function ModalDialog({children}: {children: React.ReactNode}) {
     },
     dialog: {
       marginLeft: "auto", marginRight: "auto",
-      top: 300,
+      top: "15%",
+      maxHeight: "70%",
+      overflowY: "scroll",
       background: "white",
       width: 600,
       position: "relative",

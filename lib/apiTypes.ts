@@ -1,3 +1,4 @@
+import type { ImportedFile } from "./importTypes"
 import type { DeckOptions } from "./deckOptions";
 import type { SubscriptionOptions } from "./subscriptionOptions";
 import type { UserOptions } from "./userOptions";
@@ -384,15 +385,26 @@ export interface ApiEditSubscriptionOptions extends RestApiPost { //{{_}}
 }
 
 
-export interface ApiImport extends RestApiPost { //{{_}}
-  path: "/api/import",
+export interface ApiUploadForImport extends RestApiPost { //{{_}}
+  path: "/api/uploadForImport",
   queryArgs: object,
   bodyArgs: {
     fileName: string
-    fileContents: string, //TODO
+    fileContents: string,
   },
   responseType: {
-    numCards: number
+    importFileId: string
+    preview: ImportedFile
+  }
+}
+
+export interface ApiConfirmImport extends RestApiPost { //{{_}}
+  path: "/api/confirmImport",
+  queryArgs: object,
+  bodyArgs: {
+    fileId: string
+  },
+  responseType: {
     deckId: string
   }
 }

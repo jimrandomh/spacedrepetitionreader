@@ -8,6 +8,7 @@ import { getPublicConfig } from '../lib/getPublicConfig';
 import { getBrowserTimezone } from '../lib/util/timeUtil';
 import { DeckOptions, getDeckOptions, reviewStatusLabels } from '../lib/deckOptions';
 import { arrayBufferToBase64 } from '../lib/util/encodingUtil';
+import type { ImportedFile } from '../lib/importTypes';
 
 
 export function LoginForm() {
@@ -400,6 +401,7 @@ export function ImportDeckForm() {
 
   const [error,setError] = useState<string|null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const {openModal} = useModal();
 
   async function importDeck() {
     const file = fileInputRef.current?.files?.[0];
@@ -410,8 +412,8 @@ export function ImportDeckForm() {
     
     const fileContents = arrayBufferToBase64(await file.arrayBuffer());
     
-    const {result,error} = await doPost<ApiTypes.ApiImport>({
-      endpoint: "/api/import",
+    const {result,error} = await doPost<ApiTypes.ApiUploadForImport>({
+      endpoint: "/api/uploadForImport",
       query: {},
       body: {
         fileName: file.name,
@@ -420,14 +422,22 @@ export function ImportDeckForm() {
     });
     
     if (result) {
-      const deckId = result.deckId;
-      redirect(`/decks/edit/${deckId}`);
+      openModal({
+        fn: (onClose) => <ModalDialog>
+          <ImportPreview
+            onClose={onClose}
+            fileId={result.importFileId}
+            importedFile={result.preview}
+          />
+        </ModalDialog>
+      });
     } else if (error) {
       setError(error);
     }
   }
 
   return <div>
+    <div>Supported format: Mnemosine (.cards)</div>
     <form onSubmit={(ev) => {ev.preventDefault(); void importDeck()}}>
       <input ref={fileInputRef} type="file" />
       
@@ -437,6 +447,56 @@ export function ImportDeckForm() {
       {error && <ErrorMessage message={error}/>}
     </form>
   </div>
+}
+
+export function ImportPreview({onClose, fileId, importedFile}: {
+  onClose: ()=>void,
+  fileId: string,
+  importedFile: ImportedFile,
+}) {
+  const classes = useJssStyles("ImportDeckForm", () => ({
+    root: {},
+  }));
+  const [displayedError, setDisplayedError] = useState<string|null>(null);
+  
+  async function confirmImport() {
+    const {result, error} = await doPost<ApiTypes.ApiConfirmImport>({
+      endpoint: "/api/confirmImport",
+      query: {},
+      body: {
+        fileId: fileId,
+      }
+    });
+    
+    if (result) {
+      const deckId = result!.deckId;
+      redirect(`/edit/${deckId}`);
+    } else {
+      setDisplayedError(error);
+    }
+  }
+  function cancel() {
+    onClose();
+  }
+
+  return <div className={classes.root}>
+    {importedFile.decks.map((deck,i) => <div key={i}>
+      <div>{deck.metadata.name}</div>
+      
+      <ul>
+        {deck.cards.map((card,j) =>
+          <li key={j}>
+            {card.front} / {card.back}
+          </li>
+        )}
+      </ul>
+    </div>)}
+    
+    {displayedError && <ErrorMessage message={displayedError}/>}
+    
+    <Button label="Import" onClick={confirmImport}/>
+    <Button label="Cancel" onClick={cancel}/>
+  </div>;
 }
 
 export function DeckSettingsForm({deck}: {
@@ -582,4 +642,4 @@ export function FeedPreview({feedUrl,onError,onClose}: {
   </div>
 }
 
-export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,ImportDeckForm,DeckSettingsForm,SubscribeToFeedForm,FeedPreview};
+export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,ImportDeckForm,ImportPreview,DeckSettingsForm,SubscribeToFeedForm,FeedPreview};

@@ -243,8 +243,8 @@ export function ManageDecks() {
     <h2>Create Deck</h2>
     <CreateDeckForm/>
     
-    {/*<h2>Import Deck</h2>
-    <ImportDeckForm/>*/}
+    <h2>Import Deck</h2>
+    <ImportDeckForm/>
   </PageWrapper>
 }
 

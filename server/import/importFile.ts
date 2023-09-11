@@ -1,21 +1,6 @@
 import { importFileAnki } from "./importAnki"
 import { importFileMnemomosine } from "./importMnemosine"
-
-export interface ImportedCard {
-  front: string
-  back: string
-}
-
-export interface ImportedDeck {
-  metadata: {
-    name?: string
-  }
-  cards: ImportedCard[]
-}
-
-export interface ImportedFile {
-  decks: ImportedDeck[]
-}
+import type { ImportedFile } from "../../lib/importTypes"
 
 export class ImportError extends Error {
   constructor(message: string) {

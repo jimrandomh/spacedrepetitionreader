@@ -8,7 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model User { //{{{
   id             String   @id @default(cuid())
   name           String   @unique
   email          String   @unique
@@ -26,12 +26,13 @@ model User {
   CardImpression  CardImpression[]
   CardDueDate     CardDueDate[]
   EmailToken      EmailToken[]
+  fileUploads     FileUpload[]
 
   @@index([name])
   @@index([email])
-}
+} //}}}
 
-model LoginToken {
+model LoginToken { //{{{
   id        String   @id @default(cuid())
   tokenHash String   @unique
   createdAt DateTime @default(now())
@@ -41,9 +42,9 @@ model LoginToken {
   ownerId String
 
   @@index([tokenHash])
-}
+} //}}}
 
-model EmailToken {
+model EmailToken { //{{{
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now())
   usedAt    DateTime?
@@ -54,9 +55,9 @@ model EmailToken {
   owner  User   @relation(fields: [userId], references: [id])
 
   @@index([tokenHash])
-}
+} //}}}
 
-model Deck {
+model Deck { //{{{
   id        String   @id @default(cuid())
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -70,9 +71,9 @@ model Deck {
   authorId String
 
   @@index([authorId])
-}
+} //}}}
 
-model Card {
+model Card { //{{{
   id        String   @id @default(cuid())
   front     String
   back      String
@@ -85,9 +86,9 @@ model Card {
   CardDueDate CardDueDate[]
 
   @@index([deckId])
-}
+} //}}}
 
-model CardImpression {
+model CardImpression { //{{{
   id         String   @id @default(cuid())
   date       DateTime @default(now())
   timeSpent  Float
@@ -101,9 +102,9 @@ model CardImpression {
 
   @@index([userId])
   @@index([cardId])
-}
+} //}}}
 
-model CardDueDate {
+model CardDueDate { //{{{
   id  String   @id @default(cuid())
   due DateTime
 
@@ -115,9 +116,9 @@ model CardDueDate {
 
   @@index([userId, due])
   @@index([cardId, userId])
-}
+} //}}}
 
-model RssSubscription {
+model RssSubscription { //{{{
   id      String  @id @default(cuid())
   deleted Boolean @default(false)
   config  Json
@@ -130,9 +131,9 @@ model RssSubscription {
 
   @@index([userId])
   @@index([feedId])
-}
+} //}}}
 
-model RssFeed {
+model RssFeed { //{{{
   id              String            @id @default(cuid())
   rssUrl          String            @unique
   title           String            @default("")
@@ -141,9 +142,9 @@ model RssFeed {
   RssItem         RssItem[]
 
   @@index([rssUrl])
-}
+} //}}}
 
-model RssItem {
+model RssItem { //{{{
   id       String   @id @default(cuid())
   title    String
   link     String
@@ -157,9 +158,9 @@ model RssItem {
   feedId String
 
   @@index([feedId, pubDate])
-}
+} //}}}
 
-model RssImpression {
+model RssImpression { //{{{
   id String @id @default(cuid())
 
   userId String
@@ -169,9 +170,9 @@ model RssImpression {
   rssItem   RssItem @relation(fields: [rssItemId], references: [id])
 
   @@index([userId, rssItemId])
-}
+} //}}}
 
-model CronHistory {
+model CronHistory { //{{{
   // key is {name}-{intendedAt}. intendedAt is when this job ran, according to
   // the schedule, in milliseconds-since-1970. This is an idealized time, not
   // including any small delay before start, and is used as a key to prevent
@@ -188,4 +189,27 @@ model CronHistory {
   
   // If an exception was thrown while running this, the exception, stringified
   error       String?
+} //}}}
+
+model FileUpload {
+  id              String @id @default(cuid())
+  filename        String
+  sha256sum       String
+  createdAt       DateTime @default(now())
+
+  // String-enum describing the purpose of this upload. Valid values: "import".
+  uploadType      String
+
+  importFinished  Boolean @default(false)
+
+  uploaderUserId  String
+  uploader        User @relation(fields: [uploaderUserId], references: [id])
+
+  @@index([sha256sum])
+  @@index([uploaderUserId])
+}
+
+model UploadedFileBody {
+  sha256sum       String @id
+  contents        Bytes
 }
