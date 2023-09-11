@@ -437,7 +437,7 @@ export function ImportDeckForm() {
   }
 
   return <div>
-    <div>Supported format: Mnemosine (.cards)</div>
+    <div>Supported format: Mnemosine (.cards). Coming soon: Anki (.apkg)</div>
     <form onSubmit={(ev) => {ev.preventDefault(); void importDeck()}}>
       <input ref={fileInputRef} type="file" />
       

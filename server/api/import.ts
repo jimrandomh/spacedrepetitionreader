@@ -92,7 +92,7 @@ export function addImportEndpoints(app: Express)
     
     let firstImportedDeckId: string|null = null;
 
-    for (let deck of importResult.decks) {
+    for (const deck of importResult.decks) {
       const importedDeckName = (deck.metadata.name && deck.metadata.name.length>0)
         ? deck.metadata.name : "Imported Deck";
       const importedDeckDescription = "";
