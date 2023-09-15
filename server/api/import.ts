@@ -104,15 +104,40 @@ export function addImportEndpoints(app: Express)
           config: {},
           description: importedDeckDescription,
           cards: {
-            createMany: {
-              data: deck.cards.map(importedCard => ({
-                front: importedCard.front,
-                back: importedCard.back,
-              })),
-            },
           },
         },
       });
+      for (const card of deck.cards) {
+        const createdCard = await ctx.db.card.create({
+          data: {
+            deckId: createdDeck.id,
+            AllRevisions: { 
+              createMany: {
+                data: [
+                  {
+                    userId: currentUser.id,
+                    front: card.front,
+                    back: card.back,
+                  }
+                ]
+              }
+             }
+          },
+          include: {
+            AllRevisions: true,
+          }
+        })
+
+        await ctx.db.card.update({
+          where: {
+            id: createdCard.id,
+          },
+          data: {
+            activeRevisionId: createdCard.AllRevisions[0].id
+          }
+        })
+      }
+
       if (!firstImportedDeckId) {
         firstImportedDeckId = createdDeck.id;
       }
