@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -8,14 +8,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User { //{{{
-  id             String   @id @default(cuid())
-  name           String   @unique
-  email          String   @unique
+model User {
+  id             String    @id @default(cuid())
+  name           String    @unique
+  email          String    @unique
   passwordHash   String?
-  createdAt      DateTime @default(now())
-  isAdmin        Boolean  @default(false)
-  emailVerified  Boolean  @default(false)
+  createdAt      DateTime  @default(now())
+  isAdmin        Boolean   @default(false)
+  emailVerified  Boolean   @default(false)
   lastRemindedAt DateTime?
   config         Json
 
@@ -27,12 +27,15 @@ model User { //{{{
   CardDueDate     CardDueDate[]
   EmailToken      EmailToken[]
   fileUploads     FileUpload[]
+  CardRevision    CardRevision[]
 
   @@index([name])
   @@index([email])
-} //}}}
+}
 
-model LoginToken { //{{{
+//}}}
+
+model LoginToken {
   id        String   @id @default(cuid())
   tokenHash String   @unique
   createdAt DateTime @default(now())
@@ -42,9 +45,11 @@ model LoginToken { //{{{
   ownerId String
 
   @@index([tokenHash])
-} //}}}
+}
 
-model EmailToken { //{{{
+//}}}
+
+model EmailToken {
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now())
   usedAt    DateTime?
@@ -55,13 +60,15 @@ model EmailToken { //{{{
   owner  User   @relation(fields: [userId], references: [id])
 
   @@index([tokenHash])
-} //}}}
+}
 
-model Deck { //{{{
+//}}}
+
+model Deck {
   id        String   @id @default(cuid())
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
-  config    Json @default("{}")
+  config    Json     @default("{}")
 
   name        String
   description String @default("")
@@ -71,24 +78,44 @@ model Deck { //{{{
   authorId String
 
   @@index([authorId])
-} //}}}
+}
 
-model Card { //{{{
+//}}}
+
+model Card {
   id        String   @id @default(cuid())
-  front     String
-  back      String
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  deck        Deck             @relation(fields: [deckId], references: [id])
-  deckId      String
-  impressions CardImpression[]
-  CardDueDate CardDueDate[]
+  deck             Deck             @relation(fields: [deckId], references: [id])
+  deckId           String
+  impressions      CardImpression[]
+  CardDueDate      CardDueDate[]
+  AllRevisions     CardRevision[]   @relation("AllRevisions")
+  activeRevisionId String?
+  activeRevision   CardRevision?     @relation("activeRevision", fields: [activeRevisionId], references: [id])
 
   @@index([deckId])
-} //}}}
+}
 
-model CardImpression { //{{{
+//}}}
+
+model CardRevision {
+  id         String   @id @default(cuid())
+  deleted    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  card       Card     @relation("AllRevisions", fields: [cardId], references: [id])
+  activeCard Card[]   @relation("activeRevision")
+  cardId     String
+  front      String
+  back       String
+}
+
+//}}}
+
+model CardImpression {
   id         String   @id @default(cuid())
   date       DateTime @default(now())
   timeSpent  Float
@@ -102,9 +129,11 @@ model CardImpression { //{{{
 
   @@index([userId])
   @@index([cardId])
-} //}}}
+}
 
-model CardDueDate { //{{{
+//}}}
+
+model CardDueDate {
   id  String   @id @default(cuid())
   due DateTime
 
@@ -116,9 +145,11 @@ model CardDueDate { //{{{
 
   @@index([userId, due])
   @@index([cardId, userId])
-} //}}}
+}
 
-model RssSubscription { //{{{
+//}}}
+
+model RssSubscription {
   id      String  @id @default(cuid())
   deleted Boolean @default(false)
   config  Json
@@ -131,9 +162,11 @@ model RssSubscription { //{{{
 
   @@index([userId])
   @@index([feedId])
-} //}}}
+}
 
-model RssFeed { //{{{
+//}}}
+
+model RssFeed {
   id              String            @id @default(cuid())
   rssUrl          String            @unique
   title           String            @default("")
@@ -142,9 +175,11 @@ model RssFeed { //{{{
   RssItem         RssItem[]
 
   @@index([rssUrl])
-} //}}}
+}
 
-model RssItem { //{{{
+//}}}
+
+model RssItem {
   id       String   @id @default(cuid())
   title    String
   link     String
@@ -158,9 +193,11 @@ model RssItem { //{{{
   feedId String
 
   @@index([feedId, pubDate])
-} //}}}
+}
 
-model RssImpression { //{{{
+//}}}
+
+model RssImpression {
   id String @id @default(cuid())
 
   userId String
@@ -170,46 +207,50 @@ model RssImpression { //{{{
   rssItem   RssItem @relation(fields: [rssItemId], references: [id])
 
   @@index([userId, rssItemId])
-} //}}}
+}
 
-model CronHistory { //{{{
+//}}}
+
+model CronHistory {
   // key is {name}-{intendedAt}. intendedAt is when this job ran, according to
   // the schedule, in milliseconds-since-1970. This is an idealized time, not
   // including any small delay before start, and is used as a key to prevent
   // multiple servers connected to the same DB from running the same job.
-  key String  @id
+  key String @id
 
-  intendedAt  BigInt
+  intendedAt BigInt
 
   // When this actually started (possibly including a small delay)
-  startedAt   DateTime
-  
+  startedAt DateTime
+
   // If this finished, when it did so
-  finishedAt  DateTime?
-  
+  finishedAt DateTime?
+
   // If an exception was thrown while running this, the exception, stringified
-  error       String?
-} //}}}
+  error String?
+}
+
+//}}}
 
 model FileUpload {
-  id              String @id @default(cuid())
-  filename        String
-  sha256sum       String
-  createdAt       DateTime @default(now())
+  id        String   @id @default(cuid())
+  filename  String
+  sha256sum String
+  createdAt DateTime @default(now())
 
   // String-enum describing the purpose of this upload. Valid values: "import".
-  uploadType      String
+  uploadType String
 
-  importFinished  Boolean @default(false)
+  importFinished Boolean @default(false)
 
-  uploaderUserId  String
-  uploader        User @relation(fields: [uploaderUserId], references: [id])
+  uploaderUserId String
+  uploader       User   @relation(fields: [uploaderUserId], references: [id])
 
   @@index([sha256sum])
   @@index([uploaderUserId])
 }
 
 model UploadedFileBody {
-  sha256sum       String @id
-  contents        Bytes
+  sha256sum String @id
+  contents  Bytes
 }
