@@ -3,6 +3,7 @@ import { ApiError, ApiErrorAccessDenied, ApiErrorImportFailed, ApiErrorNotFound,
 import { importFile } from '../import/importFile';
 import crypto from 'crypto';
 import type { ImportedFile } from '../../lib/importTypes';
+import { exportFile } from '../export/export';
 
 const MAX_IMPORT_FILE_SIZE = 20*1024*1024; //20MB
 
@@ -121,6 +122,14 @@ export function addImportEndpoints(app: Express)
     return {
       deckId: firstImportedDeckId!,
     };
+  });
+  
+  definePostApi<ApiTypes.ApiExportDeck>(app, "/api/exportDeck", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const deckId = assertIsString(ctx.body.deckId);
+    const options = ctx.body.options;
+    const exportResult = await exportFile(options, currentUser, [deckId]);
+    // TODO
   });
 }
 

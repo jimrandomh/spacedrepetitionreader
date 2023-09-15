@@ -1,4 +1,5 @@
 import { RssSubscription } from "@prisma/client";
+import { filterKeys } from "./util/validationUtil";
 
 export type FeedPresentationOrderType = "oldestFirst"|"newestFirst"|"random"
 
@@ -27,14 +28,7 @@ export function getSubscriptionOptions(subscription: RssSubscription|ApiTypes.Ap
 }
 
 export function validateSubscriptionOptions(config: Partial<SubscriptionOptions>): Partial<SubscriptionOptions> {
-  const result: Partial<SubscriptionOptions> = {};
-
-  for (const key of Object.keys(defaultSubscriptionOptions)) {
-    if (key in config) {
-      const typedKey = key as keyof SubscriptionOptions;
-      result[typedKey] = config[typedKey] as any;
-    }
-  }
+  const result: Partial<SubscriptionOptions> = filterKeys(config, defaultSubscriptionOptions);
 
   return result;
 }

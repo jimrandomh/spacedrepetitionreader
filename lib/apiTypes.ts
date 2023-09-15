@@ -1,4 +1,4 @@
-import type { ImportedFile } from "./importTypes"
+import type { ExportOptions, ImportedFile } from "./importTypes"
 import type { DeckOptions } from "./deckOptions";
 import type { SubscriptionOptions } from "./subscriptionOptions";
 import type { UserOptions } from "./userOptions";
@@ -406,6 +406,18 @@ export interface ApiConfirmImport extends RestApiPost { //{{_}}
   },
   responseType: {
     deckId: string
+  }
+}
+
+export interface ApiExportDeck extends RestApiPost { //{{_}}
+  path: "/api/exportDeck",
+  queryArgs: object,
+  bodyArgs: {
+    deckId: string
+    options: ExportOptions
+  },
+  responseType: {
+    downloadId: string
   }
 }
 

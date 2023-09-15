@@ -1,4 +1,5 @@
 import { Deck } from "@prisma/client";
+import { filterKeys } from "./util/validationUtil";
 
 export type ReviewStatusType = "active"|"paused"
 
@@ -23,17 +24,8 @@ export function getDeckOptions(deck: Deck|ApiTypes.ApiObjDeck): DeckOptions {
 }
 
 export function validateDeckOptions(config: Partial<DeckOptions>): Partial<DeckOptions> {
-  const result: Partial<DeckOptions> = {};
-
-  for (const key of Object.keys(defaultDeckOptions)) {
-    if (key in config) {
-      const typedKey = key as keyof DeckOptions;
-      result[typedKey] = config[typedKey] as any;
-    }
-  }
-
+  const result: Partial<DeckOptions> = filterKeys(config, defaultDeckOptions);
   // TODO
-
-  return config;
+  return result;
 }
 

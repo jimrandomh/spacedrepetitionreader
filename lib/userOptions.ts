@@ -1,4 +1,5 @@
 import { User } from "@prisma/client";
+import { filterKeys } from "./util/validationUtil";
 
 export interface UserOptions {
   enableCardsDueEmails: boolean
@@ -22,14 +23,7 @@ export function getUserOptions(user: User|ApiTypes.ApiObjCurrentUser|null): User
 }
 
 export function validateUserOptions(config: Partial<UserOptions>): Partial<UserOptions> {
-  const result: Partial<UserOptions> = {};
-
-  for (const key of Object.keys(defaultUserOptions)) {
-    if (key in config) {
-      const typedKey = key as keyof UserOptions;
-      result[typedKey] = config[typedKey] as any;
-    }
-  }
+  const result = filterKeys(config, defaultUserOptions);
   
   if ("enableCardsDueEmails" in result && typeof result.enableCardsDueEmails!=='boolean') {
     delete result.enableCardsDueEmails;
