@@ -11,7 +11,7 @@
     "generate": "prisma generate",
     "lint": "scripts/lint_and_checktypes.sh",
     "postinstall": "scripts/postinstall.sh",
-    "prisma": "DATABASE_URL=\"$(scripts/getConnectionString.js)\" prisma",
+    "prisma": "DATABASE_URL=\"$(scripts/getConnectionString.js)\" SHADOW_DATABASE_URL=\"$(scripts/getShadowDbConnectionString.js)\" prisma",
     "psql": "psql \"$(scripts/getConnectionString.js)\"",
     "start": "./build.js --run",
     "test": "jest",

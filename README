@@ -23,6 +23,16 @@ First run `yarn install`. Then set up a locally running postgres database: run
     \c spacedrepetitionreader
     GRANT ALL ON SCHEMA public TO spacedrepetitionreader;
     ```
+Optionally, also create a shadow database (used by prisma as a secondary,
+temporary database for generating migrations):
+    ```
+    CREATE DATABASE spacedrepetitionreadershadow
+    GRANT ALL PRIVILEGES ON DATABASE spacedrepetitionreadershadow TO spacedrepetitionreader;
+    \c spacedrepetitionreadershadow
+    GRANT ALL ON SCHEMA public TO spacedrepetitionreader;
+    ```
+
+
 Next, edit config.js, in particular adding the the database password you set
 in the previous step to the connection string. Finally, initialize the database
 to empty with
