@@ -1,5 +1,5 @@
 import type { Express } from 'express';
-import { ApiError, ApiErrorAccessDenied, ApiErrorImportFailed, ApiErrorNotFound, assertIsString, assertLoggedIn, definePostApi } from '../serverApiUtil';
+import { ApiError, ApiErrorAccessDenied, ApiErrorImportFailed, ApiErrorNotFound, ApiErrorNotImplemented, assertIsString, assertLoggedIn, definePostApi } from '../serverApiUtil';
 import { importFile } from '../import/importFile';
 import crypto from 'crypto';
 import type { ImportedFile } from '../../lib/importTypes';
@@ -154,7 +154,7 @@ export function addImportEndpoints(app: Express)
     const deckId = assertIsString(ctx.body.deckId);
     const options = ctx.body.options;
     const exportResult = await exportFile(options, currentUser, [deckId]);
-    // TODO
+    throw new ApiErrorNotImplemented(); // TODO
   });
 }
 

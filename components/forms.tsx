@@ -454,7 +454,7 @@ export function ImportPreview({onClose, fileId, importedFile}: {
   fileId: string,
   importedFile: ImportedFile,
 }) {
-  const classes = useJssStyles("ImportDeckForm", () => ({
+  const classes = useJssStyles("ImportPreview", () => ({
     root: {},
   }));
   const [displayedError, setDisplayedError] = useState<string|null>(null);
