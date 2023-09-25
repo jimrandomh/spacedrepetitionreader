@@ -16,16 +16,14 @@ import { ModalDialog, useModal } from '../lib/useModal';
 
 
 export function AboutPage() {
-  return <LoggedOutAccessiblePage>
-    <PageTitle title="About"/>
+  return <LoggedOutAccessiblePage title="About">
     <h1>About Spaced Repetition Reader</h1>
     <PitchText/>
   </LoggedOutAccessiblePage>
 }
 
 export function PrivacyPolicyPage() {
-  return <LoggedOutAccessiblePage>
-    <PageTitle title="Privacy Policy"/>
+  return <LoggedOutAccessiblePage title="Privacy Policy">
     <h1>Spaced Repetition Reader: Privacy Policy</h1>
 
     <p>{"Spaced Repetition Reader is a personal side project. It isn't monetized (other than perhaps donations), and there are no plans to monetize it. If this ever changes, the change will be accompanied by an email to all users and at least 30 days notice."}</p>
@@ -45,8 +43,7 @@ export function DashboardPage() {
     query: {},
   });
   
-  return <PageWrapper>
-    <PageTitle title="Dashboard"/>
+  return <PageWrapper title="Dashboard">
     {loading && <Loading/>}
     {data && <ReviewWrapper
       cards={data.cards}
@@ -105,11 +102,10 @@ export function EditDeck({id}: {id: DbKey}) {
     alert("This feature is not yet implemented");
   }
   
-  return <PageWrapper>
+  return <PageWrapper title={deck?.name ?? null}>
     {loadingDeck && <Loading/>}
     
     {deck && <>
-     <PageTitle title={deck.name}/>
       <h1>{deck.name}</h1>
       
       <div className={classes.moreOptions}>
@@ -146,8 +142,7 @@ export function EditDeck({id}: {id: DbKey}) {
 }
 
 export function Error404Page() {
-  return <LoggedOutAccessiblePage>
-    <PageTitle title="404"/>
+  return <LoggedOutAccessiblePage title="404">
     <h1>Page Not Found</h1>
   </LoggedOutAccessiblePage>
 }
@@ -218,8 +213,7 @@ export function PitchText() {
 }
 
 export function LoginPage() {
-  return <LoggedOutAccessiblePage>
-    <PageTitle title="Login"/>
+  return <LoggedOutAccessiblePage title="Login">
     <LoginForm/>
   </LoggedOutAccessiblePage>
 }
@@ -230,8 +224,7 @@ export function ManageDecks() {
     query: {}
   });
   
-  return <PageWrapper>
-    <PageTitle title="Decks"/>
+  return <PageWrapper title="Decks">
     <h1>Manage Decks</h1>
     
     {loadingDecks && <Loading/>}
@@ -289,9 +282,7 @@ export function ManageFeeds() {
   }
   
   
-  return <PageWrapper layout="centered">
-    <PageTitle title="Feeds"/>
-
+  return <PageWrapper title="Feeds" layout="centered">
     <div className={classes.subscribeSection}>
       <h2>Subscribe to Websites</h2>
       <SubscribeToFeedForm/>
@@ -351,7 +342,7 @@ export function ViewCardPage({id}: {id: DbKey}) {
       redirect("/decks/manage")
     }
   }
-  return <PageWrapper>
+  return <PageWrapper title={truncatedCardFront ?? null}>
     {truncatedCardFront && <PageTitle title={truncatedCardFront}/>}
     {loading && <Loading/>}
   
@@ -425,8 +416,7 @@ export function ViewFeedPage({id}: {id: DbKey}) {
   const hasUnreviewedCards = cardsDue && cardsDue.cards.length > 0;
   const isBlocked = (data?.subscription?.config.blockDirectAccess && hasUnreviewedCards) ?? false;
   
-  return <PageWrapper>
-    {data?.feed?.title && <PageTitle title={data.feed.title}/>}
+  return <PageWrapper title={data?.feed?.title ?? null}>
     {loading && <Loading/>}
     
     <div className={classes.buttons}>
@@ -486,8 +476,7 @@ export function FirstOAuthLoginPage() {
 }
 
 export function UserProfilePage() {
-  return <PageWrapper>
-    <PageTitle title="Profile"/>
+  return <PageWrapper title="Profile">
     <h1>Settings</h1>
     
     <UserConfiguration/>
@@ -495,15 +484,13 @@ export function UserProfilePage() {
 }
 
 export function ForgotPasswordRequestPage() {
-  return <LoggedOutAccessiblePage>
-    <PageTitle title="Forgot Password"/>
+  return <LoggedOutAccessiblePage title="Forgot Password">
     <RequestPasswordResetForm/>
   </LoggedOutAccessiblePage>
 }
 
 export function ResetPasswordPage({token}: {token: string}) {
-  return <LoggedOutAccessiblePage>
-    <PageTitle title="Reset Password"/>
+  return <LoggedOutAccessiblePage title="Reset Password">
     <ResetPasswordForm token={token} />
   </LoggedOutAccessiblePage>
 }

@@ -8,9 +8,11 @@ import { ModalDialog, useModal} from '../lib/useModal';
 import {DebugPanel, useDebugOptions} from './debug';
 import classNames from 'classnames';
 import {breakpoints} from '../lib/breakpoints';
+import { PageTitle } from '../lib/renderContext';
 
 
-export function PageWrapper({layout="full", children}: {
+export function PageWrapper({title, layout="full", children}: {
+  title: string|null,
   layout?: "full"|"centered",
   children: React.ReactNode
 }) {
@@ -46,6 +48,7 @@ export function PageWrapper({layout="full", children}: {
   const [sidebarOpen,setSidebarOpen] = useState<boolean|undefined>(undefined);
   
   return <div>
+    {title && <PageTitle title={title}/>}
     <TopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
     <LeftSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
     <div className={classNames(classes.mainColumn, {
@@ -102,7 +105,8 @@ export function FooterLinks() {
   </div>
 }
 
-export function LoggedOutAccessiblePage({children}: {
+export function LoggedOutAccessiblePage({title, children}: {
+  title: string|null,
   children: React.ReactNode,
 }) {
   const classes = useJssStyles("LoggedOutAccessiblePage", () => ({
@@ -114,11 +118,12 @@ export function LoggedOutAccessiblePage({children}: {
   
   // Show the side and top bars iff logged in
   if (currentUser) {
-    return <PageWrapper>
+    return <PageWrapper title={title}>
       {children}
     </PageWrapper>
   } else {
     return <div className={classes.loggedOutPage}>
+      {title && <PageTitle title={title}/>}
       {children}
     </div>
   }
