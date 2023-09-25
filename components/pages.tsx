@@ -1,6 +1,6 @@
 import React,{useCallback, useEffect, useState} from 'react'
 import {LoggedOutAccessiblePage, PageWrapper} from './layout';
-import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, DeckSettingsForm, ImportDeckForm } from './forms';
+import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, DeckSettingsForm, ImportDeckForm, FeedPreview } from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
@@ -12,6 +12,7 @@ import { SubscriptionSettingsForm, UserConfiguration } from './settings';
 import { getBrowserTimezone } from '../lib/util/timeUtil';
 import { PageTitle } from '../lib/renderContext';
 import { simpleTruncateStr } from '../lib/util/truncationUtil';
+import { ModalDialog, useModal } from '../lib/useModal';
 
 
 export function AboutPage() {
@@ -249,32 +250,78 @@ export function ManageDecks() {
 }
 
 export function ManageFeeds() {
+  const classes = useJssStyles("ManageFeeds", () => ({
+    subscribeSection: {
+      marginBottom: 50,
+    },
+    suggestedSection: {
+      marginBottom: 50,
+    },
+  }));
+
   const {loading: loadingSubscriptions, data} = useGetApi<ApiTypes.ApiListSubscriptions>({
     endpoint: "/api/feeds/subscribed",
     query: {}
   });
   
-  return <PageWrapper>
-    <PageTitle title="Feeds"/>
-    <h1>Manage Feeds</h1>
-    
-    {loadingSubscriptions && <Loading/>}
-    <ul>
-      {data?.feeds && data.feeds.map(feed => <li key={feed.id}>
-        <Link href={`/feeds/${feed.id}`}>
-          {feed.title || feed.url}
-        </Link>
-      </li>)}
-    </ul>
-    
-    <SubscribeToFeedForm/>
-  </PageWrapper>
-}
+  const {loading: loadingSuggestions, data: suggestedFeeds} = useGetApi<ApiTypes.ApiGetSuggestedSubscriptions>({
+    endpoint: "/api/feeds/suggested",
+    query: {}
+  });
 
-export function AddFeedPage() {
-  return <PageWrapper>
-    <PageTitle title="Add Feed"/>
-    <SubscribeToFeedForm/>
+  const {openModal} = useModal();
+  const [suggestionError,setSuggestionError] = useState<string|null>(null);
+
+  function previewFeed(feed: ApiTypes.ApiObjFeed) {
+    if (feed.url==="") return;
+    
+    openModal({
+      fn: (onClose) => {
+        return <ModalDialog>
+          <FeedPreview
+            feedUrl={feed.url}
+            onError={err => setSuggestionError(err)}
+            onClose={onClose}
+          />
+        </ModalDialog>
+      }
+    })
+  }
+  
+  
+  return <PageWrapper layout="centered">
+    <PageTitle title="Feeds"/>
+
+    <div className={classes.subscribeSection}>
+      <h2>Subscribe to Websites</h2>
+      <SubscribeToFeedForm/>
+    </div>
+    
+    {(suggestedFeeds?.feeds && suggestedFeeds.feeds.length > 0) && <div className={classes.suggestedSection}>
+      <h2>Suggested</h2>
+      {loadingSuggestions && <Loading/>}
+      
+      <ul>
+        {suggestedFeeds.feeds.map(feed => <li key={feed.id}>
+          <Link onClick={()=>previewFeed(feed)}>
+            {feed.title || feed.url}
+          </Link>
+        </li>)}
+      </ul>
+      {suggestionError && <ErrorMessage message={suggestionError}/>}
+    </div>}
+    
+    {(data?.feeds?.length??0) > 0 && <>
+      <h2>Your Subscriptions</h2>
+      {loadingSubscriptions && <Loading/>}
+      <ul>
+        {data?.feeds && data.feeds.map(feed => <li key={feed.id}>
+          <Link href={`/feeds/${feed.id}`}>
+            {feed.title || feed.url}
+          </Link>
+        </li>)}
+      </ul>
+    </>}
   </PageWrapper>
 }
 
@@ -483,4 +530,4 @@ export function ConfirmEmailPage({token}: {token: string}) {
 }
 
 
-export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,AddFeedPage,ViewCardPage,ViewFeedPage,FirstOAuthLoginPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage};
+export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,FirstOAuthLoginPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage};

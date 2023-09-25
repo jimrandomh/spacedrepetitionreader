@@ -58,6 +58,7 @@ export function addFeedEndpoints(app: Express) {
       where: {
         feedId: feed.id,
         userId: currentUser.id,
+        deleted: false,
       },
     });
 
@@ -96,6 +97,38 @@ export function addFeedEndpoints(app: Express) {
       }))
     };
   });
+  
+  defineGetApi<ApiTypes.ApiGetSuggestedSubscriptions>(app, "/api/feeds/suggested", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    console.log("Getting suggested feeds");
+    
+    // Get all feeds that have been admin-marked as suggestions
+    const feeds = await ctx.db.rssFeed.findMany({
+      where: {
+        suggested: true,
+      },
+    });
+    console.log(`Found ${feeds.length} feeds to suggest`);
+    
+    // Filter out feeds that the user is already following
+    const existingSubs = await ctx.db.rssSubscription.findMany({
+      where: {
+        userId: currentUser.id,
+        deleted: false,
+      },
+      select: {
+        feedId: true,
+      }
+    });
+    const subscribedIds = existingSubs.map(sub => sub.feedId);
+    const notSubscribedSuggestions = feeds.filter(feed => !subscribedIds.includes(feed.id));
+    console.log(`${notSubscribedSuggestions.length} feeds were not already subscribed`);
+    
+    return {
+      feeds: notSubscribedSuggestions.map(feed => apiFilterRssFeed(feed, ctx)),
+    }
+  });
+  
   definePostApi<ApiTypes.ApiSubscribeToFeed>(app, "/api/feeds/subscribe", async (ctx) => {
     const currentUser = assertLoggedIn(ctx);
     const feedUrl = assertIsString(ctx.body.feedUrl);
@@ -238,7 +271,7 @@ export function addFeedEndpoints(app: Express) {
       where: {id: subscriptionId}
     });
     
-    if (!subscription) {
+    if (!subscription || subscription.deleted) {
       throw new ApiErrorNotFound();
     }
     if (!userCanEditSubscription(currentUser, subscription)) {

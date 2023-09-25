@@ -10,7 +10,8 @@ import classNames from 'classnames';
 import {breakpoints} from '../lib/breakpoints';
 
 
-export function PageWrapper({children}: {
+export function PageWrapper({layout="full", children}: {
+  layout?: "full"|"centered",
   children: React.ReactNode
 }) {
   const classes = useJssStyles("PageWrapper", () => ({
@@ -34,6 +35,12 @@ export function PageWrapper({children}: {
       minHeight: "calc(100% - 40px)",
       padding: 16,
     },
+    full: {
+    },
+    centered: {
+      maxWidth: 600,
+      margin: "0 auto",
+    },
   }));
 
   const [sidebarOpen,setSidebarOpen] = useState<boolean|undefined>(undefined);
@@ -45,7 +52,10 @@ export function PageWrapper({children}: {
       [classes.sidebarIsAuto]: sidebarOpen===undefined,
       [classes.sidebarIsOpen]: sidebarOpen,
     })}>
-      <div className={classes.body}>
+      <div className={classNames(classes.body, {
+        [classes.full]: layout==="full",
+        [classes.centered]: layout==="centered",
+      })}>
         {children}
       </div>
       <FooterLinks/>
@@ -369,13 +379,13 @@ export function LeftSidebarContents() {
       <div className={classes.sectionBody}>
         {loadingFeeds && <Loading/>}
         {subscriptionsResponse?.feeds && subscriptionsResponse.feeds.map(feed => <FeedsListItem key={feed.id} feed={feed}/>)}
-        <Link
-          href="/feeds/add"
+        {subscriptionsResponse?.feeds.length===0 && <Link
+          href="/feeds/manage"
           color={true}
           highlightIfAlreadyHere={classes.currentPageLink}
         >
           Add Feed
-        </Link>
+        </Link>}
       </div>
     </div>
   </div>;

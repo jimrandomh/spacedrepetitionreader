@@ -172,6 +172,8 @@ model RssFeed {
   rssUrl          String            @unique
   title           String            @default("")
   lastSync        DateTime
+  suggested       Boolean           @default(false)
+
   RssSubscription RssSubscription[]
   RssItem         RssItem[]
 

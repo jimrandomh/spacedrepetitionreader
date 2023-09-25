@@ -320,6 +320,14 @@ export interface ApiListSubscriptions extends RestApiGet { //{{_}}
   }
 }
 
+export interface ApiGetSuggestedSubscriptions extends RestApiGet { //{{_}}
+  path: "/api/feeds/suggested"
+  queryArgs: object
+  responseType: {
+    feeds: ApiObjFeed[]
+  }
+}
+
 export interface ApiSubscribeToFeed extends RestApiPost { //{{_}}
   path: "/api/feeds/subscribe"
   queryArgs: object

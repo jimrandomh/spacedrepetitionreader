@@ -550,6 +550,18 @@ export function DeckSettingsForm({deck}: {
 }
 
 export function SubscribeToFeedForm() {
+  const classes = useJssStyles("SubscribeToFeedForm", () => ({
+    root: {
+      textAlign: "center",
+    },
+    input: {
+      marginBottom: 8,
+    },
+    button: {
+      textAlign: "right",
+    },
+  }));
+
   const [feedUrl,setFeedUrl] = useState("");
   const [error,setError] = useState<string|null>(null);
   const {openModal} = useModal();
@@ -570,10 +582,14 @@ export function SubscribeToFeedForm() {
     })
   }
   
-  return <div>
+  return <div className={classes.root}>
     <form onSubmit={(ev) => {ev.preventDefault(); previewFeed()}}>
-      <TextInput label="Page, RSS or Atom URI" value={feedUrl} setValue={setFeedUrl}/>
-      <input type="submit" value="Preview"/>
+      <TextInput
+        className={classes.input}
+        value={feedUrl} setValue={setFeedUrl}
+        placeholder="Web page URL"
+      />
+      <input className={classes.button} type="submit" value="Preview"/>
       {error && <ErrorMessage message={error}/>}
     </form>
   </div>

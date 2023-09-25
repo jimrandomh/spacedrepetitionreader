@@ -126,6 +126,7 @@ export function TextInput({label, placeholder, value, setValue, inputType, class
     label: {
       display: "inline-block",
       minWidth: 130,
+      marginRight: 15,
     },
     input: {
       width: 280,
