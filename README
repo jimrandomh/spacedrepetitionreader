@@ -26,7 +26,7 @@ First run `yarn install`. Then set up a locally running postgres database: run
 Optionally, also create a shadow database (used by prisma as a secondary,
 temporary database for generating migrations):
     ```
-    CREATE DATABASE spacedrepetitionreadershadow
+    CREATE DATABASE spacedrepetitionreadershadow;
     GRANT ALL PRIVILEGES ON DATABASE spacedrepetitionreadershadow TO spacedrepetitionreader;
     \c spacedrepetitionreadershadow
     GRANT ALL ON SCHEMA public TO spacedrepetitionreader;
