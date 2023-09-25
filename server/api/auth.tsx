@@ -72,6 +72,18 @@ async function logUserOut(user: User, db: PrismaClient, res: Response|null) {
   }
 }
 
+export async function updateUserLastVisitAt(user: User, db: PrismaClient): Promise<void> {
+  const now = new Date();
+  await db.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      lastVisitAt: now,
+    },
+  });
+}
+
 export function addAuthEndpoints(app: Express) {
   definePostApi<ApiTypes.ApiSignup>(app, "/api/users/signup", async (ctx) => {
     const username = assertIsString(ctx.body.username);
@@ -341,6 +353,7 @@ export function apiFilterCurrentUser(user: User|null): ApiTypes.ApiObjCurrentUse
     name: user.name,
     email: user.email,
     config: getUserOptions(user),
+    isAdmin: user.isAdmin,
   }
 }
 

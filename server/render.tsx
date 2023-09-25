@@ -17,10 +17,9 @@ export interface SsrResult {
   html: string|Buffer
 }
 
-export async function renderSSR(req: Request, res: Response, url: string): Promise<SsrResult> {
+export async function renderSSR(currentUser: User|null, req: Request, res: Response, url: string): Promise<SsrResult> {
   console.log(`Rendering ${url}`);
   const db = getPrisma();
-  const currentUser = await getUserFromReq(req, db);
   const {apiProvider, ssrCache} = getApiProviderFromUser(currentUser, db);
   const titleRef = {title: getPublicConfig().pageTitle};
   

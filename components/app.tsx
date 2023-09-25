@@ -5,7 +5,7 @@ import { useGetApi } from '../lib/apiUtil';
 import { useJssStyles } from '../lib/useJssStyles';
 import { LocationContextProvider, ParsedLocation } from '../lib/useLocation';
 import { ModalContextProvider } from '../lib/useModal';
-import { Error404Page, RedirectToLoginPage } from '../components/pages';
+import { Error404Page, ErrorAccessDeniedPage, RedirectToLoginPage } from '../components/pages';
 import { pathToRoute } from '../lib/routes';
 
 export function App({url}: {
@@ -35,18 +35,23 @@ export function App({url}: {
   }
 
   const CurrentRouteComponent = location.route.component;
+  let ComponentToRender = CurrentRouteComponent;
+  
   if (currentUserLoading) {
     return <Loading/>;
   }
-  if (location.route.access === 'LoggedIn' && !currentUser) {
+  if (location.route.access !== 'LoggedOut' && !currentUser) {
     return <RedirectToLoginPage/>
+  }
+  if (location.route.access === 'AdminOnly' && !currentUser?.isAdmin) {
+    ComponentToRender = ErrorAccessDeniedPage;
   }
   
   return <div className={classes.root}>
     <LocationContextProvider value={location}>
     <UserContext.Provider value={currentUser}>
     <ModalContextProvider>
-      <CurrentRouteComponent {...location.routeProps}/>
+      <ComponentToRender {...location.routeProps}/>
     </ModalContextProvider>
     </UserContext.Provider>
     </LocationContextProvider>

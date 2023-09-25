@@ -658,4 +658,21 @@ export function FeedPreview({feedUrl,onError,onClose}: {
   </div>
 }
 
-export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,ImportDeckForm,ImportPreview,DeckSettingsForm,SubscribeToFeedForm,FeedPreview};
+export function AdminStatisticsPanel() {
+  const {loading,data} = useGetApi<ApiTypes.ApiAdminUsageStatistics>({
+    endpoint: "/api/admin/usageStatistics",
+    query: {},
+  });
+  
+  return <div>
+    {loading && <Loading/>}
+    
+    {data && <ul>
+      <li>Cards reviewed in past week: {data.statistics.cardsReviewedInPastWeek}</li>
+      <li>New users in past week: {data.statistics.newUsersInPastWeek}</li>
+      <li>Users active in past week: {data.statistics.usersActiveInPastWeek}</li>
+    </ul>}
+  </div>;
+}
+
+export const components = {LoginForm,RequestPasswordResetForm,ResetPasswordForm,CreateCardForm,CreateDeckForm,ImportDeckForm,ImportPreview,DeckSettingsForm,SubscribeToFeedForm,FeedPreview,AdminStatisticsPanel};

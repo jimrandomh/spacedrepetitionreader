@@ -4,6 +4,7 @@ import {addDeckEndpoints} from './decks';
 import {addFeedEndpoints} from './feeds';
 import {addImportEndpoints} from './import';
 import {addUserEndpoints} from './user';
+import {addAdminEndpoints} from './admin';
 
 export function addApiEndpoints(app: Express) {
   addAuthEndpoints(app);
@@ -11,4 +12,5 @@ export function addApiEndpoints(app: Express) {
   addFeedEndpoints(app);
   addUserEndpoints(app);
   addImportEndpoints(app);
+  addAdminEndpoints(app);
 }

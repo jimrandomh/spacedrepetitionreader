@@ -103,6 +103,14 @@ export function assertLoggedIn(ctx: ServerApiContext): User {
   return currentUser;
 }
 
+export function assertLoggedInAdmin(ctx: ServerApiContext): User {
+  const {currentUser} = ctx;
+  if (!currentUser || !currentUser.isAdmin) {
+    throw new ApiErrorAccessDenied;
+  }
+  return currentUser;
+}
+
 export function assertIsKey(value: any): DbKey {
   return assertIsString(value);
 }

@@ -29,6 +29,7 @@ export interface ApiObjCurrentUser { //{{_}}
   name: string
   email: string
   config: UserOptions
+  isAdmin: boolean
 }
 
 export interface ApiObjFeed { //{{_}}
@@ -60,6 +61,13 @@ export interface ApiObjDeckWithDueCount extends ApiObjDeck { //{{_}}
 
 export interface ApiObjFeedWithUnreadCount extends ApiObjFeed { //{{_}}
   unreadCount: number
+}
+
+
+export interface ApiObjSiteUsageStatistics { //{{_}}
+  newUsersInPastWeek: number
+  usersActiveInPastWeek: number
+  cardsReviewedInPastWeek: number
 }
 
 
@@ -426,6 +434,14 @@ export interface ApiExportDeck extends RestApiPost { //{{_}}
   },
   responseType: {
     downloadId: string
+  }
+}
+
+export interface ApiAdminUsageStatistics extends RestApiGet { //{{_}}
+  path: "/api/admin/usageStatistics",
+  queryArgs: object,
+  responseType: {
+    statistics: ApiObjSiteUsageStatistics,
   }
 }
 

@@ -1,6 +1,6 @@
 import React,{useCallback, useEffect, useState} from 'react'
 import {LoggedOutAccessiblePage, PageWrapper} from './layout';
-import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, DeckSettingsForm, ImportDeckForm, FeedPreview } from './forms';
+import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, DeckSettingsForm, ImportDeckForm, FeedPreview, AdminStatisticsPanel } from './forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
 import {ReviewWrapper} from './cards';
 import {useGetApi,doPost} from '../lib/apiUtil';
@@ -144,6 +144,13 @@ export function EditDeck({id}: {id: DbKey}) {
 export function Error404Page() {
   return <LoggedOutAccessiblePage title="404">
     <h1>Page Not Found</h1>
+  </LoggedOutAccessiblePage>
+}
+
+export function ErrorAccessDeniedPage() {
+  return <LoggedOutAccessiblePage title="Access Denied">
+    <h1>Access Denied</h1>
+    <p>Sorry, you do not have access to this page. If you followed a link that someone shared with you, they may need to edit the sharing settings.</p>
   </LoggedOutAccessiblePage>
 }
 
@@ -516,5 +523,14 @@ export function ConfirmEmailPage({token}: {token: string}) {
   </div>
 }
 
+export function AdminDashboardPage() {
+  return <PageWrapper title="Admin Dashboard">
+    <h1>Admin Dashboard</h1>
+    
+    <h2>Core Statistics</h2>
+    <AdminStatisticsPanel/>
+  </PageWrapper>
+}
 
-export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,FirstOAuthLoginPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage};
+
+export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,FirstOAuthLoginPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage,AdminDashboardPage};

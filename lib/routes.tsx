@@ -83,6 +83,11 @@ export const routes: Endpoint[] = [
     access: "LoggedOut",
     component: Pages.ConfirmEmailPage,
   },
+  {
+    path: new Route("/admin"),
+    access: "AdminOnly",
+    component: Pages.AdminDashboardPage,
+  },
 ];
 
 export function pathToRoute(pathname: string): {

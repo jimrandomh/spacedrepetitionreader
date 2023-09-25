@@ -7,6 +7,8 @@ import process from 'process';
 import { getConfig } from './util/getConfig';
 import { addCardsDueCronjob } from './cardsDueNotification';
 import { renderSSR } from './render';
+import { getPrisma } from './db';
+import { getUserFromReq, updateUserLastVisitAt } from './api/auth';
 
 const projectRoot = path.join(__dirname, '..');
 const staticFilesPath = path.join(projectRoot, 'static');
@@ -51,9 +53,16 @@ function serverRoutes(app: Express) {
       res.end('');
       return;
     }
-    const {status, html} = await renderSSR(req, res, req.url)
+
+    const db = getPrisma();
+    const currentUser = await getUserFromReq(req, db);
+    const {status, html} = await renderSSR(currentUser, req, res, req.url)
     res.writeHead(status);
     res.end(html);
+    
+    if (currentUser) {
+      void updateUserLastVisitAt(currentUser, db);
+    }
   });
   
   console.log(`Serving static files from ${staticFilesPath}`);

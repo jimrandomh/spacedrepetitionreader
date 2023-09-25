@@ -326,6 +326,8 @@ export function LeftSidebarContents() {
     },
   }));
   
+  const currentUser = useCurrentUser();
+
   const {loading: loadingDecks, data: decksResponse} = useGetApi<ApiTypes.ApiListDecks>({
     endpoint: "/api/decks/list",
     query: {}
@@ -393,6 +395,17 @@ export function LeftSidebarContents() {
         </Link>}
       </div>
     </div>
+    
+    {currentUser?.isAdmin && <div className={classes.sidebarSection}>
+      <Link
+        href="/admin/dashboard"
+        color={false}
+        className={classes.sectionHeader}
+        highlightIfAlreadyHere={classes.currentPageLink}
+      >
+        Admin
+      </Link>
+    </div>}
   </div>;
 }
 
