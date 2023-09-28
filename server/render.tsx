@@ -6,11 +6,13 @@ import { App } from "../components/app";
 import { GetApiProvider } from "../lib/apiUtil";
 import { getPublicConfig } from "../lib/getPublicConfig";
 import { RenderContextProvider } from "../lib/renderContext";
-import { apiFilterCurrentUser, getUserFromReq } from "./api/auth";
+import { apiFilterCurrentUser } from "./api/auth";
 import { getPrisma } from "./db";
 import { getApiRoutes, ServerApiGetContext } from "./serverApiUtil";
 import { getStaticStylesheet, StylesheetWithHash } from "./staticStylesheet";
 import { getConfig } from "./util/getConfig";
+
+type SsrCache = Record<string,any>
 
 export interface SsrResult {
   status: number
@@ -22,6 +24,7 @@ export async function renderSSR(currentUser: User|null, req: Request, res: Respo
   const db = getPrisma();
   const {apiProvider, ssrCache} = getApiProviderFromUser(currentUser, db);
   const titleRef = {title: getPublicConfig().pageTitle};
+  const config = getConfig();
   
   function setPageTitle(title: string) {
     if (title) {
@@ -40,7 +43,8 @@ export async function renderSSR(currentUser: User|null, req: Request, res: Respo
   const html = pageTemplate({
     bodyHtml, ssrCache, stylesheet,
     title: titleRef.title,
-    publicConfig: getConfig().public
+    analyticsJs: config.analyticsJs ?? "",
+    publicConfig: config.public
   });
 
   return {
@@ -51,9 +55,9 @@ export async function renderSSR(currentUser: User|null, req: Request, res: Respo
 
 export function getApiProviderFromUser(currentUser: User|null, db: PrismaClient): {
   apiProvider: GetApiProvider
-  ssrCache: Record<string,any>
+  ssrCache: SsrCache
 } {
-  const ssrCache: Record<string,any> = {};
+  const ssrCache: SsrCache = {};
   const apiProvider = new GetApiProvider(async (uri: string) => {
     const parsedUrl = new URL(uri,"http://localhost");
     const pathname = parsedUrl.pathname;
@@ -95,12 +99,13 @@ export async function repeatRenderingUntilSettled(uri: string, tree: React.React
 }
 
 
-const pageTemplate = ({bodyHtml, title, ssrCache, stylesheet, publicConfig}: {
+const pageTemplate = ({bodyHtml, title, ssrCache, stylesheet, analyticsJs, publicConfig}: {
   bodyHtml: string
   title: string
-  ssrCache: any
+  ssrCache: SsrCache
   stylesheet: StylesheetWithHash
-  publicConfig: any
+  analyticsJs: string
+  publicConfig: SpacedRepetitionPublicConfig
 }) => (`<!doctype html>
 <head>
   <title>${title}</title>
@@ -108,6 +113,7 @@ const pageTemplate = ({bodyHtml, title, ssrCache, stylesheet, publicConfig}: {
   <link rel="stylesheet" type="text/css" href="/styles.css?hash=${stylesheet.hash}"></link>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta charset="utf-8"/>
+  ${analyticsJs}
 </head>
 <body><div id="react-root">${bodyHtml}</div></body>
 <script>

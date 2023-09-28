@@ -15,6 +15,7 @@ type SpacedRepetitionServerConfig = {
   emailSubjectPrefix: string
   emailFromAddress: string
   mailgunApiKey: string|null
+  analyticsJs?: string|null
 
   oauth?: {
     google?: {
