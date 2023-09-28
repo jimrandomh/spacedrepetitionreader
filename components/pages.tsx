@@ -533,4 +533,4 @@ export function AdminDashboardPage() {
 }
 
 
-export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,FirstOAuthLoginPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage,AdminDashboardPage};
+export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,ErrorAccessDeniedPage,RedirectToLoginPage,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,FirstOAuthLoginPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage,AdminDashboardPage};
