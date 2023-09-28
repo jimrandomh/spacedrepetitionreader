@@ -71,7 +71,7 @@ Documentation:
   https://github.com/SergioFacchini/anki-cards-web-browser/blob/master/documentation/Processing%20Anki's%20.apkg%20files.md
 */
 
-export async function importFileAnki(filename: string, fileContents: Uint8Array): Promise<ImportedFile> {
+export async function importFileAnki(_filename: string, fileContents: Uint8Array): Promise<ImportedFile> {
   const zipFileContents = await unpackZip(fileContents);
   const anki21sqliteBin = zipFileContents.files["collection.anki21"];
 
@@ -79,8 +79,8 @@ export async function importFileAnki(filename: string, fileContents: Uint8Array)
   //const queryResult = db.prepare('SELECT * FROM notes').get();
   //console.log(queryResult);
   
-  const notes = db.prepare("SELECT * FROM notes").get();
-  const cards = db.prepare("SELECT * FROM cards").get();
+  const _notes = db.prepare("SELECT * FROM notes").get();
+  const _cards = db.prepare("SELECT * FROM cards").get();
   
   return {
     decks: [

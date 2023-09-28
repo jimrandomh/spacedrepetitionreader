@@ -153,7 +153,7 @@ export function addImportEndpoints(app: Express)
     const currentUser = assertLoggedIn(ctx);
     const deckId = assertIsString(ctx.body.deckId);
     const options = ctx.body.options;
-    const exportResult = await exportFile(options, currentUser, [deckId]);
+    const _exportResult = await exportFile(options, currentUser, [deckId]);
     throw new ApiErrorNotImplemented(); // TODO
   });
 }

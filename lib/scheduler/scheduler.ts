@@ -1,4 +1,10 @@
 
+/*
+ * TODO
+ * This is the outline of an API interface for pluggable scheduling algorithms.
+ * But, it isn't wired up.
+ */
+
 /**
  * Card scheduler base class. Extend to implement different scheduling
  * algorithms. To define a scheduling algorithm, extend this and implement all
@@ -65,12 +71,6 @@ interface GetCardStateAfterImpressionParameters<SchedulerOptions,CardState,DeckS
   deckState: DeckState,
 }
 
-interface SchedulerOpts<SchedOpts,CardOpts,DeckOpts> {
-  defaultSchedOpts: SchedOpts
-  defaultCardOpts: CardOpts
-  defaultDeckOpts: DeckOpts
-}
-
 //////////////////////////////////////////////////////////////////////////////
 
 interface DefaultSchedulerOptions {
@@ -84,7 +84,7 @@ interface DefaultSchedulerCardState {
 interface DefaultSchedulerDeckState {
 }
 
-class DefaultScheduler extends Scheduler<DefaultSchedulerOptions,DefaultSchedulerCardState,DefaultSchedulerDeckState> {
+export class DefaultScheduler extends Scheduler<DefaultSchedulerOptions,DefaultSchedulerCardState,DefaultSchedulerDeckState> {
   override getDefaultOptions(): DefaultSchedulerOptions {
     return {
       maxNewCardsPerReview: 20,
@@ -101,14 +101,14 @@ class DefaultScheduler extends Scheduler<DefaultSchedulerOptions,DefaultSchedule
     return {}; //TODO
   }
 
-  override getDeckDueDate(args: GetDeckDueDateParameters<DefaultSchedulerOptions,DefaultSchedulerCardState,DefaultSchedulerDeckState>): Date {
+  override getDeckDueDate(_args: GetDeckDueDateParameters<DefaultSchedulerOptions,DefaultSchedulerCardState,DefaultSchedulerDeckState>): Date {
     return new Date(); // TODO
   }
 
   /**
    * Get the cards to be reviewed, in review-order, assuming a review starts now
    */
-  override getCardsForReview(args: GetCardsForReviewParameters<DefaultSchedulerOptions,DefaultSchedulerCardState,DefaultSchedulerDeckState>): ApiTypes.ApiObjCard[] {
+  override getCardsForReview(_args: GetCardsForReviewParameters<DefaultSchedulerOptions,DefaultSchedulerCardState,DefaultSchedulerDeckState>): ApiTypes.ApiObjCard[] {
     return []; // TODO
   }
 
