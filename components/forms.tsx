@@ -36,7 +36,7 @@ export function LoginForm() {
       display: "inline-block",
       verticalAlign: "top",
       margin: 16,
-      width: 270,
+      width: 280,
       height: 200,
     },
     input: {
@@ -58,7 +58,7 @@ export function LoginForm() {
     },
     button: {
       width: 150,
-      marginLeft: 80,
+      marginLeft: 95,
       marginTop: 8,
     },
     moreOptionsSection: {
