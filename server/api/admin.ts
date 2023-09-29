@@ -1,7 +1,10 @@
 import type { Express } from 'express';
-import { assertLoggedInAdmin, defineGetApi } from '../serverApiUtil';
+import { maybeSendCardsDueEmail } from '../cardsDueNotification';
+import { assertLoggedIn, assertLoggedInAdmin, defineGetApi, definePostApi } from '../serverApiUtil';
 
 export function addAdminEndpoints(app: Express) {
+  // Admin endpoints (actually restricted)
+  
   defineGetApi<ApiTypes.ApiAdminUsageStatistics>(app, "/api/admin/usageStatistics", async (ctx) => {
     const _currentUser = assertLoggedInAdmin(ctx);
     const now = new Date();
@@ -30,5 +33,16 @@ export function addAdminEndpoints(app: Express) {
         cardsReviewedInPastWeek,
       }
     };
+  });
+
+  // Debug endpoints that are theoretically okay for non-admins to use
+
+  definePostApi<ApiTypes.ApiForceSendCardsDueEmail>(app, "/api/debug/sendCardsDueEmail", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    await maybeSendCardsDueEmail({
+      user: currentUser,
+      force: true,
+    });
+    return {};
   });
 }

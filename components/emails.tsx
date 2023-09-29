@@ -1,5 +1,7 @@
-import React from 'react';
-import { useGetApi } from '../lib/apiUtil';
+import React, { useCallback } from 'react';
+import { GetApiProvider, useGetApi } from '../lib/apiUtil';
+import { RenderContextProvider } from '../lib/renderContext';
+import { UserContext } from '../lib/useCurrentUser';
 import { getConfig } from "../server/util/getConfig";
 import { CardButton, CardFrame } from './cards';
 import { Loading } from './widgets';
@@ -49,6 +51,20 @@ export function PasswordResetEmail({resetPasswordLink}: {
     <p>Click this link to reset your password:</p>
     <p><a href={resetPasswordLink}>Reset password</a></p>
   </div>
+}
+
+export function EmailWrapper({apiProvider, user, children}: {
+  children: React.ReactNode,
+  user: ApiTypes.ApiObjCurrentUser,
+  apiProvider: GetApiProvider,
+}) {
+  const setPageTitle = useCallback((_title: string) => {}, []);
+
+  return <RenderContextProvider apiProvider={apiProvider} setPageTitle={setPageTitle}>
+    <UserContext.Provider value={user}>
+      {children}
+    </UserContext.Provider>
+  </RenderContextProvider>
 }
 
 export const components = {CardsDueEmail, ConfirmYourAddressEmail, PasswordResetEmail};

@@ -331,6 +331,7 @@ export function addAuthEndpoints(app: Express) {
       const newUser = await db.user.create({
         data: {
           email: googleUserResult.email,
+          emailVerified: true,
           name: `${googleUserResult.given_name}_${googleUserResult.family_name}`,
           config: {},
           passwordHash: null,

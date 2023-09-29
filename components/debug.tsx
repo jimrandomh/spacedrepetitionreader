@@ -48,6 +48,13 @@ export function DebugPanel({onClose}: {
   function clearOverrideDate() {
     setDebugOption({ overrideDate: null, });
   }
+  
+  async function sendCardsDueEmail() {
+    const _fetchResult = await fetch("/api/debug/sendCardsDueEmail", {
+      method: "POST",
+      body: JSON.stringify({}),
+    });
+  }
 
   return <div>
     <h2>Debug Options</h2>
@@ -65,6 +72,10 @@ export function DebugPanel({onClose}: {
       </div>
       <Link onClick={clearOverrideDate}>Clear</Link>
     </div>
+    
+    <ul>
+      <li><Link onClick={sendCardsDueEmail}>Send cards due email now</Link></li>
+    </ul>
     
     <div>
       <Button label="Close" onClick={confirmAndClose}/>

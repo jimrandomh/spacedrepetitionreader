@@ -33,7 +33,7 @@ async function sendCardsDueNotifications({db,  when}: {
 
   for (const user of users) {
     if (userCardsDueTimeSettingMatches(user, nowUtcHours)) {
-      await maybeSendCardsDueEmail(user);
+      await maybeSendCardsDueEmail({user});
     }
   }
 }
@@ -54,9 +54,13 @@ function canReceiveCardsDueEmails(user: User) {
   return user.emailVerified && getUserOptions(user).enableCardsDueEmails;
 }
 
-async function maybeSendCardsDueEmail(user: User) {
-  if (!canReceiveCardsDueEmails(user))
+export async function maybeSendCardsDueEmail({user, force}: {
+  user: User
+  force?: boolean
+}) {
+  if (!force && !canReceiveCardsDueEmails(user)) {
     return;
+  }
 
   const now = new Date();
   const ctx: ServerApiContext = {
@@ -71,10 +75,13 @@ async function maybeSendCardsDueEmail(user: User) {
   });
   
   if (cards.length==0 && feedItems.length==0) {
+    if (force) {
+      console.log(`Not sending cards-due email to ${user.name} because nothing is due`);
+    }
     // No cards due, no feed items, so don't email
     return;
   }
-  if (user.lastRemindedAt) {
+  if (!force && user.lastRemindedAt) {
     // TODO: Enforce minimum time between emails
   }
   

@@ -437,12 +437,20 @@ export interface ApiExportDeck extends RestApiPost { //{{_}}
   }
 }
 
+
 export interface ApiAdminUsageStatistics extends RestApiGet { //{{_}}
   path: "/api/admin/usageStatistics",
   queryArgs: object,
   responseType: {
     statistics: ApiObjSiteUsageStatistics,
   }
+}
+
+export interface ApiForceSendCardsDueEmail extends RestApiPost { //{{_}}
+  path: "/api/debug/sendCardsDueEmail",
+  queryArgs: object,
+  bodyArgs: object,
+  responseType: object,
 }
 
 }}

@@ -9,6 +9,8 @@ import { getConfig } from './util/getConfig';
 import Mailgun from 'mailgun.js';
 import formData from 'form-data';
 import type { IMailgunClient } from 'mailgun.js/Interfaces';
+import { EmailWrapper } from '../components/emails';
+import { apiFilterCurrentUser } from './api/auth';
 
 export async function sendEmail({subject, body, user, allowUnverified=false}: {
   subject: string,
@@ -26,7 +28,9 @@ export async function sendEmail({subject, body, user, allowUnverified=false}: {
   }
 
   const {apiProvider} = getApiProviderFromUser(user, db);
-  const renderedBody = await repeatRenderingUntilSettled("email", body, apiProvider);
+  const filteredUser = apiFilterCurrentUser(user)!;
+  const wrappedBody = <EmailWrapper apiProvider={apiProvider} user={filteredUser}>{body}</EmailWrapper>
+  const renderedBody = await repeatRenderingUntilSettled("email", wrappedBody, apiProvider);
   const stylesheet = getEmailStylesheet().css;
   const bodyWithStyles = applyInlineStylesTo(stylesheet, renderedBody);
   const textVersion = convert(renderedBody, {
