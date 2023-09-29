@@ -28,7 +28,8 @@ export function PrivacyPolicyPage() {
 
     <p>{"Spaced Repetition Reader is a personal side project. It isn't monetized (other than perhaps donations), and there are no plans to monetize it. If this ever changes, the change will be accompanied by an email to all users and at least 30 days notice."}</p>
     <p>{"We will not look at, disclose, or sell your cards, decks, or subscriptions, except as requested by you or as required by law. You retain copyright to any cards, decks, and other content you create through the site."}</p>
-    <p>{"We may look at aggregate statistics, such as numbers of cards created and viewed, top-subscribed feeds, and so on, in ways that don't identify you individually. We may use third-party tools to gather these statistics, such as Google Analytics."}</p>
+    <p>{"We may look at aggregate statistics, such as numbers of cards created and viewed, top-subscribed feeds, and so on, in ways that don't identify you individually. We may use third-party tools to gather these statistics, such as Google Analytics. Card content is not shared with Google."}</p>
+    <p>We use Google Analytics to measure site usage.</p>
   </LoggedOutAccessiblePage>
 }
 
