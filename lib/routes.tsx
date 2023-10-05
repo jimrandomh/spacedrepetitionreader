@@ -84,7 +84,7 @@ export const routes: Endpoint[] = [
     component: Pages.ConfirmEmailPage,
   },
   {
-    path: new Route("/admin"),
+    path: new Route("/admin/dashboard"),
     access: "AdminOnly",
     component: Pages.AdminDashboardPage,
   },
