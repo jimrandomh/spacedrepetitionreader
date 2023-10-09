@@ -15,12 +15,11 @@ export function CardsDueEmail({numCards, numFeedItems}: {
     query: {}
   });
 
-  //TODO: This is actually a dashboard link; there should be a URL that starts the review immediately
-  const reviewUrl = `${getConfig().siteUrl}/dashboard`;
-
   if (loading || !data) {
     return <Loading/>;
   }
+
+  const reviewUrl = `${getConfig().siteUrl}/dashboard?flipCard=${encodeURIComponent(data.card.id)}`;
 
   return <div>
     <p>{`You have ${numCards} cards to review and ${numFeedItems} feed items ready to review on Spaced Repetition Reader.`}</p>

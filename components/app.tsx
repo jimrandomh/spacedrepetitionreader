@@ -6,7 +6,7 @@ import { useJssStyles } from '../lib/useJssStyles';
 import { LocationContextProvider, ParsedLocation } from '../lib/useLocation';
 import { ModalContextProvider } from '../lib/useModal';
 import { Error404Page, ErrorAccessDeniedPage, RedirectToLoginPage } from '../components/pages';
-import { pathToRoute } from '../lib/routes';
+import { urlToRoute } from '../lib/routes';
 
 export function App({url}: {
   url: string
@@ -17,7 +17,7 @@ export function App({url}: {
     },
   }));
 
-  const {route,routeProps} = pathToRoute(url);
+  const {route,routeProps} = urlToRoute(url);
   const location: ParsedLocation = useMemo(() => ({
     url, route, routeProps
   // eslint-disable-next-line react-hooks/exhaustive-deps

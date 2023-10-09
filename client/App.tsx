@@ -18,7 +18,7 @@ export function AppClient() {
   }
   
   return <RenderContextProvider apiProvider={apiProvider} setPageTitle={setPageTitle}>
-    <App url={location.pathname}/>
+    <App url={location.href}/>
   </RenderContextProvider>
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { doPost } from '../lib/apiUtil';
 import { useJssStyles } from '../lib/useJssStyles';
 import { Button, FeedItem } from './widgets';
@@ -13,21 +13,22 @@ import reverse from 'lodash/reverse';
 import { randomInterleaveMany } from '../lib/util/rngUtil';
 
 
-export function CardChallenge({card, onFinish, simulatedDate}: {
+export function CardChallenge({card, preFlipped,onFinish, simulatedDate}: {
   card: {
     id: DbKey
     front: string,
     back: string
   },
+  preFlipped?: boolean,
   simulatedDate?: Date,
   onFinish: ()=>void,
 }) {
   const _classes = useJssStyles("CardChallenge", () => ({
   }));
   
-  const [flipped,setFlipped] = useState(false);
+  const [flipped,setFlipped] = useState(!!preFlipped);
   const [startTime] = useState<Date>(() => new Date());
-  const [flipTime,setFlipTime] = useState<Date|null>(null);
+  const [flipTime,setFlipTime] = useState<Date|null>(preFlipped ? new Date() : null);
   
   function clickFlip() {
     setFlipTime(new Date());
@@ -197,26 +198,24 @@ export function RSSCard({card, onFinish}: {
 
 type CardOrFeedItem = {type:"card",card:ApiTypes.ApiObjCard}|{type:"feedItem",feedItem:ApiTypes.ApiObjRssItem};
 
-export function ReviewWrapper({cards, subscriptions, feedItems, simulatedDate}: {
+export function ReviewWrapper({cards, flipCardId, subscriptions, feedItems, simulatedDate}: {
   cards: ApiTypes.ApiObjCard[]
+  flipCardId?: string,
   subscriptions: ApiTypes.ApiObjSubscription[]
   feedItems: ApiTypes.ApiObjRssItem[]
   simulatedDate?: Date
 }) {
-  const [started,setStarted] = useState(false);
-  const [shuffledDeck,setShuffledDeck] = useState<CardOrFeedItem[]|null>(null);
+  //const [shuffledDeck,setShuffledDeck] = useState<CardOrFeedItem[]|null>(null);
   
-  function begin() {
-    const maxFeedItems = 3; //TODO: Make this a user setting
-    const selectedFeedItems = selectFeedItemsFromAllSubscriptions(maxFeedItems, feedItems, subscriptions);
-    
-    const taggedCards: CardOrFeedItem[] = shuffle(cards)
-      .map(card => ({type: "card", card}));
-    const taggedFeedItems: CardOrFeedItem[] = selectedFeedItems
-      .map(feedItem => ({type: "feedItem", feedItem}));
-    const allItems = randomInterleaveMany([taggedCards, taggedFeedItems]);
+  const allItems = useMemo(
+    () => prepareReviewOrder({ cards, flipCardId, feedItems, subscriptions }),
+    [cards, flipCardId, feedItems, subscriptions]
+  );
+  const shuffledDeck = allItems;
+  const flipFirst = shuffledDeck?.[0]?.type==="card" && shuffledDeck[0].card.id===flipCardId;
+  const [started,setStarted] = useState(flipFirst);
 
-    setShuffledDeck(allItems);
+  function begin() {
     setStarted(true);
   }
   
@@ -224,8 +223,9 @@ export function ReviewWrapper({cards, subscriptions, feedItems, simulatedDate}: 
     return <div>You&apos;re all caught up!</div>
   }
   
+
   if (started && shuffledDeck) {
-    return <ReviewInProgress items={shuffledDeck} simulatedDate={simulatedDate}/>
+    return <ReviewInProgress items={shuffledDeck} flipFirst={flipFirst} simulatedDate={simulatedDate}/>
   } else {
     return <div>
       <div>You have {cards.length} cards and {feedItems.length} RSS feed items ready.</div>
@@ -234,8 +234,9 @@ export function ReviewWrapper({cards, subscriptions, feedItems, simulatedDate}: 
   }
 }
 
-function ReviewInProgress({items, simulatedDate}: {
+function ReviewInProgress({items, flipFirst, simulatedDate}: {
   items: Array<CardOrFeedItem>
+  flipFirst?: boolean,
   simulatedDate?: Date
 }) {
   const [cardPos,setCardPos] = useState(0);
@@ -249,6 +250,7 @@ function ReviewInProgress({items, simulatedDate}: {
     {currentCard && currentCard.type==="card" && <CardChallenge
       key={cardPos}
       card={currentCard.card}
+      preFlipped={cardPos===0 && flipFirst}
       onFinish={() => {
         advanceToNextCard();
       }}
@@ -265,6 +267,41 @@ function ReviewInProgress({items, simulatedDate}: {
       You&apos;re all caught up!
     </div>}
   </>
+}
+
+function prepareReviewOrder({cards, flipCardId, feedItems, subscriptions}: {
+  cards: ApiTypes.ApiObjCard[]
+  flipCardId?: string,
+  subscriptions: ApiTypes.ApiObjSubscription[]
+  feedItems: ApiTypes.ApiObjRssItem[]
+}): CardOrFeedItem[] {
+  const maxFeedItems = 3; //TODO: Make this a user setting
+  const selectedFeedItems = selectFeedItemsFromAllSubscriptions(maxFeedItems, feedItems, subscriptions);
+  
+  const taggedCards: CardOrFeedItem[] = shuffle(cards)
+    .map(card => ({type: "card", card}));
+  const taggedFeedItems: CardOrFeedItem[] = selectedFeedItems
+    .map(feedItem => ({type: "feedItem", feedItem}));
+  let result = randomInterleaveMany([taggedCards, taggedFeedItems]);
+  
+  // If flipCardId is provided and is present in the review, move it to the front
+  if (flipCardId) {
+    const flipCard = result.find(item => item.type==="card" && item.card.id===flipCardId);
+    if (flipCard) {
+      result = [flipCard, ...result.filter(item => item.type!=="card" || item.card.id!==flipCardId)];
+    }
+  }
+  
+  // If there are more feed items that weren't selected, add them at the end
+  const selectedFeedItemIds = new Set<string>(selectedFeedItems.map(item => item.id));
+  const unselectedFeedItems: CardOrFeedItem[] = feedItems
+    .filter(feedItem => !selectedFeedItemIds.has(feedItem.id))
+    .map(feedItem => ({type: "feedItem", feedItem}));
+  if (unselectedFeedItems.length > 0) {
+    result = [...result, ...unselectedFeedItems];
+  }
+  
+  return result;
 }
 
 function selectFeedItemsFromAllSubscriptions(
@@ -295,8 +332,6 @@ function selectFeedItemsFromAllSubscriptions(
       )
   )
   
-  console.log(itemsByFeed);
-  
   // Take a round-robin interleaving of the feeds (preserving order within each feed)
   const roundRobinTurnOrder = shuffle(Object.keys(itemsByFeed));
   const result: ApiTypes.ApiObjRssItem[] = [];
@@ -322,7 +357,6 @@ function selectFeedItemsFromSingleSubscription(
   subscription: ApiTypes.ApiObjSubscription,
   availableItems: ApiTypes.ApiObjRssItem[]
 ): ApiTypes.ApiObjRssItem[] {
-  console.log(`Sorting by ${subscription.config.presentationOrder}`);
   switch(subscription.config.presentationOrder) {
     case "oldestFirst":
       return take(
@@ -343,4 +377,3 @@ function selectFeedItemsFromSingleSubscription(
 }
 
 export const components = {CardChallenge,CardFrame,CardButton,RSSCard,ReviewWrapper,ReviewInProgress};
-

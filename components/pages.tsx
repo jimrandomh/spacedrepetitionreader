@@ -13,6 +13,7 @@ import { getBrowserTimezone } from '../lib/util/timeUtil';
 import { PageTitle } from '../lib/renderContext';
 import { simpleTruncateStr } from '../lib/util/truncationUtil';
 import { ModalDialog, useModal } from '../lib/useModal';
+import { useLocation } from '../lib/useLocation';
 
 
 export function AboutPage() {
@@ -35,6 +36,7 @@ export function PrivacyPolicyPage() {
 
 export function DashboardPage() {
   const debugOptions = useDebugOptions();
+  const {query} = useLocation();
   
   const {data, loading} = useGetApi<ApiTypes.ApiCardsDue>({
     endpoint: "/api/cards/due",
@@ -44,10 +46,17 @@ export function DashboardPage() {
     query: {},
   });
   
+  // If the URI contains ?flipCard=[cardId] then this was a link from a review-reminder
+  // email; that email showed one card, and the user clicked the Flip button, which took
+  // them here. So we should guarantee that card is in the review (if eligible), is
+  // first, and loads pre-flipped.
+  const flipCardId = query?.get("flipCard");
+  
   return <PageWrapper title="Dashboard">
     {loading && <Loading/>}
     {data && <ReviewWrapper
       cards={data.cards}
+      flipCardId={flipCardId??undefined}
       subscriptions={data.subscriptions}
       feedItems={data.feedItems}
       simulatedDate={debugOptions.overrideDate ?? undefined}

@@ -90,15 +90,20 @@ export const routes: Endpoint[] = [
   },
 ];
 
-export function pathToRoute(pathname: string): {
+export function urlToRoute(url: string): {
   route: Endpoint|null
   routeProps: object
 } {
+  const parsedUrl = new URL(url, "http://localhost");
+  const pathname = parsedUrl.pathname;
+
   for (const route of routes) {
     const match = route.path.match(pathname)
     if(match) {
+      console.log(`Found valid route for: ${pathname}`);
       return {route, routeProps: match};
     }
   }
+  console.log(`Could not find route for: ${pathname}`);
   return {route: null, routeProps: {}};
 }
