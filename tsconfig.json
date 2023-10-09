@@ -18,6 +18,6 @@
     "allowJs": true,
     "noEmit": true
   },
-  "include": ["client","server","lib","components","test","."],
+  "include": ["client","server","lib","components","test"],
   "exclude": ["node_modules", "build",".git"]
 }
