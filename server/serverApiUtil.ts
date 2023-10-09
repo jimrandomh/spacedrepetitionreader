@@ -18,7 +18,7 @@ export interface ServerApiGetContext<QueryArgs> extends ServerApiContext {
   searchParams: URLSearchParams
 }
 
-export interface ServerApiPostContext<QueryArgs,BodyArgs> extends ServerApiContext {
+interface ServerApiPostContext<QueryArgs,BodyArgs> extends ServerApiContext {
   query: QueryArgs
   body: BodyArgs
 }
@@ -115,7 +115,7 @@ export function assertIsKey(value: any): DbKey {
   return assertIsString(value);
 }
 
-export function assertIsInt(value: any): number {
+function _assertIsInt(value: any): number {
   const num = parseInt(value);
   if(isNaN(num)) throw new Error(`Argument must be a number; was ${JSON.stringify(value)}`);
   return num;

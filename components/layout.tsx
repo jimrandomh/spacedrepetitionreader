@@ -66,7 +66,7 @@ export function PageWrapper({title, layout="full", children}: {
   </div>
 }
 
-export function FooterLinks() {
+function FooterLinks() {
   const classes = useJssStyles("FooterLinks", () => ({
     footer: {
       height: 40,
@@ -129,7 +129,7 @@ export function LoggedOutAccessiblePage({title, children}: {
   }
 }
 
-export function TopBar({sidebarOpen, setSidebarOpen}: {
+function TopBar({sidebarOpen, setSidebarOpen}: {
   sidebarOpen: boolean|undefined
   setSidebarOpen: (open: boolean)=>void
 }) {
@@ -223,7 +223,7 @@ export function TopBar({sidebarOpen, setSidebarOpen}: {
   </div>;
 }
 
-export function OpenSidebarButton({open, setOpen}: {
+function OpenSidebarButton({open, setOpen}: {
   open: boolean|undefined
   setOpen: (open: boolean)=>void
 }) {
@@ -257,7 +257,7 @@ export function OpenSidebarButton({open, setOpen}: {
   </span>
 }
 
-export function LeftSidebar({open, setOpen:_}: {
+function LeftSidebar({open, setOpen:_}: {
   open?: boolean
   setOpen: (open: boolean)=>void
 }) {
@@ -298,7 +298,7 @@ export function LeftSidebar({open, setOpen:_}: {
   </div>
 }
 
-export function LeftSidebarContents() {
+function LeftSidebarContents() {
   const classes = useJssStyles("LeftSidebarContents", () => ({
     root: {
       "& ul": {
@@ -409,7 +409,7 @@ export function LeftSidebarContents() {
   </div>;
 }
 
-export function DeckListItem({deck}: {
+function DeckListItem({deck}: {
   deck: ApiTypes.ApiObjDeckWithDueCount
 }) {
   return <SidebarListItemWithCount
@@ -419,7 +419,7 @@ export function DeckListItem({deck}: {
   />
 }
 
-export function FeedsListItem({feed}: {
+function FeedsListItem({feed}: {
   feed: ApiTypes.ApiObjFeedWithUnreadCount
 }) {
   return <SidebarListItemWithCount
@@ -429,7 +429,7 @@ export function FeedsListItem({feed}: {
   />
 }
 
-export function SidebarListItemWithCount({title, href, unreadCount}: {
+function SidebarListItemWithCount({title, href, unreadCount}: {
   title: string
   href: string
   unreadCount: number

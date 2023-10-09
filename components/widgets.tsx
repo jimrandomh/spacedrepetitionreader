@@ -250,7 +250,7 @@ export function FeedItem({item}: {
   </div>
 }
 
-export function FeedItemFrame({children}: {
+function FeedItemFrame({children}: {
   children: React.ReactNode,
 }) {
   const classes = useJssStyles("FeedItemFrame", () => ({

@@ -6,7 +6,7 @@ export interface UserOptions {
   timezone: string
   cardsBecomeDueAt: number
 }
-export const defaultUserOptions: UserOptions = {
+const defaultUserOptions: UserOptions = {
   enableCardsDueEmails: true,
   timezone: "America/Los_Angeles",
   cardsBecomeDueAt: 3.5,

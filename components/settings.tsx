@@ -107,7 +107,7 @@ export function UserConfiguration() {
   </div>
 }
 
-export function ChangePasswordForm() {
+function ChangePasswordForm() {
   const classes = useJssStyles("ChangePasswordForm", () => ({
     button: {},
     form: {},

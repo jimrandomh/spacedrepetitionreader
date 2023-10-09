@@ -13,6 +13,7 @@ export async function awaitAll<T>(asyncFns: (() => Promise<T>)[], maxConcurrent:
   return results;
 }
 
+// eslint-disable-next-line import/no-unused-modules
 export function sleep(delayMs: number): Promise<void> {
   return new Promise<void>(accept => {
     setTimeout(accept, delayMs);

@@ -1,13 +1,13 @@
 import { Deck } from "@prisma/client";
 import { filterKeys } from "./util/validationUtil";
 
-export type ReviewStatusType = "active"|"paused"
+type ReviewStatusType = "active"|"paused"
 
 export interface DeckOptions {
   reviewStatus: ReviewStatusType
 }
 
-export const defaultDeckOptions: DeckOptions = {
+const defaultDeckOptions: DeckOptions = {
   reviewStatus: "active"
 };
 

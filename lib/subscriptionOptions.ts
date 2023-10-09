@@ -1,14 +1,14 @@
 import { RssSubscription } from "@prisma/client";
 import { filterKeys } from "./util/validationUtil";
 
-export type FeedPresentationOrderType = "oldestFirst"|"newestFirst"|"random"
+type FeedPresentationOrderType = "oldestFirst"|"newestFirst"|"random"
 
 export interface SubscriptionOptions {
   presentationOrder: FeedPresentationOrderType
   shuffleIntoReviews: boolean
   blockDirectAccess: boolean
 }
-export const defaultSubscriptionOptions: SubscriptionOptions = {
+const defaultSubscriptionOptions: SubscriptionOptions = {
   presentationOrder: "oldestFirst",
   shuffleIntoReviews: true,
   blockDirectAccess: false,

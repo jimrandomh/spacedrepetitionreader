@@ -14,7 +14,7 @@ import { getConfig } from "./util/getConfig";
 
 type SsrCache = Record<string,any>
 
-export interface SsrResult {
+interface SsrResult {
   status: number
   html: string|Buffer
 }

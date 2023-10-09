@@ -1,4 +1,9 @@
 
+/**
+ * Given a list of arrays (which may be of different lengths), select a random
+ * interleaving. The result is a single array containing all the input elements, with
+ * elements from a shared input array in the same order relative to each other.
+ */
 export function randomInterleaveMany<T>(items: T[][]): T[] {
   if (!items.length) return [];
   let result = items[0];
@@ -13,7 +18,7 @@ export function randomInterleaveMany<T>(items: T[][]): T[] {
  * interleaving. The result contains the element from both arrays, in the same
  * order relative to each other.
  */
-export function randomInterleaveTwo<T>(a: T[], b: T[]): T[] {
+function randomInterleaveTwo<T>(a: T[], b: T[]): T[] {
   const result: T[] = [];
   let a_index = 0;
   let b_index = 0;

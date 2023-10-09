@@ -1,11 +1,11 @@
 import { filterKeys } from "./util/validationUtil"
 
-export interface ImportedCard {
+interface ImportedCard {
   front: string
   back: string
 }
 
-export interface ImportedDeck {
+interface ImportedDeck {
   metadata: {
     name?: string
   }
@@ -16,16 +16,17 @@ export interface ImportedFile {
   decks: ImportedDeck[]
 }
 
-export type ExportFormat = "srrjson"|"anki"|"mnemosine"
+type ExportFormat = "srrjson"|"anki"|"mnemosine"
 export interface ExportOptions {
   format: ExportFormat
 }
 
-export const defaultExportOptions: ExportOptions = {
+const defaultExportOptions: ExportOptions = {
   format: "srrjson",
 };
 
-export function validateExportOptions(options: Partial<ExportOptions>): Partial<ExportOptions> {
+// TODO hook this up
+function _validateExportOptions(options: Partial<ExportOptions>): Partial<ExportOptions> {
   const result = filterKeys(options, defaultExportOptions);
   return result;
 }

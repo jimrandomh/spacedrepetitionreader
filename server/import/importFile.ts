@@ -2,7 +2,7 @@ import { importFileAnki } from "./importAnki"
 import { importFileMnemomosine } from "./importMnemosine"
 import type { ImportedFile } from "../../lib/importTypes"
 
-export class ImportError extends Error {
+class ImportError extends Error {
   constructor(message: string) {
     super(message);
   }

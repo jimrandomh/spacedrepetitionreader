@@ -4,7 +4,6 @@ import { LoginForm, RequestPasswordResetForm, ResetPasswordForm } from '../forms
 import {Loading} from '../widgets';
 import {doPost} from '../../lib/apiUtil';
 import {redirect} from '../../lib/util/browserUtil';
-import {useJssStyles} from '../../lib/useJssStyles';
 import { getBrowserTimezone } from '../../lib/util/timeUtil';
 import { PageTitle } from '../../lib/renderContext';
 import { defineRoute } from '../../lib/util/routeUtil';

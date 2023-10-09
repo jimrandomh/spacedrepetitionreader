@@ -89,7 +89,7 @@ async function resultIsFeed(fetchResult: FetchResponse, body: string): Promise<b
   return pageBodyIsFeed(body);
 }
 
-export function pageBodyIsFeed(body: string): boolean {
+function pageBodyIsFeed(body: string): boolean {
   return !!body.match(/^\s*(<\?xml[^>]*>\s*)?<\s*(rss|feed)/);
 }
 

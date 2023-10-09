@@ -84,7 +84,7 @@ interface DefaultSchedulerCardState {
 interface DefaultSchedulerDeckState {
 }
 
-export class DefaultScheduler extends Scheduler<DefaultSchedulerOptions,DefaultSchedulerCardState,DefaultSchedulerDeckState> {
+class _DefaultScheduler extends Scheduler<DefaultSchedulerOptions,DefaultSchedulerCardState,DefaultSchedulerDeckState> {
   override getDefaultOptions(): DefaultSchedulerOptions {
     return {
       maxNewCardsPerReview: 20,

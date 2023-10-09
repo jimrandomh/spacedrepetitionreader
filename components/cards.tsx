@@ -13,7 +13,7 @@ import reverse from 'lodash/reverse';
 import { randomInterleaveMany } from '../lib/util/rngUtil';
 
 
-export function CardChallenge({card, preFlipped,onFinish, simulatedDate}: {
+function CardChallenge({card, preFlipped,onFinish, simulatedDate}: {
   card: {
     id: DbKey
     front: string,
@@ -161,7 +161,7 @@ export function CardButton({label, onClick, href, className, type}: {
   }
 }
 
-export function RSSCard({card, onFinish}: {
+function RSSCard({card, onFinish}: {
   card: ApiTypes.ApiObjRssItem,
   onFinish: ()=>void,
 }) {

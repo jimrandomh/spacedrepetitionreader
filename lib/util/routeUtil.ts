@@ -1,7 +1,7 @@
 import React from 'react';
 import Route from 'route-parser';
 
-export type RouteOptions = {
+type RouteOptions = {
   name: string
   path: string
   access: "LoggedOut"|"LoggedIn"|"AdminOnly",

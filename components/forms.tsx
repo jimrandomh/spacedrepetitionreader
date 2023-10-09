@@ -449,7 +449,7 @@ export function ImportDeckForm() {
   </div>
 }
 
-export function ImportPreview({onClose, fileId, importedFile}: {
+function ImportPreview({onClose, fileId, importedFile}: {
   onClose: ()=>void,
   fileId: string,
   importedFile: ImportedFile,

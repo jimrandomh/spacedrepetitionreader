@@ -45,6 +45,7 @@ module.exports = {
     //"import/no-cycle": 1,
     "import/no-mutable-exports": 1,
     "import/no-named-as-default-member": 0,
+    "import/no-unused-modules": [1, {"unusedExports": true}]
   },
   "settings": {
     "react": {
