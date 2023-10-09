@@ -14,9 +14,14 @@ import { simpleTruncateStr } from '../../lib/util/truncationUtil';
 import { ModalDialog, useModal } from '../../lib/useModal';
 import { useLocation } from '../../lib/useLocation';
 import { PitchText } from '../pages/metaPages';
+import { defineRoute } from '../../lib/util/routeUtil';
 
 
-export function DashboardPage() {
+const DashboardPage = defineRoute({
+  name: "DashboardPage",
+  path: "/dashboard",
+  access: "LoggedIn"
+}, () => {
   const debugOptions = useDebugOptions();
   const {query} = useLocation();
   
@@ -44,9 +49,13 @@ export function DashboardPage() {
       simulatedDate={debugOptions.overrideDate ?? undefined}
     />}
   </PageWrapper>
-}
+});
 
-export function EditDeck({id}: {id: DbKey}) {
+const EditDeck = defineRoute({
+  name: "EditDeck",
+  path: "/decks/edit/:id",
+  access: "LoggedIn",
+}, ({id}: {id: DbKey}) => {
   const classes = useJssStyles("EditDeck", () => ({
     moreOptions: {
     },
@@ -131,9 +140,13 @@ export function EditDeck({id}: {id: DbKey}) {
     </>}
     {error && <ErrorMessage message={error}/>}
   </PageWrapper>
-}
+});
 
-export function LandingPage() {
+const LandingPage = defineRoute({
+  name: "LandingPage",
+  path: "/",
+  access: "LoggedOut",
+}, () => {
   const classes = useJssStyles("LandingPage", () => ({
     title: {
       color: "#006",
@@ -170,9 +183,13 @@ export function LandingPage() {
       <LoginForm/>
     </div>
   </div>
-}
+});
 
-export function ManageDecks() {
+const ManageDecks = defineRoute({
+  name: "ManageDecks",
+  path: "/decks/manage",
+  access: "LoggedIn",
+}, () => {
   const {loading: loadingDecks, data: decksResult} = useGetApi<ApiTypes.ApiListDecks>({
     endpoint: "/api/decks/list",
     query: {}
@@ -194,9 +211,13 @@ export function ManageDecks() {
     <h2>Import Deck</h2>
     <ImportDeckForm/>
   </PageWrapper>
-}
+});
 
-export function ManageFeeds() {
+const ManageFeeds = defineRoute({
+  name: "ManageFeeds",
+  path: "/feeds/manage",
+  access: "LoggedIn",
+}, () => {
   const classes = useJssStyles("ManageFeeds", () => ({
     subscribeSection: {
       marginBottom: 50,
@@ -268,9 +289,13 @@ export function ManageFeeds() {
       </ul>
     </>}
   </PageWrapper>
-}
+});
 
-export function ViewCardPage({id}: {id: DbKey}) {
+const ViewCardPage = defineRoute({
+  name: "ViewCardPage",
+  path: "/card/:id",
+  access: "LoggedIn",
+}, ({id}: {id: DbKey}) => {
   const {data, loading} = useGetApi<ApiTypes.ApiGetCard>({
     endpoint: "/api/cards/:cardId",
     query: {cardId: id},
@@ -307,9 +332,13 @@ export function ViewCardPage({id}: {id: DbKey}) {
     <button onClick={deleteCard}>Delete</button>
     {error && <ErrorMessage message={error}/>}
   </PageWrapper>
-}
+});
 
-export function ViewFeedPage({id}: {id: DbKey}) {
+const ViewFeedPage = defineRoute({
+  name: "ViewFeedPage",
+  path: "/feeds/:id",
+  access: "LoggedIn",
+}, ({id}: {id: DbKey}) => {
   const classes = useJssStyles("ViewFeedPage", () => ({
     buttons: {},
     settings: {
@@ -400,24 +429,31 @@ export function ViewFeedPage({id}: {id: DbKey}) {
     </div>}
     
   </PageWrapper>
-}
+});
 
-export function UserProfilePage() {
+const UserProfilePage = defineRoute({
+  name: "UserProfilePage",
+  path: "/profile",
+  access: "LoggedIn",
+}, () => {
   return <PageWrapper title="Profile">
     <h1>Settings</h1>
     
     <UserConfiguration/>
   </PageWrapper>
-}
+});
 
-export function AdminDashboardPage() {
+const AdminDashboardPage = defineRoute({
+  name: "AdminDashboardPage",
+  path: "/admin/dashboard",
+  access: "AdminOnly",
+}, () => {
   return <PageWrapper title="Admin Dashboard">
     <h1>Admin Dashboard</h1>
     
     <h2>Core Statistics</h2>
     <AdminStatisticsPanel/>
   </PageWrapper>
-}
+});
 
-
-export const components = {DashboardPage,EditDeck,LandingPage,PitchText,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,UserProfilePage,AdminDashboardPage};
+export const routes = [DashboardPage,EditDeck,LandingPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,UserProfilePage,AdminDashboardPage];

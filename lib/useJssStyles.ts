@@ -82,7 +82,7 @@ export function getStylesFrom(componentName: string, component: any): {name:stri
     if (e instanceof ThrownStyles) {
       const {name,getStyles} = e;
       if (name !== componentName) {
-        console.warn(`Component-name mismatch between function and styles for ${componentName}`);
+        console.warn(`Component-name mismatch between function and styles for ${name}/${componentName}`);
       }
       const stylesheet = jss.createStyleSheet(getStyles(), {
         generateId: (rule: any) => {

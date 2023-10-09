@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { Endpoint } from './routes';
+import type { Endpoint } from './util/routeUtil';
 
 export interface ParsedLocation {
   url: string

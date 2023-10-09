@@ -1,15 +1,25 @@
 import React from 'react'
 import { useJssStyles } from '../../lib/useJssStyles';
+import { defineRoute, Endpoint } from '../../lib/util/routeUtil';
 import {LoggedOutAccessiblePage} from '../layout';
 
-export function AboutPage() {
+
+const AboutPage = defineRoute({
+  name: "AboutPage",
+  path: "/about",
+  access: "LoggedOut",
+}, () => {
   return <LoggedOutAccessiblePage title="About">
     <h1>About Spaced Repetition Reader</h1>
     <PitchText/>
   </LoggedOutAccessiblePage>
-}
+});
 
-export function PrivacyPolicyPage() {
+const PrivacyPolicyPage = defineRoute({
+  name: "PrivacyPolicyPage",
+  path: "/privacy-policy",
+  access: "LoggedOut",
+}, () => {
   return <LoggedOutAccessiblePage title="Privacy Policy">
     <h1>Spaced Repetition Reader: Privacy Policy</h1>
 
@@ -18,7 +28,7 @@ export function PrivacyPolicyPage() {
     <p>{"We may look at aggregate statistics, such as numbers of cards created and viewed, top-subscribed feeds, and so on, in ways that don't identify you individually. We may use third-party tools to gather these statistics, such as Google Analytics. Card content is not shared with Google."}</p>
     <p>We use Google Analytics to measure site usage.</p>
   </LoggedOutAccessiblePage>
-}
+});
 
 export function PitchText() {
   const classes = useJssStyles("PitchText", () => ({
@@ -38,4 +48,5 @@ export function PitchText() {
   </div>
 }
 
-export const components = {AboutPage,PrivacyPolicyPage,PitchText};
+export const routes: Endpoint[] = [AboutPage,PrivacyPolicyPage];
+export const components = {PitchText};

@@ -2,15 +2,14 @@ import {components as appComponents} from '../components/app';
 import {components as cardComponents} from '../components/cards';
 import {components as formComponents} from '../components/forms';
 import {components as layoutComponents} from '../components/layout';
-import {components as authPageComponents} from '../components/pages/authPages';
 import {components as errorPageComponents} from '../components/pages/errorPages';
 import {components as metaPageComponents} from '../components/pages/metaPages';
-import {components as miscPageComponents} from '../components/pages/miscPages';
 import {components as widgetComponents} from '../components/widgets';
 import {components as debugComponents} from '../components/debug';
 import {components as settingsComponents} from '../components/settings';
 import {components as emailComponents} from '../components/emails';
 import {getStylesFrom} from '../lib/useJssStyles';
+import { allRoutes } from '../lib/routes';
 import crypto from 'crypto';
 import fs from 'fs';
 
@@ -19,10 +18,8 @@ const allComponents = {
   ...cardComponents,
   ...formComponents,
   ...layoutComponents,
-  ...authPageComponents,
   ...errorPageComponents,
   ...metaPageComponents,
-  ...miscPageComponents,
   ...widgetComponents,
   ...debugComponents,
   ...settingsComponents,
@@ -37,12 +34,17 @@ const nonJssStylesheets: string[] = [
 function renderStaticStylesheet(isForEmail: boolean): string {
   const sb = [];
   
+  for(const route of allRoutes) {
+    const extractedStyles = getStylesFrom(route.name, route.component);
+    if (extractedStyles) {
+      sb.push(extractedStyles.styles);
+    }
+  }
   for(const componentName of Object.keys(allComponents)) {
     const componentFn = (allComponents as any)[componentName];
     const extractedStyles = getStylesFrom(componentName, componentFn);
     if (extractedStyles) {
-      const {name:_,styles} = extractedStyles;
-      sb.push(styles);
+      sb.push(extractedStyles.styles);
     }
   }
   

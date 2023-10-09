@@ -7,15 +7,18 @@ import {redirect} from '../../lib/util/browserUtil';
 import {useJssStyles} from '../../lib/useJssStyles';
 import { getBrowserTimezone } from '../../lib/util/timeUtil';
 import { PageTitle } from '../../lib/renderContext';
-import { PitchText } from './metaPages';
+import { defineRoute } from '../../lib/util/routeUtil';
 
 
-
-export function LoginPage() {
+const LoginPage = defineRoute({
+  name: "LoginPage",
+  path: "/login",
+  access: "LoggedOut",
+}, () => {
   return <LoggedOutAccessiblePage title="Login">
     <LoginForm/>
   </LoggedOutAccessiblePage>
-}
+});
 
 /**
  * When you log in with OAuth for the first time, you go to this page
@@ -24,10 +27,11 @@ export function LoginPage() {
  * don't need to do this for password-login signups, because the create-account
  * form submits the timezone.)
  */
-export function FirstOAuthLoginPage() {
-  const _classes = useJssStyles("FirstOAuthLoginPage", () => ({
-  }));
-
+const FirstOAuthLoginPage = defineRoute({
+  name: "FirstOAuthLoginPage",
+  path: "/first-oauth-login",
+  access: "LoggedIn",
+}, () => {
   useEffect(() => {
     void (async () => {
       const {result:_1, error:_2} = await doPost<ApiTypes.ApiChangeUserConfig>({
@@ -42,21 +46,33 @@ export function FirstOAuthLoginPage() {
   }, []);
   
   return <Loading/>
-}
+});
 
-export function ForgotPasswordRequestPage() {
+const ForgotPasswordRequestPage = defineRoute({
+  name: "ForgotPasswordRequestPage",
+  path: "/email/forgotPassword",
+  access: "LoggedOut",
+}, () => {
   return <LoggedOutAccessiblePage title="Forgot Password">
     <RequestPasswordResetForm/>
   </LoggedOutAccessiblePage>
-}
+});
 
-export function ResetPasswordPage({token}: {token: string}) {
+const ResetPasswordPage = defineRoute({
+  name: "ResetPasswordPage",
+  path: "/email/resetPassword/:token",
+  access: "LoggedOut",
+}, ({token}: {token: string}) => {
   return <LoggedOutAccessiblePage title="Reset Password">
     <ResetPasswordForm token={token} />
   </LoggedOutAccessiblePage>
-}
+});
 
-export function ConfirmEmailPage({token}: {token: string}) {
+const ConfirmEmailPage = defineRoute({
+  name: "ConfirmEmailPage",
+  path: "/email/confirm/:token",
+  access: "LoggedOut",
+}, ({token}: {token: string}) => {
   const doConfirm = useCallback(async () => {
     await doPost<ApiTypes.ApiConfirmEmail>({
       endpoint: "/api/users/confirmEmail",
@@ -75,7 +91,6 @@ export function ConfirmEmailPage({token}: {token: string}) {
     <PageTitle title="Confirming Email Address"/>
     <Loading/>
   </div>
-}
+});
 
-
-export const components = {PitchText,LoginPage,FirstOAuthLoginPage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage};
+export const routes = [LoginPage,FirstOAuthLoginPage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage];
