@@ -2,7 +2,10 @@ import {components as appComponents} from '../components/app';
 import {components as cardComponents} from '../components/cards';
 import {components as formComponents} from '../components/forms';
 import {components as layoutComponents} from '../components/layout';
-import {components as pageComponents} from '../components/pages';
+import {components as authPageComponents} from '../components/pages/authPages';
+import {components as errorPageComponents} from '../components/pages/errorPages';
+import {components as metaPageComponents} from '../components/pages/metaPages';
+import {components as miscPageComponents} from '../components/pages/miscPages';
 import {components as widgetComponents} from '../components/widgets';
 import {components as debugComponents} from '../components/debug';
 import {components as settingsComponents} from '../components/settings';
@@ -16,7 +19,10 @@ const allComponents = {
   ...cardComponents,
   ...formComponents,
   ...layoutComponents,
-  ...pageComponents,
+  ...authPageComponents,
+  ...errorPageComponents,
+  ...metaPageComponents,
+  ...miscPageComponents,
   ...widgetComponents,
   ...debugComponents,
   ...settingsComponents,

@@ -1,38 +1,20 @@
-import React,{useCallback, useEffect, useState} from 'react'
-import {LoggedOutAccessiblePage, PageWrapper} from './layout';
-import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, RequestPasswordResetForm, ResetPasswordForm, DeckSettingsForm, ImportDeckForm, FeedPreview, AdminStatisticsPanel } from './forms';
-import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from './widgets';
-import {ReviewWrapper} from './cards';
-import {useGetApi,doPost} from '../lib/apiUtil';
-import {useCurrentUser} from '../lib/useCurrentUser';
-import {redirect} from '../lib/util/browserUtil';
-import {useJssStyles} from '../lib/useJssStyles';
-import { useDebugOptions } from './debug';
-import { SubscriptionSettingsForm, UserConfiguration } from './settings';
-import { getBrowserTimezone } from '../lib/util/timeUtil';
-import { PageTitle } from '../lib/renderContext';
-import { simpleTruncateStr } from '../lib/util/truncationUtil';
-import { ModalDialog, useModal } from '../lib/useModal';
-import { useLocation } from '../lib/useLocation';
+import React, { useState } from 'react'
+import { PageWrapper } from '../layout';
+import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, DeckSettingsForm, ImportDeckForm, FeedPreview, AdminStatisticsPanel } from '../forms';
+import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from '../widgets';
+import {ReviewWrapper} from '../cards';
+import {useGetApi,doPost} from '../../lib/apiUtil';
+import {useCurrentUser} from '../../lib/useCurrentUser';
+import {redirect} from '../../lib/util/browserUtil';
+import {useJssStyles} from '../../lib/useJssStyles';
+import { useDebugOptions } from '../debug';
+import { SubscriptionSettingsForm, UserConfiguration } from '../settings';
+import { PageTitle } from '../../lib/renderContext';
+import { simpleTruncateStr } from '../../lib/util/truncationUtil';
+import { ModalDialog, useModal } from '../../lib/useModal';
+import { useLocation } from '../../lib/useLocation';
+import { PitchText } from '../pages/metaPages';
 
-
-export function AboutPage() {
-  return <LoggedOutAccessiblePage title="About">
-    <h1>About Spaced Repetition Reader</h1>
-    <PitchText/>
-  </LoggedOutAccessiblePage>
-}
-
-export function PrivacyPolicyPage() {
-  return <LoggedOutAccessiblePage title="Privacy Policy">
-    <h1>Spaced Repetition Reader: Privacy Policy</h1>
-
-    <p>{"Spaced Repetition Reader is a personal side project. It isn't monetized (other than perhaps donations), and there are no plans to monetize it. If this ever changes, the change will be accompanied by an email to all users and at least 30 days notice."}</p>
-    <p>{"We will not look at, disclose, or sell your cards, decks, or subscriptions, except as requested by you or as required by law. You retain copyright to any cards, decks, and other content you create through the site."}</p>
-    <p>{"We may look at aggregate statistics, such as numbers of cards created and viewed, top-subscribed feeds, and so on, in ways that don't identify you individually. We may use third-party tools to gather these statistics, such as Google Analytics. Card content is not shared with Google."}</p>
-    <p>We use Google Analytics to measure site usage.</p>
-  </LoggedOutAccessiblePage>
-}
 
 export function DashboardPage() {
   const debugOptions = useDebugOptions();
@@ -151,27 +133,6 @@ export function EditDeck({id}: {id: DbKey}) {
   </PageWrapper>
 }
 
-export function Error404Page() {
-  return <LoggedOutAccessiblePage title="404">
-    <h1>Page Not Found</h1>
-  </LoggedOutAccessiblePage>
-}
-
-export function ErrorAccessDeniedPage() {
-  return <LoggedOutAccessiblePage title="Access Denied">
-    <h1>Access Denied</h1>
-    <p>Sorry, you do not have access to this page. If you followed a link that someone shared with you, they may need to edit the sharing settings.</p>
-  </LoggedOutAccessiblePage>
-}
-
-export function RedirectToLoginPage() {
-  useEffect(() => {
-    redirect("/login");
-  });
-
-  return <div>Redirecting to /login</div>
-}
-
 export function LandingPage() {
   const classes = useJssStyles("LandingPage", () => ({
     title: {
@@ -209,30 +170,6 @@ export function LandingPage() {
       <LoginForm/>
     </div>
   </div>
-}
-
-export function PitchText() {
-  const classes = useJssStyles("PitchText", () => ({
-    pitchText: {
-      maxWidth: 600,
-      margin: "0 auto",
-    },
-  }));
-  return <div className={classes.pitchText}>
-    <p>Spaced Repetition Reader makes reviewing flashcards motivating by mixing
-    webcomics (or anything with an RSS feed) into your decks. It uses a
-    repetition schedule optimized for maximizing your retention of
-    information.</p>
-    
-    <p>Spaced Repetition Reader is open source (AGPL-v3.0), so you can run your
-    own server if you wish to do so. Check it out <a href="https://www.github.com/jimrandomh/spacedrepetitionreader">on GitHub</a>.</p>
-  </div>
-}
-
-export function LoginPage() {
-  return <LoggedOutAccessiblePage title="Login">
-    <LoginForm/>
-  </LoggedOutAccessiblePage>
 }
 
 export function ManageDecks() {
@@ -465,72 +402,12 @@ export function ViewFeedPage({id}: {id: DbKey}) {
   </PageWrapper>
 }
 
-/**
- * When you log in with OAuth for the first time, you go to this page
- * (/first-oauth-login) first. It checks the timezone in your browser, updates
- * your user settings with that timezone, then redirects you to /dashboard. (We
- * don't need to do this for password-login signups, because the create-account
- * form submits the timezone.)
- */
-export function FirstOAuthLoginPage() {
-  const _classes = useJssStyles("FirstOAuthLoginPage", () => ({
-  }));
-
-  useEffect(() => {
-    void (async () => {
-      const {result:_1, error:_2} = await doPost<ApiTypes.ApiChangeUserConfig>({
-        endpoint: "/api/users/changeConfig",
-        query: {},
-        body: { config: {
-          timezone: getBrowserTimezone(),
-        }},
-      });
-      redirect("/dashboard");
-    })();
-  }, []);
-  
-  return <Loading/>
-}
-
 export function UserProfilePage() {
   return <PageWrapper title="Profile">
     <h1>Settings</h1>
     
     <UserConfiguration/>
   </PageWrapper>
-}
-
-export function ForgotPasswordRequestPage() {
-  return <LoggedOutAccessiblePage title="Forgot Password">
-    <RequestPasswordResetForm/>
-  </LoggedOutAccessiblePage>
-}
-
-export function ResetPasswordPage({token}: {token: string}) {
-  return <LoggedOutAccessiblePage title="Reset Password">
-    <ResetPasswordForm token={token} />
-  </LoggedOutAccessiblePage>
-}
-
-export function ConfirmEmailPage({token}: {token: string}) {
-  const doConfirm = useCallback(async () => {
-    await doPost<ApiTypes.ApiConfirmEmail>({
-      endpoint: "/api/users/confirmEmail",
-      query: {}, body: {token}
-    });
-  }, [token]);
-
-  useEffect(() => {
-    void (async () => {
-      await doConfirm();
-      redirect("/dashboard");
-    })();
-  }, [doConfirm]);
-  
-  return <div>
-    <PageTitle title="Confirming Email Address"/>
-    <Loading/>
-  </div>
 }
 
 export function AdminDashboardPage() {
@@ -543,4 +420,4 @@ export function AdminDashboardPage() {
 }
 
 
-export const components = {AboutPage,PrivacyPolicyPage,DashboardPage,EditDeck,Error404Page,ErrorAccessDeniedPage,RedirectToLoginPage,LandingPage,PitchText,LoginPage,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,FirstOAuthLoginPage,UserProfilePage,ForgotPasswordRequestPage,ResetPasswordPage,ConfirmEmailPage,AdminDashboardPage};
+export const components = {DashboardPage,EditDeck,LandingPage,PitchText,ManageDecks,ManageFeeds,ViewCardPage,ViewFeedPage,UserProfilePage,AdminDashboardPage};

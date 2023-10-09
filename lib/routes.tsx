@@ -1,4 +1,6 @@
-import * as Pages from '../components/pages';
+import * as MiscPages from '../components/pages/miscPages';
+import * as AuthPages from '../components/pages/authPages';
+import * as MetaPages from '../components/pages/metaPages';
 import Route from 'route-parser';
 
 export type Endpoint = {
@@ -11,82 +13,82 @@ export const routes: Endpoint[] = [
   {
     path: new Route("/"),
     access: "LoggedOut",
-    component: Pages.LandingPage,
+    component: MiscPages.LandingPage,
   },
   {
     path: new Route("/dashboard"),
     access: "LoggedIn",
-    component: Pages.DashboardPage,
+    component: MiscPages.DashboardPage,
   },
   {
     path: new Route("/login"),
     access: "LoggedOut",
-    component: Pages.LoginPage,
+    component: AuthPages.LoginPage,
   },
   {
     path: new Route("/decks/manage"),
     access: "LoggedIn",
-    component: Pages.ManageDecks,
+    component: MiscPages.ManageDecks,
   },
   {
     path: new Route("/feeds/manage"),
     access: "LoggedIn",
-    component: Pages.ManageFeeds,
+    component: MiscPages.ManageFeeds,
   },
   {
     path: new Route("/feeds/:id"),
     access: "LoggedIn",
-    component: Pages.ViewFeedPage,
+    component: MiscPages.ViewFeedPage,
   },
   {
     path: new Route("/decks/edit/:id"),
     access: "LoggedIn",
-    component: Pages.EditDeck,
+    component: MiscPages.EditDeck,
   },
   {
     path: new Route("/about"),
     access: "LoggedOut",
-    component: Pages.AboutPage,
+    component: MetaPages.AboutPage,
   },
   {
     path: new Route("/privacy-policy"),
     access: "LoggedOut",
-    component: Pages.PrivacyPolicyPage,
+    component: MetaPages.PrivacyPolicyPage,
   },
   {
     path: new Route("/card/:id"),
     access: "LoggedIn",
-    component: Pages.ViewCardPage,
+    component: MiscPages.ViewCardPage,
   },
   {
     path: new Route("/profile"),
     access: "LoggedIn",
-    component: Pages.UserProfilePage,
+    component: MiscPages.UserProfilePage,
   },
   {
     path: new Route("/first-oauth-login"),
     access: "LoggedIn",
-    component: Pages.FirstOAuthLoginPage,
+    component: AuthPages.FirstOAuthLoginPage,
   },
   {
     path: new Route("/email/forgotPassword"),
     access: "LoggedOut",
-    component: Pages.ForgotPasswordRequestPage,
+    component: AuthPages.ForgotPasswordRequestPage,
   },
   {
     path: new Route("/email/resetPassword/:token"),
     access: "LoggedOut",
-    component: Pages.ResetPasswordPage,
+    component: AuthPages.ResetPasswordPage,
   },
   {
     path: new Route("/email/confirm/:token"),
     access: "LoggedOut",
-    component: Pages.ConfirmEmailPage,
+    component: AuthPages.ConfirmEmailPage,
   },
   {
     path: new Route("/admin/dashboard"),
     access: "AdminOnly",
-    component: Pages.AdminDashboardPage,
+    component: MiscPages.AdminDashboardPage,
   },
 ];
 

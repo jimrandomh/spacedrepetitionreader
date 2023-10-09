@@ -5,7 +5,7 @@ import { useGetApi } from '../lib/apiUtil';
 import { useJssStyles } from '../lib/useJssStyles';
 import { LocationContextProvider, ParsedLocation } from '../lib/useLocation';
 import { ModalContextProvider } from '../lib/useModal';
-import { Error404Page, ErrorAccessDeniedPage, RedirectToLoginPage } from '../components/pages';
+import { Error404Page, ErrorAccessDeniedPage, RedirectToLoginPage } from '../components/pages/errorPages';
 import { urlToRoute } from '../lib/routes';
 
 export function App({url}: {
