@@ -296,13 +296,24 @@ const ViewCardPage = defineRoute({
   path: "/card/:id",
   access: "LoggedIn",
 }, ({id}: {id: DbKey}) => {
-  const {data, loading} = useGetApi<ApiTypes.ApiGetCard>({
-    endpoint: "/api/cards/:cardId",
+  const classes = useJssStyles("ViewCardPage", () => ({
+    impressions: {
+      paddingTop: 16,
+      paddingBottom: 16,
+    },
+    impression: {
+      display: 'flex',
+      columnGap: 16,
+    },
+  }));
+  const {data, loading} = useGetApi<ApiTypes.ApiGetCardWithHistory>({
+    endpoint: "/api/cards/:cardId/history",
     query: {cardId: id},
   });
   const [error,setError] = useState<string|null>(null);
   
   const card = data?.card;
+  const history = data?.history;
   const truncatedCardFront = card?.front ? simpleTruncateStr(card.front, 30) : undefined;
   
   async function deleteCard() {
@@ -329,6 +340,18 @@ const ViewCardPage = defineRoute({
       <div>Front: {card.front}</div>
       <div>Back: {card.back}</div>
     </div>}
+    <div className={classes.impressions}>
+      {history?.map(impression => (
+        <div className={classes.impression} key={impression.id}>
+          <span>
+            {impression.date}
+          </span>
+          <div>
+            {impression.result}
+          </div>
+        </div>
+      ))}
+    </div>
     <button onClick={deleteCard}>Delete</button>
     {error && <ErrorMessage message={error}/>}
   </PageWrapper>

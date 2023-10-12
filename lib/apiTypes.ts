@@ -52,6 +52,13 @@ interface ApiObjRssItem { //{{_}}
   summary: string
 }
 
+interface ApiObjCardImpression { //{{_}}
+  cardId: DbKey
+  id: DbKey
+  result: string
+  date: string
+}
+
 
 interface ApiObjDeckWithDueCount extends ApiObjDeck { //{{_}}
   due: number
@@ -247,6 +254,17 @@ interface ApiGetCard extends RestApiGet { //{{_}}
   }
   responseType: {
     card: ApiObjCard
+  }
+}
+
+interface ApiGetCardWithHistory extends RestApiGet { //{{_}}
+  path: "/api/cards/:cardId/history"
+  queryArgs: {
+    cardId: DbKey
+  }
+  responseType: {
+    card: ApiObjCard,
+    history: ApiObjCardImpression[],
   }
 }
 

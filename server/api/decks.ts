@@ -1,5 +1,5 @@
 import type { Express } from 'express';
-import type { Card, CardRevision, Deck, RssFeed, RssItem, RssSubscription, User } from '@prisma/client'
+import type { Card, CardImpression, CardRevision, Deck, RssFeed, RssItem, RssSubscription, User } from '@prisma/client'
 import { defineGetApi, definePostApi, assertLoggedIn, assertIsKey, assertIsNumber, assertIsString, ServerApiContext, ApiErrorNotFound, ApiErrorAccessDenied } from '../serverApiUtil';
 import { getUnreadItems } from './feeds';
 import { getDueDate } from '../cardScheduler';
@@ -251,6 +251,27 @@ export function addDeckEndpoints(app: Express) {
     return {}
   });
 
+  defineGetApi<ApiTypes.ApiGetCardWithHistory>(app, "/api/cards/:cardId/history", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const cardId = assertIsKey(ctx.query.cardId);
+    
+    const card = await ctx.db.card.findUnique({ where: { id: cardId }, include: { activeRevision: true } });
+    const history = await ctx.db.cardImpression.findMany({ where: { cardId: cardId }});
+    if (!card || card.deleted) {
+      throw new ApiErrorNotFound;
+    }
+    const deck = await ctx.db.deck.findUnique({ where: { id: card.deckId } });
+    if (!deck || deck.deleted) {
+      throw new ApiErrorNotFound;
+    }
+    if (!userCanViewDeck(currentUser, deck)) {
+      throw new ApiErrorAccessDenied;
+    }
+    return {
+      card: apiFilterCard(card, card.activeRevision!, ctx),
+      history: history.map(apiFilterImpression),
+    }
+  })
   defineGetApi<ApiTypes.ApiGetCard>(app, "/api/cards/:cardId", async (ctx) => {
     const currentUser = assertLoggedIn(ctx);
     const cardId = assertIsKey(ctx.query.cardId);
@@ -382,5 +403,13 @@ function apiFilterCard(card: Card, revision: CardRevision, _ctx: ServerApiContex
   };
 }
 
+function apiFilterImpression(impression: CardImpression): ApiTypes.ApiObjCardImpression {
+  return {
+    cardId: impression.cardId,
+    id: impression.id,
+    result: impression.resolution,
+    date: impression.date.toISOString(),
+  };
+}
 
 
