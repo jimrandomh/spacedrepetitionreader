@@ -19,6 +19,7 @@ model User {
   isAdmin        Boolean   @default(false)
   emailVerified  Boolean   @default(false)
   lastRemindedAt DateTime?
+  lastEmailOpenedAt DateTime?
   config         Json
 
   decks           Deck[]

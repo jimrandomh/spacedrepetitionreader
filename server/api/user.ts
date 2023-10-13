@@ -15,4 +15,16 @@ export function addUserEndpoints(app: Express) {
     
     return {};
   });
+  definePostApi<ApiTypes.ApiUpdateLastEmailOpenedAt>(app, "/api/users/emailOpened", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    
+    await ctx.db.user.update({
+      where: { id: currentUser.id },
+      data: {
+        lastEmailOpenedAt: new Date()
+      },
+    });
+    
+    return {};
+  });
 }

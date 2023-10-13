@@ -168,6 +168,12 @@ interface ApiChangePassword extends RestApiPost { //{{_}}
   }
   responseType: object
 }
+interface ApiUpdateLastEmailOpenedAt extends RestApiPost { //{{_}}
+  path: "/api/users/emailOpened"
+  queryArgs: object
+  bodyArgs: object
+  responseType: object
+}
 
 
 interface ApiChangeUserConfig extends RestApiPost { //{{_}}

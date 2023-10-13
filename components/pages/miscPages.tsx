@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PageWrapper } from '../layout';
 import { LoginForm, CreateCardForm, CreateDeckForm, SubscribeToFeedForm, DeckSettingsForm, ImportDeckForm, FeedPreview, AdminStatisticsPanel } from '../forms';
 import {ErrorMessage,Link,Loading,BulletSeparator,FeedScrollList,Redirect} from '../widgets';
@@ -24,6 +24,18 @@ const DashboardPage = defineRoute({
 }, () => {
   const debugOptions = useDebugOptions();
   const {query} = useLocation();
+  const isFromEmail = query?.get("isFromEmail");
+  useEffect(() => {
+    if(isFromEmail) {
+      void (async () => {
+        void doPost<ApiTypes.ApiUpdateLastEmailOpenedAt>({
+          endpoint: "/api/users/emailOpened",
+          query: {},
+          body: {},
+        });
+      })();
+    }
+  }, [isFromEmail]);
   
   const {data, loading} = useGetApi<ApiTypes.ApiCardsDue>({
     endpoint: "/api/cards/due",
@@ -38,6 +50,8 @@ const DashboardPage = defineRoute({
   // them here. So we should guarantee that card is in the review (if eligible), is
   // first, and loads pre-flipped.
   const flipCardId = query?.get("flipCard");
+  
+  
   
   return <PageWrapper title="Dashboard">
     {loading && <Loading/>}

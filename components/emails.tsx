@@ -19,7 +19,7 @@ export function CardsDueEmail({numCards, numFeedItems}: {
     return <Loading/>;
   }
 
-  const reviewUrl = `${getConfig().siteUrl}/dashboard?flipCard=${encodeURIComponent(data.card.id)}`;
+  const reviewUrl = `${getConfig().siteUrl}/dashboard?flipCard=${encodeURIComponent(data.card.id)}&isFromEmail=true`;
 
   return <div>
     <p>{`You have ${numCards} cards to review and ${numFeedItems} feed items ready to review on Spaced Repetition Reader.`}</p>

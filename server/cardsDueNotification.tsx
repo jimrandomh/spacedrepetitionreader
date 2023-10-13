@@ -81,8 +81,33 @@ export async function maybeSendCardsDueEmail({user, force}: {
     // No cards due, no feed items, so don't email
     return;
   }
-  if (!force && user.lastRemindedAt) {
-    // TODO: Enforce minimum time between emails
+  if (!force) {
+    if (user.lastEmailOpenedAt && user.lastRemindedAt) {
+      const timeSinceOpened = now.getTime() - user.lastEmailOpenedAt.getTime();
+      const timeSinceReminded = now.getTime() - user.lastRemindedAt.getTime();
+      const oneHourInMs = 3600*1000;
+      const oneDayInMs = 24 * 3600 * 1000;
+      const oneDayInMsMinusEpsilon = oneDayInMs - oneHourInMs;
+      const oneWeekInMs = 7 * oneDayInMs;
+      if (timeSinceReminded < oneDayInMsMinusEpsilon) {
+        // skip; too soon
+        return;
+      } else if(timeSinceOpened > oneWeekInMs && timeSinceReminded > oneWeekInMs){
+        // continue; inactive users get one per week
+      } else if (timeSinceOpened < oneDayInMs) {
+        // continue; active users get a daily email on schedule
+      } else {
+        // skip; inactive users don't get emails on days 2-6
+        return;
+      }
+    } else {
+      // First time sending a message. Pretend that this was opened immediately
+      // so that we can distinguish the second email case.
+      await ctx.db.user.update({
+        where: { id: user.id },
+        data: { lastEmailOpenedAt: now },
+      });
+    }
   }
   
   // TODO: Add logged-out-accessible unsubscribe link
