@@ -124,8 +124,7 @@ interface ApiLogout extends RestApiPost { //{{_}}
 
 interface ApiWhoami extends RestApiGet { //{{_}}
   path: "/api/users/whoami"
-  queryArgs: object
-  bodyArgs: object
+  queryArgs: object,
   responseType: {
     currentUser: ApiObjCurrentUser|null
   }

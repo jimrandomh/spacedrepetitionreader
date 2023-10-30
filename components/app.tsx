@@ -27,7 +27,7 @@ export function App({url}: {
     endpoint: "/api/users/whoami",
     query: {}
   });
-
+  
   const currentUser = data?.currentUser ?? null;
 
   if (!location || !location.route) {
@@ -41,7 +41,9 @@ export function App({url}: {
     return <Loading/>;
   }
   if (location.route.access !== 'LoggedOut' && !currentUser) {
-    return <RedirectToLoginPage/>
+    return <LocationContextProvider value={location}>
+      <RedirectToLoginPage/>
+    </LocationContextProvider>
   }
   if (location.route.access === 'AdminOnly' && !currentUser?.isAdmin) {
     ComponentToRender = ErrorAccessDeniedPage;

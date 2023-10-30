@@ -55,7 +55,7 @@ function serverRoutes(app: Express) {
     }
 
     const db = getPrisma();
-    const currentUser = await getUserFromReq(req, db);
+    const currentUser = await getUserFromReq(req, res, db);
     const {status, html} = await renderSSR(currentUser, req, res, req.url)
     res.writeHead(status);
     res.end(html);

@@ -8,6 +8,7 @@ import { ServerApiContext } from "./serverApiUtil";
 import { registerCronjob } from "./util/cronUtil";
 import { timezoneNameToUtcOffset } from '../lib/util/timeUtil';
 import { CardsDueEmail } from '../components/emails';
+import { createEmailLoginToken } from './api/auth';
 
 export function addCardsDueCronjob() {
   registerCronjob({
@@ -110,10 +111,16 @@ export async function maybeSendCardsDueEmail({user, force}: {
     }
   }
   
+  const emailLoginToken = await createEmailLoginToken(user, ctx.db);
+  
   // TODO: Add logged-out-accessible unsubscribe link
   await sendEmail({
     user,
     subject: `You have ${cards.length} cards to review and ${feedItems.length} feed items`,
-    body: <CardsDueEmail numCards={cards.length} numFeedItems={feedItems.length}/>
+    body: <CardsDueEmail
+      numCards={cards.length}
+      numFeedItems={feedItems.length}
+      emailLoginToken={emailLoginToken}
+    />
   });
 }

@@ -24,22 +24,47 @@ function hashForTokens(token: string): string {
 }
 
 
-export async function getUserFromReq(req: Request, db: PrismaClient): Promise<User|null> {
+export async function getUserFromReq(req: Request, res: Response, db: PrismaClient): Promise<User|null> {
   const loginCookie = getCookie(req, "login");
-  if (!loginCookie || !loginCookie.length) {
-    return null;
+  if (loginCookie && loginCookie.length) {
+    const tokenHash = hashForTokens(loginCookie);
+    const tokenObj = await db.loginToken.findUnique({
+      where: {tokenHash},
+      include: {owner: true}
+    });
+    if (!tokenObj) return null;
+    if (!tokenObj.valid) return null;
+    
+    const user = tokenObj.owner;
+    return user;
   }
   
-  const tokenHash = hashForTokens(loginCookie);
-  const tokenObj = await db.loginToken.findUnique({
-    where: {tokenHash},
-    include: {owner: true}
-  });
-  if (!tokenObj) return null;
-  if (!tokenObj.valid) return null;
+  const url = req.url;
+  const emailLoginToken = new URL(url, "http://localhost").searchParams.get("emailLoginToken");
+  if (emailLoginToken) {
+    console.log("Looking up email token");
+    const tokenHash = hashForTokens(emailLoginToken);
+    const dbEmailToken = await db.emailToken.findFirst({
+      where: {
+        type: "emailLogin",
+        tokenHash,
+      },
+    });
+    if (dbEmailToken) {
+      console.log("Looking up user for email token");
+      const userId = dbEmailToken.userId;
+      const user = await db.user.findUnique({
+        where: { id: userId }
+      });
+      if (user) {
+        console.log("Logging user in with email token");
+        await createAndAssignLoginToken(req, res, user, db);
+        return user;
+      }
+    }
+  }
   
-  const user = tokenObj.owner;
-  return user;
+  return null;
 }
 
 async function createAndAssignLoginToken(req: Request, res: Response, user: User, db: PrismaClient) {
@@ -58,6 +83,20 @@ async function createAndAssignLoginToken(req: Request, res: Response, user: User
   setCookie(res, 'login', token, {
     path: "/"
   });
+}
+
+export async function createEmailLoginToken(user: User, db: PrismaClient): Promise<string> {
+  const token = generateTokenString();
+  const tokenHash = hashForTokens(token);
+
+  await db.emailToken.create({
+    data: {
+      type: "emailLogin",
+      tokenHash,
+      userId: user.id,
+    },
+  });
+  return token;
 }
 
 async function logUserOut(user: User, db: PrismaClient, res: Response|null) {

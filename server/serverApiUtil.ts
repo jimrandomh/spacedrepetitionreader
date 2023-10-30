@@ -40,7 +40,7 @@ export function defineGetApi<T extends ApiTypes.RestApiGet>(
     const db = getPrisma();
     const ctx: ServerApiGetContext<T["queryArgs"]> = {
       req, res, query: queryArgs, db,
-      currentUser: await getUserFromReq(req, db),
+      currentUser: await getUserFromReq(req, res, db),
       searchParams: parsedUrl.searchParams,
     };
     
@@ -81,7 +81,7 @@ export function definePostApi<T extends ApiTypes.RestApiPost>(
       req, res, db,
       query: queryArgs,
       body: requestBody,
-      currentUser: await getUserFromReq(req,db),
+      currentUser: await getUserFromReq(req, res, db),
     };
     try {
       const result = await fn(ctx);

@@ -6,9 +6,10 @@ import { getConfig } from "../server/util/getConfig";
 import { CardButton, CardFrame } from './cards';
 import { Loading } from './widgets';
 
-export function CardsDueEmail({numCards, numFeedItems}: {
+export function CardsDueEmail({numCards, numFeedItems, emailLoginToken}: {
   numCards: number,
   numFeedItems: number,
+  emailLoginToken: string,
 }) {
   const {loading, data} = useGetApi<ApiTypes.ApiOneDueCard>({
     endpoint: "/api/cards/oneDueCard",
@@ -19,7 +20,7 @@ export function CardsDueEmail({numCards, numFeedItems}: {
     return <Loading/>;
   }
 
-  const reviewUrl = `${getConfig().siteUrl}/dashboard?flipCard=${encodeURIComponent(data.card.id)}&isFromEmail=true`;
+  const reviewUrl = `${getConfig().siteUrl}/dashboard?flipCard=${encodeURIComponent(data.card.id)}&isFromEmail=true&emailLoginToken=${emailLoginToken}`;
 
   return <div>
     <p>{`You have ${numCards} cards to review and ${numFeedItems} feed items ready to review on Spaced Repetition Reader.`}</p>

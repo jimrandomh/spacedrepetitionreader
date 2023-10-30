@@ -1,6 +1,7 @@
 import React,{useEffect} from 'react'
 import {LoggedOutAccessiblePage} from '../layout';
 import {redirect} from '../../lib/util/browserUtil';
+import { useLocation } from '../../lib/useLocation';
 
 
 export function Error404Page() {
@@ -17,8 +18,11 @@ export function ErrorAccessDeniedPage() {
 }
 
 export function RedirectToLoginPage() {
+  const { url } = useLocation();
+
   useEffect(() => {
-    redirect("/login");
+    const encodedUrl = encodeURIComponent(url);
+    redirect(`/login?redirect=${encodedUrl}`);
   });
 
   return <div>Redirecting to /login</div>

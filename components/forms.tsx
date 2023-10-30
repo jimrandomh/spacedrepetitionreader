@@ -9,6 +9,7 @@ import { getBrowserTimezone } from '../lib/util/timeUtil';
 import { DeckOptions, getDeckOptions, reviewStatusLabels } from '../lib/deckOptions';
 import { arrayBufferToBase64 } from '../lib/util/encodingUtil';
 import type { ImportedFile } from '../lib/importTypes';
+import { useLocation } from '../lib/useLocation';
 
 
 export function LoginForm() {
@@ -78,6 +79,7 @@ export function LoginForm() {
   const [loginError,setLoginError] = useState<string|null>(null);
   const [signupError,setSignupError] = useState<string|null>(null);
   const hasOAuth = getPublicConfig().enableGoogleOAuth;
+  const { query } = useLocation();
   
   async function logIn() {
     const {result:_,error} = await doPost<ApiTypes.ApiLogin>({
@@ -91,7 +93,8 @@ export function LoginForm() {
     if (error) {
       setLoginError(error);
     } else {
-      redirect("/dashboard");
+      const redirectLocation = query.get("redirect") ?? "/dashboard";
+      redirect(redirectLocation);
     }
   }
   async function createAccount() {
