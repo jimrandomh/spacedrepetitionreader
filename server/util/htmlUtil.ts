@@ -44,7 +44,7 @@ function parseCssNumber(n: string): {value: number|null, units: string} {
 }
 
 export function postprocessFeedHtml(html: string): string {
-  const $ = cheerio.load(html, {}, true);
+  const $ = cheerio.load(html, {}, false);
   
   // Find images which have both width and height attributes, where both are in
   // pixels. If the specified width/height is large (width>500px), rewrite them
@@ -56,7 +56,7 @@ export function postprocessFeedHtml(html: string): string {
     const heightAttr = image.attr('height');
     if (widthAttr && heightAttr) {
       const {value: width, units: widthUnits} = parseCssNumber(widthAttr);
-      const {value: height, units: heightUnits} = parseCssNumber(widthAttr);
+      const {value: height, units: heightUnits} = parseCssNumber(heightAttr);
       if (width && height  && widthUnits==='px' && heightUnits==='px' && width>500) {
         const aspect = width / height;
         image.removeAttr('height');
