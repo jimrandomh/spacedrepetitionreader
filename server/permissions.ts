@@ -1,5 +1,6 @@
 import { Deck, User, RssFeed, RssSubscription, RssItem } from "@prisma/client";
 import { getSubscriptionOptions } from "../lib/subscriptionOptions";
+import { postprocessFeedHtml } from './util/htmlUtil';
 import type { ServerApiContext } from "./serverApiUtil";
 
 export function userCanViewDeck(user: User, deck: Deck) {
@@ -34,7 +35,7 @@ export function apiFilterRssItem(item: RssItem, _ctx: ServerApiContext): ApiType
     title: item.title,
     link: item.link,
     pubDate: item.pubDate.toISOString(),
-    summary: item.content,
+    summary: postprocessFeedHtml(item.content),
   }
 }
 
