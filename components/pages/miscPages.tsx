@@ -241,7 +241,7 @@ const ManageFeeds = defineRoute({
     },
   }));
 
-  const {loading: loadingSubscriptions, data} = useGetApi<ApiTypes.ApiListSubscriptions>({
+  const {loading: loadingSubscriptions, data: subscriptionsResponse} = useGetApi<ApiTypes.ApiListSubscriptions>({
     endpoint: "/api/feeds/subscribed",
     query: {}
   });
@@ -291,13 +291,13 @@ const ManageFeeds = defineRoute({
       {suggestionError && <ErrorMessage message={suggestionError}/>}
     </div>}
     
-    {(data?.feeds?.length??0) > 0 && <>
+    {(subscriptionsResponse?.feeds?.length??0) > 0 && <>
       <h2>Your Subscriptions</h2>
       {loadingSubscriptions && <Loading/>}
       <ul>
-        {data?.feeds && data.feeds.map(feed => <li key={feed.id}>
-          <Link href={`/feeds/${feed.id}`}>
-            {feed.title || feed.url}
+        {subscriptionsResponse?.feeds && subscriptionsResponse.feeds.map(feed => <li key={feed.feed.id}>
+          <Link href={`/feeds/${feed.feed.id}`}>
+            {feed.feed.title || feed.feed.url}
           </Link>
         </li>)}
       </ul>
@@ -395,6 +395,10 @@ const ViewFeedPage = defineRoute({
     endpoint: "/api/feed/load/:feedId",
     query: {feedId: id}
   });
+  const {data: feedCategories, loading: _loadingFeedCategories} = useGetApi<ApiTypes.ApiGetFeedCategories>({
+    endpoint: "/api/feeds/categories",
+    query: {},
+  });
   const {data: cardsDue, loading: _loadingCardsDue} = useGetApi<ApiTypes.ApiCardsDue>({
     endpoint: "/api/cards/due",
     query: {},
@@ -451,6 +455,7 @@ const ViewFeedPage = defineRoute({
     {data?.subscription && <div className={classes.settings}>
       <SubscriptionSettingsForm
         subscription={data.subscription}
+        categories={feedCategories?.categories ?? []}
         disabled={isBlocked}
       />
     </div>}

@@ -64,7 +64,9 @@ interface ApiObjDeckWithDueCount extends ApiObjDeck { //{{_}}
   due: number
 }
 
-interface ApiObjFeedWithUnreadCount extends ApiObjFeed { //{{_}}
+interface ApiObjFeedWithSubscription { //{{_}}
+  feed: ApiObjFeed
+  subscription: ApiObjSubscription
   unreadCount: number
 }
 
@@ -345,7 +347,7 @@ interface ApiListSubscriptions extends RestApiGet { //{{_}}
   path: "/api/feeds/subscribed"
   queryArgs: object
   responseType: {
-    feeds: ApiObjFeedWithUnreadCount[]
+    feeds: ApiObjFeedWithSubscription[]
   }
 }
 
@@ -419,6 +421,14 @@ interface ApiEditSubscriptionOptions extends RestApiPost { //{{_}}
     config: Partial<SubscriptionOptions>
   },
   responseType: object
+}
+
+interface ApiGetFeedCategories extends RestApiGet { //{{_}}
+  path: "/api/feeds/categories",
+  queryArgs: object
+  responseType: {
+    categories: string[]
+  }
 }
 
 

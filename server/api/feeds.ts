@@ -6,6 +6,7 @@ import { apiFilterRssFeed, apiFilterRssItem, apiFilterSubscription, userCanEditS
 import { awaitAll } from '../../lib/util/asyncUtil';
 import { feedURLToFeedTitle, maybeRefreshFeed, pollFeed, refreshFeed } from '../feeds/feedSync';
 import { validateSubscriptionOptions } from "../../lib/subscriptionOptions";
+import uniq from 'lodash/uniq';
 
 const maxParallelism = 10;
 
@@ -92,7 +93,8 @@ export function addFeedEndpoints(app: Express) {
     
     return {
       feeds: subscriptions.map(subscription => ({
-        ...apiFilterRssFeed(subscription.feed, ctx),
+        subscription: apiFilterSubscription(subscription, ctx),
+        feed: apiFilterRssFeed(subscription.feed, ctx),
         unreadCount: unreadCountsByFeedId[subscription.feed.id],
       }))
     };
@@ -284,6 +286,21 @@ export function addFeedEndpoints(app: Express) {
     });
 
     return {};
+  });
+  
+  defineGetApi<ApiTypes.ApiGetFeedCategories>(app, "/api/feeds/categories", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const subscriptions = await ctx.db.rssSubscription.findMany({
+      where: {
+        userId: currentUser.id,
+        deleted: false,
+      },
+    });
+    const categories = subscriptions
+      .filter(s=>!!(s.config as any)?.category)
+      .map(s=>(s.config as any).category!);
+
+    return { categories: uniq(categories) };
   });
 }
 

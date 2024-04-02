@@ -7,11 +7,13 @@ export interface SubscriptionOptions {
   presentationOrder: FeedPresentationOrderType
   shuffleIntoReviews: boolean
   blockDirectAccess: boolean
+  category: string|undefined
 }
 const defaultSubscriptionOptions: SubscriptionOptions = {
   presentationOrder: "oldestFirst",
   shuffleIntoReviews: true,
   blockDirectAccess: false,
+  category: undefined,
 };
 
 export const feedPresentationOrderLabels: Record<FeedPresentationOrderType,string> = {

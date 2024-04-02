@@ -9,6 +9,7 @@ import {DebugPanel, useDebugOptions} from './debug';
 import classNames from 'classnames';
 import {breakpoints} from '../lib/breakpoints';
 import { PageTitle } from '../lib/renderContext';
+import { groupBy } from 'lodash';
 
 
 export function PageWrapper({title, layout="full", children}: {
@@ -324,6 +325,14 @@ function LeftSidebarContents() {
     sectionBody: {
       marginLeft: 16,
     },
+    feedCategoryBlock: {
+    },
+    feedCategoryHeading: {
+      marginBottom: 6,
+    },
+    feedCategoryContents: {
+      paddingLeft: 16,
+    },
   }));
   
   const currentUser = useCurrentUser();
@@ -337,6 +346,11 @@ function LeftSidebarContents() {
     endpoint: "/api/feeds/subscribed",
     query: {}
   });
+  
+  const subscriptionsInCategories = subscriptionsResponse?.feeds.filter(f=>!!f.subscription.config.category);
+  const uncategorizedSubscriptions = subscriptionsResponse?.feeds.filter(f=>!f.subscription.config.category) ?? [];
+  const subscriptionsByCategory = groupBy(subscriptionsInCategories, f=>f.subscription.config.category) ?? [];
+  const categories = Object.keys(subscriptionsByCategory);
   
   return <div className={classes.root}>
     <div className={classes.sidebarSection}>
@@ -385,7 +399,13 @@ function LeftSidebarContents() {
       </Link>
       <div className={classes.sectionBody}>
         {loadingFeeds && <Loading/>}
-        {subscriptionsResponse?.feeds && subscriptionsResponse.feeds.map(feed => <FeedsListItem key={feed.id} feed={feed}/>)}
+        {uncategorizedSubscriptions.map(f => <SubscriptionListItem key={f.feed.id} feed={f}/>)}
+        {categories.map(c => <div key={c} className={classes.feedCategoryBlock}>
+          <div className={classes.feedCategoryHeading}>{c}</div>
+          <div className={classes.feedCategoryContents}>
+            {subscriptionsByCategory[c].map(f => <SubscriptionListItem key={f.feed.id} feed={f}/>)}
+          </div>
+        </div>)}
         {subscriptionsResponse?.feeds.length===0 && <Link
           href="/feeds/manage"
           color={true}
@@ -419,12 +439,12 @@ function DeckListItem({deck}: {
   />
 }
 
-function FeedsListItem({feed}: {
-  feed: ApiTypes.ApiObjFeedWithUnreadCount
+function SubscriptionListItem({feed}: {
+  feed: ApiTypes.ApiObjFeedWithSubscription
 }) {
   return <SidebarListItemWithCount
-    title={feed.title || feed.url}
-    href={`/feeds/${feed.id}`}
+    title={feed.feed.title || feed.feed.url}
+    href={`/feeds/${feed.feed.id}`}
     unreadCount={feed.unreadCount}
   />
 }
@@ -467,4 +487,4 @@ function SidebarListItemWithCount({title, href, unreadCount}: {
   </div>
 }
 
-export const components = {PageWrapper,FooterLinks,LoggedOutAccessiblePage,TopBar,OpenSidebarButton,LeftSidebar,LeftSidebarContents,DeckListItem,FeedsListItem,SidebarListItemWithCount};
+export const components = {PageWrapper,FooterLinks,LoggedOutAccessiblePage,TopBar,OpenSidebarButton,LeftSidebar,LeftSidebarContents,DeckListItem,SubscriptionListItem,SidebarListItemWithCount};

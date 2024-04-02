@@ -6,8 +6,9 @@ import { useCurrentUser } from "../lib/useCurrentUser";
 import { useJssStyles } from "../lib/useJssStyles";
 import { formatTimeInHours, getUserOptions, UserOptions } from '../lib/userOptions';
 import { getTimezonesList } from '../lib/util/timeUtil';
-import { Checkbox, Dropdown, ErrorMessage, Link, TextInput } from "./widgets";
+import { Button, Checkbox, Dropdown, ErrorMessage, Link, TextInput } from "./widgets";
 import { feedPresentationOrderLabels, getSubscriptionOptions, SubscriptionOptions } from '../lib/subscriptionOptions';
+import { ModalDialog, useModal } from '../lib/useModal';
 
 
 export function UserConfiguration() {
@@ -160,8 +161,9 @@ function ChangePasswordForm() {
   </form>
 }
 
-export function SubscriptionSettingsForm({subscription, disabled}: {
+export function SubscriptionSettingsForm({subscription, categories, disabled}: {
   subscription: ApiTypes.ApiObjSubscription
+  categories: string[]
   disabled: boolean
 }) {
   const classes = useJssStyles("SubscriptionSettingsForm", () => ({
@@ -176,6 +178,7 @@ export function SubscriptionSettingsForm({subscription, disabled}: {
       display: "inline-block",
     },
   }));
+  const {openModal} = useModal();
   const [currentOptions,setCurrentOptions] = useState(getSubscriptionOptions(subscription));
   
   async function updateOptions(options: Partial<SubscriptionOptions>) {
@@ -192,6 +195,13 @@ export function SubscriptionSettingsForm({subscription, disabled}: {
     });
   }
 
+  const feedCategories: Record<string,string> = {};
+  feedCategories["Uncategorized"] = "Uncategorized";
+  for (const category of categories) {
+    feedCategories[category] = category;
+  }
+  feedCategories["New Category"] = "New Category";
+
   return <div>
     <div className={classes.twoColumnSetting}>
       <div className={classes.label}>Reading order</div>
@@ -202,6 +212,39 @@ export function SubscriptionSettingsForm({subscription, disabled}: {
           setValue={order => updateOptions({
             presentationOrder: order
           })}
+        />
+      </div>
+    </div>
+    <div className={classes.twoColumnSetting}>
+      <div className={classes.label}>Category</div>
+      <div className={classes.optionColumn}>
+        <Dropdown
+          optionsAndLabels={feedCategories}
+          value={currentOptions.category ?? ""}
+          setValue={category => {
+            switch(category) {
+              case "Uncategorized":
+                void updateOptions({
+                  category: undefined
+                })
+                break;
+              case "New Category":
+                openModal({
+                  fn: (onClose) => {
+                    return <SetFeedCategoryDialog
+                      setCategory={(newCategory: string|undefined) => updateOptions({
+                        category: newCategory
+                      })}
+                      onClose={onClose}
+                    />
+                  }
+                });
+                break;
+              default:
+                void updateOptions({ category });
+                break;
+            }
+          }}
         />
       </div>
     </div>
@@ -220,4 +263,40 @@ export function SubscriptionSettingsForm({subscription, disabled}: {
   </div>;
 }
 
-export const components = {UserConfiguration,ChangePasswordForm,SubscriptionSettingsForm};
+function SetFeedCategoryDialog({ setCategory, onClose }: {
+  setCategory: (newCategory: string|undefined)=>void
+  onClose: ()=>void
+}) {
+  const classes = useJssStyles("SetFeedCategoryDialog", () => ({
+    input: {
+    },
+  }));
+
+  const [categoryState,setCategoryState] = useState("");
+
+  return <ModalDialog>
+    <h2>Category</h2>
+    
+    <input className={classes.input}
+      value={categoryState}
+      onChange={ev => setCategoryState(ev.target.value)}
+    />
+    
+    <div>
+      <Button
+        label="Ok"
+        onClick={() => {
+          setCategory(categoryState);
+          onClose();
+        }}
+      />
+      <Button
+        label="Cancel"
+        onClick={onClose}
+      />
+    </div>
+  </ModalDialog>
+}
+
+
+export const components = {UserConfiguration,ChangePasswordForm,SubscriptionSettingsForm,SetFeedCategoryDialog};
