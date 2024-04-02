@@ -460,6 +460,8 @@ const ViewFeedPage = defineRoute({
       />
     </div>}
     
+    <h2>{data?.feed?.title}</h2>
+
     {isBlocked && <div className={classes.blocked}>
       Finish your cards first to access this feed.
     </div>}
