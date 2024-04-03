@@ -190,7 +190,7 @@ export function SubscriptionSettingsForm({subscription, categories, disabled}: {
       query: {},
       body: {
         subscriptionId: subscription.id,
-        config: options
+        config: mergedOptions
       },
     });
   }
