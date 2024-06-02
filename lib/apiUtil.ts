@@ -4,7 +4,7 @@ import mapValues from 'lodash/mapValues';
 import { useRenderContext } from './renderContext';
 
 type ApiQueryStatus = {
-  result: {loading: boolean, result: any, error: any}
+  result: {loading: boolean, refetching: boolean, result: any, error: any}
   subscribers: Set<any>
 }
 export class GetApiProvider {
@@ -51,21 +51,52 @@ export class GetApiProvider {
   addToCache(cacheEntries: Record<string,any>) {
     for(const uri of Object.keys(cacheEntries)) {
       this.queries[uri] = {
-        result: {loading:false, result: cacheEntries[uri], error: null},
+        result: {loading:false, refetching: false, result: cacheEntries[uri], error: null},
         subscribers: new Set()
       };
     }
   }
   
-  refetch(_uri: string) {
-    //FIXME
-    return this.fetch(_uri);
+  refetch(uri: string) {
+    const existingQueryStatus = this.queries[uri];
+    if (!existingQueryStatus) throw new Error("Refetching a query that hasn't been fetched");
+
+    const queryStatus = {
+      ...this.queries[uri],
+      result: {
+        ...this.queries[uri].result,
+        refetching: true,
+      },
+    };
+    this.queries[uri] = queryStatus;
+    void (async () => {
+      try {
+        this.numPending++;
+        const fetchResult = await this.fetch(uri);
+        queryStatus.result = {
+          loading: false,
+          refetching: false,
+          result: fetchResult,
+          error: null,
+        }
+      } catch(e) {
+        queryStatus.result = {
+          loading: false,
+          refetching: false,
+          result: null,
+          error: e,
+        };
+      } finally {
+        this.numPending--;
+      }
+      this._notifySubscribers(queryStatus);
+    })();
   }
   
   _createRequest(uri: string) {
     if(!(uri in this.queries)) {
       const queryStatus = {
-        result: {loading: true, result: null, error: null},
+        result: {loading: true, refetching: false, result: null, error: null},
         subscribers: new Set<any>(),
       };
       this.queries[uri] = queryStatus;
@@ -75,12 +106,14 @@ export class GetApiProvider {
           const fetchResult = await this.fetch(uri);
           queryStatus.result = {
             loading: false,
+            refetching: false,
             result: fetchResult,
             error: null,
           }
         } catch(e) {
           queryStatus.result = {
             loading: false,
+            refetching: false,
             result: null,
             error: e,
           };
@@ -128,7 +161,7 @@ export function useGetApi<
 }): {
   loading: boolean
   data: T["responseType"]|null
-  refetch: ()=>Promise<void>
+  refetch: ()=>void
 } {
   const { apiProvider } = useRenderContext();
   if (!apiProvider) throw new Error("No API provider");
