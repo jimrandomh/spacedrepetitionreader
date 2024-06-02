@@ -3,5 +3,6 @@
 git pull \
   && yarn prisma generate \
   && yarn prisma migrate deploy \
-  service spacedrepetitionreader restart
+  && service spacedrepetitionreader stop \
+  && service spacedrepetitionreader start
 
