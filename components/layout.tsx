@@ -103,6 +103,8 @@ function FooterLinks() {
     <Link href="mailto:jimrandomh@gmail.com" color={false}>Feedback</Link>
     <BulletSeparator/>
     <Link href="/privacy-policy" color={false}>Privacy Policy</Link>
+    <BulletSeparator/>
+    <Link href="https://www.github.com/jimrandomh/spacedrepetitionreader" color={false}>GitHub</Link>
   </div>
 }
 
