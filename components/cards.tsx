@@ -116,7 +116,7 @@ export function CardButton({label, onClick, href, className, type}: {
   onClick?: ()=>void,
   href?: string,
   className?: string,
-  type: "flip"|"easy"|"hard"|"again"|"next"
+  type: "flip"|"easy"|"hard"|"again"|"next"|"other"
 }) {
   const classes = useJssStyles("CardButton", () => ({
     button: {
@@ -142,6 +142,7 @@ export function CardButton({label, onClick, href, className, type}: {
       background: "#fcc",
     },
     next: {},
+    other: {},
   }));
   
   if (href) {
@@ -196,19 +197,23 @@ function RSSCard({card, onFinish}: {
   />
 }
 
-type CardOrFeedItem = {type:"card",card:ApiTypes.ApiObjCard}|{type:"feedItem",feedItem:ApiTypes.ApiObjRssItem};
+type ReviewItem =
+  | {type:"card",card:ApiTypes.ApiObjCard}
+  | {type:"feedItem",feedItem:ApiTypes.ApiObjRssItem}
+  | {type:"notificationCard",notificationType:"feedbackRequest"}
 
-export function ReviewWrapper({cards, flipCardId, subscriptions, feedItems, simulatedDate}: {
+export function ReviewWrapper({cards, flipCardId, subscriptions, feedItems, notificationCards, simulatedDate}: {
   cards: ApiTypes.ApiObjCard[]
   flipCardId?: string,
   subscriptions: ApiTypes.ApiObjSubscription[]
   feedItems: ApiTypes.ApiObjRssItem[]
+  notificationCards: ApiTypes.ApiObjNotificationCard[]
   simulatedDate?: Date
 }) {
-  //const [shuffledDeck,setShuffledDeck] = useState<CardOrFeedItem[]|null>(null);
+  //const [shuffledDeck,setShuffledDeck] = useState<ReviewItem[]|null>(null);
   
   const allItems = useMemo(
-    () => prepareReviewOrder({ cards, flipCardId, feedItems, subscriptions }),
+    () => prepareReviewOrder({ cards, flipCardId, feedItems, notificationCards, subscriptions }),
     [cards, flipCardId, feedItems, subscriptions]
   );
   const shuffledDeck = allItems;
@@ -235,7 +240,7 @@ export function ReviewWrapper({cards, flipCardId, subscriptions, feedItems, simu
 }
 
 function ReviewInProgress({items, flipFirst, simulatedDate}: {
-  items: Array<CardOrFeedItem>
+  items: Array<ReviewItem>
   flipFirst?: boolean,
   simulatedDate?: Date
 }) {
@@ -247,18 +252,10 @@ function ReviewInProgress({items, flipFirst, simulatedDate}: {
   }
   
   return <>
-    {currentCard && currentCard.type==="card" && <CardChallenge
+    {currentCard && <ReviewQueueItem
       key={cardPos}
-      card={currentCard.card}
-      preFlipped={cardPos===0 && flipFirst}
-      onFinish={() => {
-        advanceToNextCard();
-      }}
-      simulatedDate={simulatedDate}
-    />}
-    {currentCard && currentCard.type==="feedItem" && <RSSCard
-      key={cardPos}
-      card={currentCard.feedItem}
+      item={currentCard}
+      preFlipped={cardPos===0 && !!flipFirst}
       onFinish={() => {
         advanceToNextCard();
       }}
@@ -269,20 +266,91 @@ function ReviewInProgress({items, flipFirst, simulatedDate}: {
   </>
 }
 
-function prepareReviewOrder({cards, flipCardId, feedItems, subscriptions}: {
+function ReviewQueueItem({item, preFlipped, onFinish, simulatedDate}: {
+  item: ReviewItem
+  preFlipped: boolean,
+  onFinish: ()=>void,
+  simulatedDate?: Date,
+}) {
+  switch (item.type) {
+    case "card":
+      return <CardChallenge
+        card={item.card}
+        preFlipped={preFlipped}
+        onFinish={onFinish}
+        simulatedDate={simulatedDate}
+      />
+    case "feedItem":
+      return <RSSCard
+        card={item.feedItem}
+        onFinish={onFinish}
+      />
+    case "notificationCard":
+      return <NotificationCard
+        notificationType={item.notificationType}
+        onFinish={onFinish}
+      />
+  }
+}
+
+function NotificationCard({notificationType, onFinish}: {
+  notificationType: "feedbackRequest",
+  onFinish: ()=>void,
+}) {
+  switch (notificationType) {
+    case "feedbackRequest":
+      return <CardFrame
+        contents={<>
+          Do you have feedback abotu Spaced Repetition Reader? How well is it working for you?
+        </>}
+        buttons={<>
+          <CardButton
+            type="other"
+            label="Don't ask again"
+            onClick={async () => {
+              await doPost("/api/notifications/dismiss", {
+                notificationType: "feedbackRequest",
+                dontShowAgain: true,
+              });
+            }}
+          />
+          <CardButton
+            type="other"
+            label="Maybe later"
+            onClick={async () => {
+              await doPost("/api/notifications/dismiss", {
+                notificationType: "feedbackRequest",
+                dontShowAgain: false,
+              });
+            }}
+          />
+          <CardButton
+            type="other"
+            label="Send Feedback"
+            onClick={() => {
+              //TODO
+            }}
+          />
+        </>}
+      />
+  }
+}
+
+function prepareReviewOrder({cards, flipCardId, feedItems, notificationCards, subscriptions}: {
   cards: ApiTypes.ApiObjCard[]
   flipCardId?: string,
   subscriptions: ApiTypes.ApiObjSubscription[]
+  notificationCards: ApiTypes.ApiObjNotificationCard[],
   feedItems: ApiTypes.ApiObjRssItem[]
-}): CardOrFeedItem[] {
+}): ReviewItem[] {
   const maxFeedItems = 3; //TODO: Make this a user setting
   const selectedFeedItems = selectFeedItemsFromAllSubscriptions(maxFeedItems, feedItems, subscriptions);
   
-  const taggedCards: CardOrFeedItem[] = shuffle(cards)
+  const taggedCards: ReviewItem[] = shuffle(cards)
     .map(card => ({type: "card", card}));
-  const taggedFeedItems: CardOrFeedItem[] = selectedFeedItems
+  const taggedFeedItems: ReviewItem[] = selectedFeedItems
     .map(feedItem => ({type: "feedItem", feedItem}));
-  let result = randomInterleaveMany([taggedCards, taggedFeedItems]);
+  let result: ReviewItem[] = randomInterleaveMany([taggedCards, taggedFeedItems]);
   
   // If flipCardId is provided and is present in the review, move it to the front
   if (flipCardId) {
@@ -292,9 +360,15 @@ function prepareReviewOrder({cards, flipCardId, feedItems, subscriptions}: {
     }
   }
   
+  // Add notification cards after the review
+  result = [
+    ...result,
+    ...notificationCards.map((card): ReviewItem => ({type: "notificationCard", notificationType: card.notificationType}))
+  ];
+  
   // If there are more feed items that weren't selected, add them at the end
   const selectedFeedItemIds = new Set<string>(selectedFeedItems.map(item => item.id));
-  const unselectedFeedItems: CardOrFeedItem[] = feedItems
+  const unselectedFeedItems: ReviewItem[] = feedItems
     .filter(feedItem => !selectedFeedItemIds.has(feedItem.id))
     .map(feedItem => ({type: "feedItem", feedItem}));
   if (unselectedFeedItems.length > 0) {

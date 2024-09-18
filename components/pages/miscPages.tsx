@@ -50,9 +50,7 @@ const DashboardPage = defineRoute({
   // them here. So we should guarantee that card is in the review (if eligible), is
   // first, and loads pre-flipped.
   const flipCardId = query?.get("flipCard");
-  
-  
-  
+
   return <PageWrapper title="Dashboard">
     {loading && <Loading/>}
     {data && <ReviewWrapper
@@ -60,6 +58,7 @@ const DashboardPage = defineRoute({
       flipCardId={flipCardId??undefined}
       subscriptions={data.subscriptions}
       feedItems={data.feedItems}
+      notificationCards={data.notificationCards}
       simulatedDate={debugOptions.overrideDate ?? undefined}
     />}
   </PageWrapper>

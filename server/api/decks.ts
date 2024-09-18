@@ -377,10 +377,11 @@ export async function getItemsDue({ currentUser, ctx, now, maxCards, includeRss 
 
   const subscriptionsToInclude = subscriptionsToCheck.filter(sub => some(unreadItems, item => item.feedId === sub.feedId));
 
-  // Return cards that are due ad unread feed items
+  // Return cards that are due and unread feed items
   return {
     cards: cardsDue.map(card => apiFilterCard(card, card.activeRevision!, ctx)),
     subscriptions: subscriptionsToInclude.map(sub => apiFilterSubscription(sub, ctx)),
+    notificationCards: [], //TODO
     feedItems: unreadItems.map(item => apiFilterRssItem(item, ctx)),
   };
 }

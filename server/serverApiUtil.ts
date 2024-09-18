@@ -133,6 +133,12 @@ export function assertIsString(value: any): string {
   return (value as string);
 }
 
+export function assertIsBoolean(value: any): boolean {
+  if(typeof(value) !== 'boolean')
+    throw new Error("Argument must be a boolean");
+  return (value as boolean);
+}
+
 
 export function getCookie(req: Request, name: string) {
   const cookies = new Cookies((req as any).headers.cookie);

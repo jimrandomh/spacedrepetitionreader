@@ -5,6 +5,7 @@ import {addFeedEndpoints} from './feeds';
 import {addImportEndpoints} from './import';
 import {addUserEndpoints} from './user';
 import {addAdminEndpoints} from './admin';
+import { addNotificationEndpoints } from './notifications';
 
 export function addApiEndpoints(app: Express) {
   addAuthEndpoints(app);
@@ -13,4 +14,5 @@ export function addApiEndpoints(app: Express) {
   addUserEndpoints(app);
   addImportEndpoints(app);
   addAdminEndpoints(app);
+  addNotificationEndpoints(app);
 }

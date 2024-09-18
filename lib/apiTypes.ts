@@ -22,6 +22,10 @@ interface ApiObjCard { //{{_}}
   back: string
 }
 
+interface ApiObjNotificationCard { //{{_}}
+  notificationType: "feedbackRequest"
+}
+
 interface ApiObjCurrentUser { //{{_}}
   id: DbKey
   name: string
@@ -285,6 +289,7 @@ interface ApiCardsDue extends RestApiGet { //{{_}}
     cards: ApiObjCard[]
     subscriptions: ApiObjSubscription[]
     feedItems: ApiObjRssItem[]
+    notificationCards: ApiObjNotificationCard[]
   }
 }
 
@@ -481,6 +486,26 @@ interface ApiForceSendCardsDueEmail extends RestApiPost { //{{_}}
   path: "/api/debug/sendCardsDueEmail",
   queryArgs: object,
   bodyArgs: object,
+  responseType: object,
+}
+
+
+interface ApiNotificationSeen extends RestApiPost { //{{_}}
+  path: "/api/notifications/seen",
+  queryArgs: object,
+  bodyArgs: {
+    notificationType: string
+  },
+  responseType: object,
+}
+
+interface ApiDismissNotification extends RestApiPost { //{{_}}
+  path: "/api/notifications/dismiss",
+  queryArgs: object,
+  bodyArgs: {
+    notificationType: string
+    dontShowAgain: boolean
+  },
   responseType: object,
 }
 
