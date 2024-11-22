@@ -1,9 +1,12 @@
-import React, {useEffect} from 'react'
+import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react'
 import {useJssStyles} from '../lib/useJssStyles';
 import {redirect} from '../lib/util/browserUtil';
 import classNames from 'classnames';
 import { useLocation } from '../lib/useLocation';
+import ClickAwayListener from 'react-click-away-listener';
+import { doPost } from '../lib/apiUtil';
 
+const MenuContext = React.createContext<{closeMenu: ()=>void}|null>(null);
 
 export function Link({href, onClick, alwaysNewTab=false, highlightIfAlreadyHere, className, color=true, children}: {
   href?: string
@@ -210,18 +213,20 @@ export function FeedScrollList({items}: {
   items: ApiTypes.ApiObjRssItem[]
 }) {
   return <>
-    {items.map((feedItem,i) =>
-      <FeedItemFrame key={feedItem.id || (""+i)}>
-        <FeedItem item={feedItem}/>
-      </FeedItemFrame>
-    )}
+    {items.map((feedItem,i) => <div key={feedItem.id || (""+i)}>
+      <FeedItem showFrame={true} showTripleDotMenu={true} item={feedItem}/>
+    </div>)}
   </>
 }
-export function FeedItem({item}: {
+
+export function FeedItem({showFrame, showTripleDotMenu, item}: {
+  showFrame: boolean,
+  showTripleDotMenu: boolean,
   item: ApiTypes.ApiObjRssItem
 }) {
   const classes = useJssStyles("FeedItem", () => ({
-    root: {
+    content: {
+      position: "relative",
       "& img": {
         maxWidth: "100%",
       },
@@ -236,18 +241,45 @@ export function FeedItem({item}: {
       color: "#444",
     },
   }));
-  return <div className={classes.root}>
+  const [hidden, setHidden] = useState(false);
+
+  async function markAsRead() {
+    setHidden(true);
+    await doPost({
+      endpoint: "/api/feedItems/markAsRead",
+      query: {},
+      body: {
+        itemId: item.id
+      },
+    });
+  }
+
+  if (hidden)
+    return null;
+
+  const content = <div className={classes.content}>
     <div className={classes.rssTitle}>
       <Link href={item.link} alwaysNewTab={true}>
         {item.title}
       </Link>
       <div className={classes.date}>{item.pubDate}</div>
     </div>
+
+    {showTripleDotMenu && <TripleDotMenuButton menu={<div>
+      <MenuItem onPick={() => markAsRead()}>Mark as Read</MenuItem>
+    </div>}/>}
+
     <div
       className={classes.rssBody}
       dangerouslySetInnerHTML={{__html: item.summary}}
     />
   </div>
+  
+  if (showFrame) {
+    return <FeedItemFrame>{content}</FeedItemFrame>
+  } else {
+    return content;
+  }
 }
 
 function FeedItemFrame({children}: {
@@ -266,6 +298,65 @@ function FeedItemFrame({children}: {
   }));
   
   return <div className={classes.root}>
+    {children}
+  </div>
+}
+
+export function TripleDotMenuButton({menu}: {
+  menu: React.ReactNode
+}) {
+  const classes = useJssStyles("TripleDotMenuButton", () => ({
+    button: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      width: 20,
+    },
+    menu: {
+      position: "absolute",
+      right: 0,
+      border: "1px solid black",
+      background: "white",
+      padding: 4,
+      minWidth: 150,
+    },
+  }));
+  const [open,setOpen] = useState(false);
+  const closeMenu = useCallback(() => setOpen(false), []); 
+  const menuContext = useMemo(() => ({closeMenu}), [closeMenu]);
+  
+  return <MenuContext.Provider value={menuContext}>
+    <div className={classes.button}>
+      <img src="/static/noun-three-dot-4287657-9B9B9B.svg" onClick={() => setOpen(true)}/>
+      {open && <ClickAwayListener onClickAway={closeMenu}>
+        <div className={classes.menu}>{menu}</div>
+      </ClickAwayListener>}
+    </div>
+  </MenuContext.Provider>
+}
+
+export function MenuItem({onPick, children}: {
+  onPick: ()=>void,
+  children: React.ReactNode,
+}) {
+  const menuContext = useContext(MenuContext);
+  const classes = useJssStyles("MenuItem", () => ({
+    root: {
+      padding: 4,
+      cursor: "pointer",
+      "&:hover": {
+        background: "rgba(0,0,0,.1)",
+      }
+    },
+  }));
+
+  return <div
+    className={classes.root}
+    onClick={(_ev) => {
+      menuContext?.closeMenu();
+      onPick();
+    }}
+  >
     {children}
   </div>
 }
@@ -309,4 +400,4 @@ export function Redirect({to}: {to: string}) {
 }
 
 
-export const components = {Link,ErrorMessage,Loading,TextAreaInput,TextInput,Checkbox,BulletSeparator,FeedScrollList, FeedItem,FeedItemFrame,Button,Redirect};
+export const components = {Link,ErrorMessage,Loading,TextAreaInput,TextInput,Checkbox,BulletSeparator,FeedScrollList, FeedItem,FeedItemFrame,TripleDotMenuButton,MenuItem,Button,Redirect};

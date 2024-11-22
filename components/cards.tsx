@@ -189,7 +189,7 @@ function RSSCard({card, onFinish}: {
   
   return <CardFrame
     contents={<div className={classes.contents}>
-      <FeedItem item={card}/>
+      <FeedItem showFrame={false} showTripleDotMenu={false} item={card}/>
     </div>}
     buttons={<>
       <CardButton type="next" onClick={() => clickNext()} label="Next"/>
@@ -308,9 +308,13 @@ function NotificationCard({notificationType, onFinish}: {
             type="other"
             label="Don't ask again"
             onClick={async () => {
-              await doPost("/api/notifications/dismiss", {
-                notificationType: "feedbackRequest",
-                dontShowAgain: true,
+              await doPost({
+                endpoint: "/api/notifications/dismiss",
+                query: {},
+                body: {
+                  notificationType: "feedbackRequest",
+                  dontShowAgain: true,
+                }
               });
             }}
           />
@@ -318,9 +322,13 @@ function NotificationCard({notificationType, onFinish}: {
             type="other"
             label="Maybe later"
             onClick={async () => {
-              await doPost("/api/notifications/dismiss", {
-                notificationType: "feedbackRequest",
-                dontShowAgain: false,
+              await doPost({
+                endpoint: "/api/notifications/dismiss",
+                query: {},
+                body: {
+                  notificationType: "feedbackRequest",
+                  dontShowAgain: false,
+                }
               });
             }}
           />
