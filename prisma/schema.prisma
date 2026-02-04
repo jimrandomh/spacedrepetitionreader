@@ -28,6 +28,7 @@ model User { //{{{
 
   decks           Deck[]
   loginTokens     LoginToken[]
+  apiTokens       ApiToken[]
   RssSubscription RssSubscription[]
   RssImpression   RssImpression[]
   CardImpression  CardImpression[]
@@ -64,6 +65,22 @@ model EmailToken {
 
   @@index([tokenHash])
 }
+
+model ApiToken { //{{{
+  id          String    @id @default(cuid())
+  tokenHash   String    @unique
+  name        String    @default("")
+  createdAt   DateTime  @default(now())
+  lastUsedAt  DateTime?
+  revoked     Boolean   @default(false)
+  revokedAt   DateTime?
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  @@index([tokenHash])
+  @@index([ownerId])
+} //}}}
 
 //}}}
 

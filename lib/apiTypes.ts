@@ -509,4 +509,42 @@ interface ApiDismissNotification extends RestApiPost { //{{_}}
   responseType: object,
 }
 
+
+// API Token Management
+interface ApiObjApiToken { //{{_}}
+  id: DbKey
+  name: string
+  createdAt: string
+  lastUsedAt: string | null
+}
+
+interface ApiCreateApiToken extends RestApiPost { //{{_}}
+  path: "/api/tokens/create"
+  queryArgs: object
+  bodyArgs: {
+    name?: string
+  }
+  responseType: {
+    token: string
+    name: string
+  }
+}
+
+interface ApiListApiTokens extends RestApiGet { //{{_}}
+  path: "/api/tokens/list"
+  queryArgs: object
+  responseType: {
+    tokens: ApiObjApiToken[]
+  }
+}
+
+interface ApiRevokeApiToken extends RestApiPost { //{{_}}
+  path: "/api/tokens/revoke"
+  queryArgs: object
+  bodyArgs: {
+    tokenId: DbKey
+  }
+  responseType: object
+}
+
 }}

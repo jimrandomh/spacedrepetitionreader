@@ -25,6 +25,27 @@ function hashForTokens(token: string): string {
 
 
 export async function getUserFromReq(req: Request, res: Response, db: PrismaClient): Promise<User|null> {
+  // Check for Bearer token in Authorization header (API token auth)
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7);
+    const tokenHash = hashForTokens(token);
+    const apiToken = await db.apiToken.findUnique({
+      where: { tokenHash },
+      include: { owner: true }
+    });
+    if (apiToken && !apiToken.revoked) {
+      // Update last used timestamp
+      await db.apiToken.update({
+        where: { id: apiToken.id },
+        data: { lastUsedAt: new Date() }
+      });
+      return apiToken.owner;
+    }
+    return null;
+  }
+
+  // Check for session cookie (browser auth)
   const loginCookie = getCookie(req, "login");
   if (loginCookie && loginCookie.length) {
     const tokenHash = hashForTokens(loginCookie);
@@ -293,6 +314,70 @@ export function addAuthEndpoints(app: Express) {
       data: {passwordHash: newPasswordHash},
     });
     await logUserOut(user, ctx.db, ctx.res);
+    
+    return {};
+  });
+
+  // API Token Management
+  definePostApi<ApiTypes.ApiCreateApiToken>(app, "/api/tokens/create", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const name = ctx.body.name ? assertIsString(ctx.body.name) : "";
+    
+    const token = generateTokenString();
+    const tokenHash = hashForTokens(token);
+    
+    await ctx.db.apiToken.create({
+      data: {
+        tokenHash,
+        name,
+        ownerId: currentUser.id,
+      }
+    });
+    
+    // Return the raw token (only time it's visible)
+    return { token, name };
+  });
+
+  defineGetApi<ApiTypes.ApiListApiTokens>(app, "/api/tokens/list", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    
+    const tokens = await ctx.db.apiToken.findMany({
+      where: {
+        ownerId: currentUser.id,
+        revoked: false,
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+    
+    return {
+      tokens: tokens.map(t => ({
+        id: t.id,
+        name: t.name,
+        createdAt: t.createdAt.toISOString(),
+        lastUsedAt: t.lastUsedAt?.toISOString() ?? null,
+      }))
+    };
+  });
+
+  definePostApi<ApiTypes.ApiRevokeApiToken>(app, "/api/tokens/revoke", async (ctx) => {
+    const currentUser = assertLoggedIn(ctx);
+    const tokenId = assertIsString(ctx.body.tokenId);
+    
+    const token = await ctx.db.apiToken.findUnique({
+      where: { id: tokenId }
+    });
+    
+    if (!token || token.ownerId !== currentUser.id) {
+      throw new ApiErrorNotFound;
+    }
+    
+    await ctx.db.apiToken.update({
+      where: { id: tokenId },
+      data: {
+        revoked: true,
+        revokedAt: new Date(),
+      }
+    });
     
     return {};
   });
