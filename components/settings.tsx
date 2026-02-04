@@ -1,6 +1,6 @@
 import range from 'lodash/range';
 import React, { useState } from 'react';
-import { doPost } from '../lib/apiUtil';
+import { doPost, useGetApi } from '../lib/apiUtil';
 import { redirect } from '../lib/util/browserUtil';
 import { useCurrentUser } from "../lib/useCurrentUser";
 import { useJssStyles } from "../lib/useJssStyles";
@@ -105,7 +105,205 @@ export function UserConfiguration() {
       <Link onClick={() => setShowChangePassword(true)}>Change Password</Link>
       {showChangePassword && <ChangePasswordForm/>}
     </div>
+    
+    <TokenManagementSection />
   </div>
+}
+
+function TokenManagementSection() {
+  const classes = useJssStyles("TokenManagementSection", () => ({
+    section: {
+      marginTop: 24,
+      paddingTop: 16,
+      borderTop: "1px solid #ddd",
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: 600,
+      marginBottom: 12,
+    },
+    description: {
+      fontSize: 13,
+      color: "#666",
+      marginBottom: 16,
+    },
+    tokenList: {
+      marginBottom: 16,
+    },
+    tokenRow: {
+      display: "flex",
+      alignItems: "center",
+      padding: "8px 0",
+      borderBottom: "1px solid #eee",
+    },
+    tokenInfo: {
+      flex: 1,
+    },
+    tokenName: {
+      fontWeight: 500,
+    },
+    tokenMeta: {
+      fontSize: 12,
+      color: "#888",
+    },
+    revokeButton: {
+      fontSize: 12,
+      color: "#c00",
+      cursor: "pointer",
+      "&:hover": {
+        textDecoration: "underline",
+      },
+    },
+    createSection: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+    },
+    nameInput: {
+      padding: "6px 8px",
+      border: "1px solid #ccc",
+      borderRadius: 4,
+      width: 200,
+    },
+    newTokenDisplay: {
+      marginTop: 12,
+      padding: 12,
+      background: "#fffde7",
+      border: "1px solid #ffd54f",
+      borderRadius: 4,
+    },
+    newTokenLabel: {
+      fontWeight: 500,
+      marginBottom: 4,
+    },
+    newTokenValue: {
+      fontFamily: "monospace",
+      fontSize: 13,
+      wordBreak: "break-all",
+      background: "#fff",
+      padding: 8,
+      border: "1px solid #ddd",
+      borderRadius: 4,
+    },
+    newTokenWarning: {
+      fontSize: 12,
+      color: "#c00",
+      marginTop: 8,
+    },
+    emptyState: {
+      color: "#888",
+      fontStyle: "italic",
+      marginBottom: 12,
+    },
+  }));
+
+  const { loading, data, refetch } = useGetApi<ApiTypes.ApiListApiTokens>({
+    endpoint: "/api/tokens/list",
+    query: {},
+  });
+
+  const [newTokenName, setNewTokenName] = useState("");
+  const [newlyCreatedToken, setNewlyCreatedToken] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function createToken() {
+    setError(null);
+    const response = await doPost<ApiTypes.ApiCreateApiToken>({
+      endpoint: "/api/tokens/create",
+      query: {},
+      body: { name: newTokenName || "Unnamed Token" },
+    });
+
+    if (response.error) {
+      setError(response.error);
+    } else if (response.result) {
+      setNewlyCreatedToken(response.result.token);
+      setNewTokenName("");
+      refetch();
+    }
+  }
+
+  async function revokeToken(tokenId: string) {
+    if (!confirm("Revoke this token? This cannot be undone.")) return;
+
+    const response = await doPost<ApiTypes.ApiRevokeApiToken>({
+      endpoint: "/api/tokens/revoke",
+      query: {},
+      body: { tokenId },
+    });
+
+    if (response.error) {
+      setError(response.error);
+    } else {
+      refetch();
+    }
+  }
+
+  function formatDate(isoString: string | null): string {
+    if (!isoString) return "Never";
+    const date = new Date(isoString);
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+  }
+
+  const tokens = data?.tokens ?? [];
+
+  return (
+    <div className={classes.section}>
+      <div className={classes.title}>API Tokens</div>
+      <div className={classes.description}>
+        API tokens allow external applications and agents to access your account.
+        Tokens have full access to your account — keep them secret.
+      </div>
+
+      <div className={classes.tokenList}>
+        {loading ? (
+          <div>Loading...</div>
+        ) : tokens.length === 0 ? (
+          <div className={classes.emptyState}>No active tokens</div>
+        ) : (
+          tokens.map((token) => (
+            <div key={token.id} className={classes.tokenRow}>
+              <div className={classes.tokenInfo}>
+                <div className={classes.tokenName}>{token.name || "Unnamed Token"}</div>
+                <div className={classes.tokenMeta}>
+                  Created: {formatDate(token.createdAt)} · Last used: {formatDate(token.lastUsedAt)}
+                </div>
+              </div>
+              <div
+                className={classes.revokeButton}
+                onClick={() => revokeToken(token.id)}
+              >
+                Revoke
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className={classes.createSection}>
+        <input
+          type="text"
+          className={classes.nameInput}
+          placeholder="Token name (optional)"
+          value={newTokenName}
+          onChange={(e) => setNewTokenName(e.target.value)}
+        />
+        <Button label="Create Token" onClick={createToken} />
+      </div>
+
+      {error && <ErrorMessage message={error} />}
+
+      {newlyCreatedToken && (
+        <div className={classes.newTokenDisplay}>
+          <div className={classes.newTokenLabel}>New API Token Created</div>
+          <div className={classes.newTokenValue}>{newlyCreatedToken}</div>
+          <div className={classes.newTokenWarning}>
+            Copy this token now — it won't be shown again!
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function ChangePasswordForm() {
@@ -299,4 +497,4 @@ function SetFeedCategoryDialog({ setCategory, onClose }: {
 }
 
 
-export const components = {UserConfiguration,ChangePasswordForm,SubscriptionSettingsForm,SetFeedCategoryDialog};
+export const components = {UserConfiguration,TokenManagementSection,ChangePasswordForm,SubscriptionSettingsForm,SetFeedCategoryDialog};
