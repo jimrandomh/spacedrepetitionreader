@@ -368,6 +368,31 @@ Mark all items in a feed as read.
 
 ---
 
+## Stats
+
+### Get Review Status
+**GET** `/api/stats/reviewStatus`
+
+Lightweight endpoint for checking review activity. Useful for agents to determine if nudging is needed.
+
+**Response:**
+```json
+{
+  "cardsDue": 15,
+  "lastReviewAt": "2026-02-03T18:30:00.000Z",
+  "reviewsToday": 8,
+  "activeDecks": 3
+}
+```
+
+Fields:
+- `cardsDue`: Number of cards currently due for review
+- `lastReviewAt`: ISO timestamp of most recent review, or `null` if never reviewed
+- `reviewsToday`: Number of cards reviewed since midnight (local server time)
+- `activeDecks`: Number of decks with `reviewStatus: "active"`
+
+---
+
 ## User
 
 ### Get Current User

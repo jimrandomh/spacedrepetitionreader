@@ -6,6 +6,7 @@ import {addImportEndpoints} from './import';
 import {addUserEndpoints} from './user';
 import {addAdminEndpoints} from './admin';
 import { addNotificationEndpoints } from './notifications';
+import { addStatsEndpoints } from './stats';
 
 export function addApiEndpoints(app: Express) {
   addAuthEndpoints(app);
@@ -15,4 +16,5 @@ export function addApiEndpoints(app: Express) {
   addImportEndpoints(app);
   addAdminEndpoints(app);
   addNotificationEndpoints(app);
+  addStatsEndpoints(app);
 }

@@ -547,4 +547,17 @@ interface ApiRevokeApiToken extends RestApiPost { //{{_}}
   responseType: object
 }
 
+
+// Stats
+interface ApiReviewStatus extends RestApiGet { //{{_}}
+  path: "/api/stats/reviewStatus"
+  queryArgs: object
+  responseType: {
+    cardsDue: number
+    lastReviewAt: string | null
+    reviewsToday: number
+    activeDecks: number
+  }
+}
+
 }}
