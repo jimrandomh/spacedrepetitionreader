@@ -56,6 +56,12 @@ function serverRoutes(app: Express) {
 
     const db = getPrisma();
     const currentUser = await getUserFromReq(req, res, db);
+
+    // Redirect logged-in users from landing page to dashboard
+    if (currentUser && (req.path === '/' || req.path === '')) {
+      res.redirect(302, '/dashboard');
+      return;
+    }
     const {status, html} = await renderSSR(currentUser, req, res, req.url)
     res.writeHead(status);
     res.end(html);
