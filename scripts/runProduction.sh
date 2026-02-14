@@ -2,7 +2,7 @@
 
 export NVM_DIR="$HOME/.nvm"
 . "$NVM_DIR/nvm.sh"
-nvm use 18
+nvm use 22
 node --version
 
 echo "Running yarn install"
